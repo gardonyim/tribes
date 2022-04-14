@@ -1,8 +1,11 @@
 package com.greenfoxacademy.springwebapp.player.models;
 
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity(name = "players")
 public class Player {
@@ -12,14 +15,15 @@ public class Player {
   @Column(length = 50)
   private String username;
   private String password;
-  private Integer kingdomId;
+  @OneToOne(mappedBy = "player")
+  private Kingdom kingdom;
   private String avatar;
   private Integer points;
 
-  public Player(String username, String password, Integer kingdomId, String avatar, Integer points) {
+  public Player(String username, String password, Kingdom kingdom, String avatar, Integer points) {
     this.username = username;
     this.password = password;
-    this.kingdomId = kingdomId;
+    this.kingdom = kingdom;
     this.avatar = avatar;
     this.points = points;
   }
@@ -51,12 +55,12 @@ public class Player {
     this.password = password;
   }
 
-  public Integer getKingdomId() {
-    return kingdomId;
+  public Kingdom getKingdom() {
+    return kingdom;
   }
 
-  public void setKingdomId(Integer kingdomId) {
-    this.kingdomId = kingdomId;
+  public void setKingdom(Kingdom kingdom) {
+    this.kingdom = kingdom;
   }
 
   public String getAvatar() {

@@ -13,12 +13,12 @@ public class Kingdom {
   private int id;
   private String name;
   @OneToOne()
-  private Player owner;
+  private Player player;
 
-  public Kingdom(int id, String name, Player owner) {
+  public Kingdom(int id, String name, Player player) {
     this.id = id;
     this.name = name;
-    this.owner = owner;
+    this.player = player;
   }
 
   public Kingdom() {
@@ -40,11 +40,11 @@ public class Kingdom {
     this.name = name;
   }
 
-  public Player getOwner() {
-    return owner;
+  public Player getPlayer() {
+    return player;
   }
 
-  public void setOwner(Player owner) {
-    this.owner = owner;
+  public void setPlayer(Player player) {
+    this.player = player;
   }
 }
