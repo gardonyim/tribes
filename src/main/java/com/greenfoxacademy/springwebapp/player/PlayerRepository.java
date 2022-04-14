@@ -1,4 +1,7 @@
-package com.greenfoxacademy.springwebapp.player.models;
+package com.greenfoxacademy.springwebapp.player;
 
-public interface PlayerRepository {
+import com.greenfoxacademy.springwebapp.player.models.Player;
+import org.springframework.data.repository.CrudRepository;
+
+public interface PlayerRepository extends CrudRepository<Player, Integer> {
 }
