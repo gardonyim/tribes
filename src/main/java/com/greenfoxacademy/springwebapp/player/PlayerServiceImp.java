@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlayerServiceImp implements PlayerService {
 
-    private PlayerRepository playerRepository;
+  private PlayerRepository playerRepository;
 
-    @Autowired
-    public PlayerServiceImp(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
-    }
+  @Autowired
+  public PlayerServiceImp(PlayerRepository playerRepository) {
+    this.playerRepository = playerRepository;
+  }
 
-    @Override
-    public Player savePlayer() {
-        return playerRepository.save(new Player("foo", "", 0, "", 0));
-    }
+  @Override
+  public Player savePlayer() {
+    return playerRepository.save(new Player("foo", "", 0, "", 0));
+  }
 }
