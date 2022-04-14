@@ -16,8 +16,7 @@ public class Player {
     private String avatar;
     private Integer points;
 
-    public Player(int id, String username, String password, Integer kingdomId, String avatar, Integer points) {
-        this.id = id;
+    public Player(String username, String password, Integer kingdomId, String avatar, Integer points) {
         this.username = username;
         this.password = password;
         this.kingdomId = kingdomId;

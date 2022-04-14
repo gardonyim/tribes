@@ -16,6 +16,6 @@ public class PlayerServiceImp implements PlayerService {
 
     @Override
     public Player savePlayer() {
-        return playerRepository.save(new Player());
+        return playerRepository.save(new Player("foo", "", 0, "", 0));
     }
 }
