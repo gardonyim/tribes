@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+
 @Entity(name = "kingdoms")
 public class Kingdom {
 
@@ -20,6 +21,11 @@ public class Kingdom {
 
   public Kingdom(int id, String name, Player player) {
     this.id = id;
+    this.name = name;
+    this.player = player;
+  }
+
+  public Kingdom(String name, Player player) {
     this.name = name;
     this.player = player;
   }
