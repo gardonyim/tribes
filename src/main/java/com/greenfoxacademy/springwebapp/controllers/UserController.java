@@ -1,5 +1,11 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
+import com.greenfoxacademy.springwebapp.exceptions.NoPasswordException;
+import com.greenfoxacademy.springwebapp.exceptions.NoUsernameAndPasswordException;
+import com.greenfoxacademy.springwebapp.exceptions.NoUsernameException;
+import com.greenfoxacademy.springwebapp.exceptions.ShortPasswordException;
+import com.greenfoxacademy.springwebapp.exceptions.UsernameAlreadyExistsException;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,15 @@ public class UserController {
 
   @PostMapping("/register")
   public ResponseEntity registerUser(@RequestBody RegistrationReqDTO reqDTO) {
-    return ResponseEntity.ok(playerService.savePlayer(reqDTO));
+    try {
+      return ResponseEntity.status(201).body(playerService.savePlayer(reqDTO));
+    } catch (NoPasswordException | NoUsernameException | NoUsernameAndPasswordException e) {
+      return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
+    } catch (ShortPasswordException e) {
+      return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
+    } catch (UsernameAlreadyExistsException e) {
+      return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
+    }
+
   }
 }

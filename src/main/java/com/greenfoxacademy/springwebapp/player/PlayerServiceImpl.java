@@ -1,5 +1,10 @@
 package com.greenfoxacademy.springwebapp.player;
 
+import com.greenfoxacademy.springwebapp.exceptions.NoPasswordException;
+import com.greenfoxacademy.springwebapp.exceptions.NoUsernameAndPasswordException;
+import com.greenfoxacademy.springwebapp.exceptions.NoUsernameException;
+import com.greenfoxacademy.springwebapp.exceptions.ShortPasswordException;
+import com.greenfoxacademy.springwebapp.exceptions.UsernameAlreadyExistsException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
@@ -24,15 +29,35 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   public RegistrationResDTO savePlayer(RegistrationReqDTO reqDTO) {
+    validateRegistration(reqDTO);
     Player player = playerRepository.save(convert(reqDTO));
     player.setKingdom(kingdomService.save(reqDTO.getKingdomname(), player));
     return new RegistrationResDTO(player);
   }
 
+  private void validateRegistration(RegistrationReqDTO reqDTO) {
+    if ((reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty())
+            && (reqDTO.getPassword() == null || reqDTO.getPassword().trim().isEmpty())) {
+      throw new NoUsernameAndPasswordException();
+    }
+    if (reqDTO.getPassword() == null || reqDTO.getPassword().trim().isEmpty()) {
+      throw new NoPasswordException();
+    }
+    if (reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty()) {
+      throw new NoUsernameException();
+    }
+    if (playerRepository.findByUsername(reqDTO.getUsername()).isPresent()) {
+      throw new UsernameAlreadyExistsException();
+    }
+    if (reqDTO.getPassword().trim().length() < 8) {
+      throw new ShortPasswordException();
+    }
+  }
+
   private Player convert(RegistrationReqDTO reqDTO) {
     Player player = new Player();
     player.setUsername(reqDTO.getUsername());
-    player.setPassword(pwEnc.encode(reqDTO.getPassword()));
+    player.setPassword(pwEnc.encode(reqDTO.getPassword().trim()));
     player.setKingdom(null);
     player.setAvatar("");
     player.setPoints(0);
