@@ -6,10 +6,10 @@ public class RegistrationResDTO {
   private String username;
   private int kingdomId;
 
-  public RegistrationResDTO(int id, String username, int kingdomId) {
-    this.id = id;
-    this.username = username;
-    this.kingdomId = kingdomId;
+  public RegistrationResDTO(Player player) {
+    this.id = player.getId();
+    this.username = player.getUsername();
+    this.kingdomId = player.getKingdom().getId();
   }
 
   public int getId() {

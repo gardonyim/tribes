@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,11 @@ public class KingdomServiceImpl implements KingdomService {
   }
 
   @Override
-  public Kingdom save(Kingdom kingdom) {
-    return kingdomRepository.save(kingdom);
+  public Kingdom save(String kingdomname, Player player) {
+    if (kingdomname == null || kingdomname.isEmpty()) {
+      kingdomname = player.getUsername() + "'s kingdom";
+    }
+    return kingdomRepository.save(new Kingdom(kingdomname, player));
   }
 
 }

@@ -1,7 +1,6 @@
 package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
-import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
@@ -25,14 +24,18 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   public RegistrationResDTO savePlayer(RegistrationReqDTO reqDTO) {
-    Player player = playerRepository.save(new Player(reqDTO.getUsername(),
-            pwEnc.encode(reqDTO.getPassword()), null, "", 0));
-    String kingdomname = reqDTO.getKingdomname();
-    if (kingdomname == null || kingdomname.isEmpty()) {
-      kingdomname = reqDTO.getUsername() + "'s kingdom";
-    }
-    Kingdom kingdom = kingdomService.save(new Kingdom(kingdomname, player));
-    player.setKingdom(kingdom);
-    return new RegistrationResDTO(player.getId(), player.getUsername(), kingdom.getId());
+    Player player = playerRepository.save(convert(reqDTO));
+    player.setKingdom(kingdomService.save(reqDTO.getKingdomname(), player));
+    return new RegistrationResDTO(player);
+  }
+
+  private Player convert(RegistrationReqDTO reqDTO) {
+    Player player = new Player();
+    player.setUsername(reqDTO.getUsername());
+    player.setPassword(pwEnc.encode(reqDTO.getPassword()));
+    player.setKingdom(null);
+    player.setAvatar("");
+    player.setPoints(0);
+    return player;
   }
 }
