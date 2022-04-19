@@ -1,5 +1,0 @@
-CREATE TABLE kingdoms (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50),
-    player_id INT NOT NULL
-);
