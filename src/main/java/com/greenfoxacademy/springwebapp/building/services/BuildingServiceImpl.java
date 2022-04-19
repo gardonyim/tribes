@@ -12,8 +12,7 @@ public class BuildingServiceImpl implements BuildingService {
   @Autowired
   private BuildingRepository buildingRepository;
 
-  public BuildingServiceImpl(
-      BuildingRepository buildingRepository) {
+  public BuildingServiceImpl(BuildingRepository buildingRepository) {
     this.buildingRepository = buildingRepository;
   }
 

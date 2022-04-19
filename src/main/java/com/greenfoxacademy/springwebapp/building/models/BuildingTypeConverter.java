@@ -22,7 +22,7 @@ public class BuildingTypeConverter implements AttributeConverter<BuildingType, S
     }
 
     return Stream.of(BuildingType.values())
-        .filter(c -> c.getName().equals(name))
+        .filter(b -> b.getName().equals(name))
         .findFirst()
         .orElseThrow(IllegalArgumentException::new);
   }
