@@ -46,10 +46,13 @@ public class PlayerServiceImpl implements PlayerService {
     if (reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty()) {
       throw new NoUsernameException();
     }
-    if (playerRepository.findByUsername(reqDTO.getUsername()).isPresent()) {
+    
+    if (playerRepository.findFirstByUsername(reqDTO.getUsername()).isPresent()) {
       throw new UsernameAlreadyExistsException();
     }
-    if (reqDTO.getPassword().trim().length() < 8) {
+
+    int minPasswordLength = 8;
+    if (reqDTO.getPassword().trim().length() < minPasswordLength) {
       throw new ShortPasswordException();
     }
   }
