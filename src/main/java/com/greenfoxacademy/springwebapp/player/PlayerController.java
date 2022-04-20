@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.controllers;
+package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.exceptions.NoPasswordException;
 import com.greenfoxacademy.springwebapp.exceptions.NoUsernameAndPasswordException;
@@ -6,7 +6,6 @@ import com.greenfoxacademy.springwebapp.exceptions.NoUsernameException;
 import com.greenfoxacademy.springwebapp.exceptions.ShortPasswordException;
 import com.greenfoxacademy.springwebapp.exceptions.UsernameAlreadyExistsException;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
-import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserController {
+public class PlayerController {
 
   private PlayerService playerService;
 
   @Autowired
-  public UserController(PlayerService playerService) {
+  public PlayerController(PlayerService playerService) {
     this.playerService = playerService;
   }
 
