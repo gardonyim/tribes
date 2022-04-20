@@ -79,7 +79,7 @@ public class PlayerServiceTest {
     reqDTO.setPassword("testpassword");
 
     Optional<Player> optionalPlayer = Optional.of(new Player());
-    when(playerRepository.findByUsername(any())).thenReturn(optionalPlayer);
+    when(playerRepository.findFirstByUsername(any())).thenReturn(optionalPlayer);
 
     exceptionRule.expect(UsernameAlreadyExistsException.class);
     exceptionRule.expectMessage("Username is already taken.");
@@ -93,7 +93,7 @@ public class PlayerServiceTest {
     reqDTO.setPassword("testpw");
 
     Optional<Player> optionalPlayer = Optional.empty();
-    when(playerRepository.findByUsername(any())).thenReturn(optionalPlayer);
+    when(playerRepository.findFirstByUsername(any())).thenReturn(optionalPlayer);
 
     exceptionRule.expect(ShortPasswordException.class);
     exceptionRule.expectMessage("Password must be at least 8 characters.");

@@ -5,5 +5,5 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 
 public interface KingdomService {
 
-  public Kingdom save(String kingdonname, Player player);
+  public Kingdom save(String kingdomName, Player player);
 }
