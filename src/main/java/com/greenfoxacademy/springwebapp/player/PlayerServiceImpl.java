@@ -36,12 +36,12 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   private void validateRegistration(RegistrationReqDTO reqDTO) {
-    if ((reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty())
-            && (reqDTO.getPassword() == null || reqDTO.getPassword().trim().isEmpty())) {
-      throw new NoUsernameAndPasswordException();
-    }
     if (reqDTO.getPassword() == null || reqDTO.getPassword().trim().isEmpty()) {
-      throw new NoPasswordException();
+      if (reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty()) {
+        throw new NoUsernameAndPasswordException();
+      } else {
+        throw new NoPasswordException();
+      }
     }
     if (reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty()) {
       throw new NoUsernameException();

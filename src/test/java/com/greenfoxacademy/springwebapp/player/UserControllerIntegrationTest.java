@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.player;
 
-import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ public class UserControllerIntegrationTest {
   private MockMvc mockMvc;
 
   @Test
-  public void givenRegisterURL_postUsernamePasswordKingdomname_thenStatusCreated_returnsJSON()
+  public void givenRegisterURL_postUsernamePasswordKingdomname_thenStatusCreated_returnsJson()
       throws Exception {
 
   }

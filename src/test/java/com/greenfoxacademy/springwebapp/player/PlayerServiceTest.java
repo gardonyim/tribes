@@ -38,7 +38,7 @@ public class PlayerServiceTest {
   PasswordEncoder passwordEncoder;
 
   @InjectMocks
-  PlayerServiceImp playerService;
+  PlayerServiceImpl playerService;
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
