@@ -1,7 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.flywaydb:flyway-mysql:8.5.8'
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.2.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
+    id "org.flywaydb.flyway" version "8.5.8"
 }
 
 apply plugin: 'checkstyle'
@@ -35,10 +45,21 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2', 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 }
 
 test {
     useJUnitPlatform()
+}
+
+flyway {
+    url = 'jdbc:mysql://localhost:3306/?serverTimezone=UTC'
+    user = 'root'
+    password = 'admin'
+    schemas = ['adoxus-ch4-backend']
 }
