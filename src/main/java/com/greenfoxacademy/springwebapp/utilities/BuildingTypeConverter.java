@@ -1,5 +1,6 @@
-package com.greenfoxacademy.springwebapp.building.models;
+package com.greenfoxacademy.springwebapp.utilities;
 
+import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import java.util.stream.Stream;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
