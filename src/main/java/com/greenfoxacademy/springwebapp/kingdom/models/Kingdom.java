@@ -1,12 +1,10 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "kingdoms")
 public class Kingdom {
@@ -17,6 +15,8 @@ public class Kingdom {
   private String name;
   @OneToOne()
   private Player player;
+  @OneToMany(mappedBy = "kingdom")
+  private List<Resource> resources;
 
   public Kingdom(int id, String name, Player player) {
     this.id = id;
@@ -49,5 +49,13 @@ public class Kingdom {
 
   public void setPlayer(Player player) {
     this.player = player;
+  }
+
+  public List<Resource> getResources() {
+    return resources;
+  }
+
+  public void setResources(List<Resource> resources) {
+    this.resources = resources;
   }
 }
