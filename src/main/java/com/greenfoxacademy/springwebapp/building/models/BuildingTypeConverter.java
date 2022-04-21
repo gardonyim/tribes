@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.utilities;
+package com.greenfoxacademy.springwebapp.building.models;
 
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import java.util.stream.Stream;
