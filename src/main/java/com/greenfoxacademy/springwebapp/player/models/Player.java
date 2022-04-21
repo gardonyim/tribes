@@ -1,38 +1,47 @@
 package com.greenfoxacademy.springwebapp.player.models;
 
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+
+import javax.persistence.Column;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import javax.persistence.OneToOne;
 
 @Entity(name = "players")
 public class Player {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private int id;
+  @Column(length = 50)
   private String username;
-  private String email;
-  private Integer kingdomId;
+  private String password;
+  @OneToOne(mappedBy = "player")
+  private Kingdom kingdom;
   private String avatar;
   private Integer points;
 
-  public Player() {
-  }
-
-  public Player(String username, String email, Integer kingdomId, String avatar, Integer points) {
+  public Player(String username, String password, Kingdom kingdom, String avatar, Integer points) {
     this.username = username;
-    this.email = email;
-    this.kingdomId = kingdomId;
+    this.password = password;
+    this.kingdom = kingdom;
+
     this.avatar = avatar;
     this.points = points;
   }
 
-  public Integer getId() {
+  public Player() {
+  }
+
+  public int getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(int id) {
     this.id = id;
   }
 
@@ -44,20 +53,20 @@ public class Player {
     this.username = username;
   }
 
-  public String getEmail() {
-    return email;
+  public String getPassword() {
+    return password;
   }
 
-  public void setEmail(String email) {
-    this.email = email;
+  public void setPassword(String password) {
+    this.password = password;
   }
 
-  public Integer getKingdomId() {
-    return kingdomId;
+  public Kingdom getKingdom() {
+    return kingdom;
   }
 
-  public void setKingdomId(Integer kingdomId) {
-    this.kingdomId = kingdomId;
+  public void setKingdom(Kingdom kingdom) {
+    this.kingdom = kingdom;
   }
 
   public String getAvatar() {
