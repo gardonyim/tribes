@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.resource.models;
+package com.greenfoxacademy.springwebapp.utilities;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
