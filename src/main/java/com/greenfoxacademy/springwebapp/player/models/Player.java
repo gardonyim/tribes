@@ -1,35 +1,28 @@
 package com.greenfoxacademy.springwebapp.player.models;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.login.models.Login;
 
-import javax.persistence.Column;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity(name = "players")
 public class Player {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
   @Column(length = 50)
   private String username;
-  private String password;
   @OneToOne(mappedBy = "player")
   private Kingdom kingdom;
   private String avatar;
   private Integer points;
+  @OneToOne(mappedBy = "player")
+  private Login login;
 
   public Player(String username, String password, Kingdom kingdom, String avatar, Integer points) {
     this.username = username;
-    this.password = password;
     this.kingdom = kingdom;
-
     this.avatar = avatar;
     this.points = points;
   }
@@ -37,11 +30,11 @@ public class Player {
   public Player() {
   }
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -51,14 +44,6 @@ public class Player {
 
   public void setUsername(String username) {
     this.username = username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   public Kingdom getKingdom() {
