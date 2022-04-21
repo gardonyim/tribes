@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.player.models;
 
-public class PlayerTokenDTO {    private int id;
+public class PlayerTokenDTO {
+  private int id;
   private String username;
   private int kingdomId;
   private String kingdomName;
@@ -8,7 +9,7 @@ public class PlayerTokenDTO {    private int id;
   public PlayerTokenDTO() {
   }
 
-  public PlayerTokenDTO(int id, String username, int kingdomId, String kingdomName, String avatar, Integer points) {
+  public PlayerTokenDTO(int id, String username, int kingdomId, String kingdomName) {
     this.id = id;
     this.username = username;
     this.kingdomId = kingdomId;
