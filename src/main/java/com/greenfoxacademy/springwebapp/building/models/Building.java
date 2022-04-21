@@ -1,14 +1,23 @@
 package com.greenfoxacademy.springwebapp.building.models;
 
+<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import java.time.LocalDateTime;
+=======
+>>>>>>> f951a4494fd1c894b52377851e09ee94280121d1
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+<<<<<<< HEAD
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+=======
+import lombok.Data;
+
+@Data
+>>>>>>> f951a4494fd1c894b52377851e09ee94280121d1
 @Entity(name = "buildings")
 public class Building {
   @Id
@@ -17,6 +26,7 @@ public class Building {
   private BuildingType buildingType;
   private int level;
   private int hp;
+<<<<<<< HEAD
   @ManyToOne
   @JoinColumn(name = "kingdom_id", referencedColumnName = "id")
   private Kingdom kingdom;
@@ -91,4 +101,8 @@ public class Building {
   public void setFinishedAt(LocalDateTime finishedAt) {
     this.finishedAt = finishedAt;
   }
+=======
+  private int startedAt;
+  private int finishedAt;
+>>>>>>> f951a4494fd1c894b52377851e09ee94280121d1
 }
