@@ -16,11 +16,11 @@ public class KingdomServiceImpl implements KingdomService {
   }
 
   @Override
-  public Kingdom save(String kingdomname, Player player) {
-    if (kingdomname == null || kingdomname.isEmpty()) {
-      kingdomname = player.getUsername() + "'s kingdom";
+  public Kingdom save(String kingdomName, Player player) {
+    if (kingdomName == null || kingdomName.isEmpty()) {
+      kingdomName = player.getUsername() + "'s kingdom";
     }
-    return kingdomRepository.save(new Kingdom(kingdomname, player));
+    return kingdomRepository.save(new Kingdom(kingdomName, player));
   }
 
 }

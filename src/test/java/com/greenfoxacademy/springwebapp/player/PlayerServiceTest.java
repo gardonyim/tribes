@@ -1,14 +1,13 @@
 package com.greenfoxacademy.springwebapp.player;
 
-import com.greenfoxacademy.springwebapp.exceptions.NoPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.NoUsernameAndPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.NoUsernameException;
-import com.greenfoxacademy.springwebapp.exceptions.ShortPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.UsernameAlreadyExistsException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomServiceImpl;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
+import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -44,36 +43,36 @@ public class PlayerServiceTest {
   public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
-  public void when_save_player_without_password_it_should_throw_exception() {
+  public void when_savePlayerWithoutPassword_should_throwException() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setUsername("testuser");
 
-    exceptionRule.expect(NoPasswordException.class);
+    exceptionRule.expect(RequestParameterMissingException.class);
     exceptionRule.expectMessage("Password is required.");
     playerService.savePlayer(reqDTO);
   }
 
   @Test
-  public void when_save_player_without_username_it_should_throw_exception() {
+  public void when_savePlayerWithoutUsername_should_throwException() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setPassword("testpassword");
 
-    exceptionRule.expect(NoUsernameException.class);
+    exceptionRule.expect(RequestParameterMissingException.class);
     exceptionRule.expectMessage("Username is required.");
     playerService.savePlayer(reqDTO);
   }
 
   @Test
-  public void when_save_player_without_username_and_password_it_should_throw_exception() {
+  public void when_savePlayerWithoutUsernameAndPassword_should_throwException() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
 
-    exceptionRule.expect(NoUsernameAndPasswordException.class);
+    exceptionRule.expect(RequestParameterMissingException.class);
     exceptionRule.expectMessage("Username and password are required.");
     playerService.savePlayer(reqDTO);
   }
 
   @Test
-  public void when_save_player_nonUniqueUsername_it_should_throw_exception() {
+  public void when_savePlayerWithNonUniqueUsername_should_throwException() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setUsername("testuser");
     reqDTO.setPassword("testpassword");
@@ -81,27 +80,24 @@ public class PlayerServiceTest {
     Optional<Player> optionalPlayer = Optional.of(new Player());
     when(playerRepository.findFirstByUsername(any())).thenReturn(optionalPlayer);
 
-    exceptionRule.expect(UsernameAlreadyExistsException.class);
+    exceptionRule.expect(RequestCauseConflictException.class);
     exceptionRule.expectMessage("Username is already taken.");
     playerService.savePlayer(reqDTO);
   }
 
   @Test
-  public void when_save_player_shortPassword_it_should_throw_exception() {
+  public void when_savePlayerWithShortPassword_should_throwException() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setUsername("testuser");
     reqDTO.setPassword("testpw");
 
-    Optional<Player> optionalPlayer = Optional.empty();
-    when(playerRepository.findFirstByUsername(any())).thenReturn(optionalPlayer);
-
-    exceptionRule.expect(ShortPasswordException.class);
+    exceptionRule.expect(RequestNotAcceptableException.class);
     exceptionRule.expectMessage("Password must be at least 8 characters.");
     playerService.savePlayer(reqDTO);
   }
 
   @Test
-  public void when_save_player_it_should_return_registrationResDTO() {
+  public void when_savePlayer_should_returnRegistrationResDTO() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setUsername("testuser");
     reqDTO.setPassword("password");
@@ -112,7 +108,9 @@ public class PlayerServiceTest {
     when(kingdomService.save(any(), any())).thenReturn(testkingdom);
     when(passwordEncoder.encode(anyString())).thenReturn("encodedpassword");
 
-    Assert.assertEquals(reqDTO.getUsername(), playerService.savePlayer(reqDTO).getUsername());
-    Assert.assertEquals(testkingdom.getId(), playerService.savePlayer(reqDTO).getKingdomId());
+    RegistrationResDTO result = playerService.savePlayer(reqDTO);
+
+    Assert.assertEquals(reqDTO.getUsername(), result.getUsername());
+    Assert.assertEquals(testkingdom.getId(), result.getKingdomId());
   }
 }

@@ -12,6 +12,15 @@ public class RegistrationResDTO {
     this.kingdomId = player.getKingdom().getId();
   }
 
+  public RegistrationResDTO(int id, String username, int kingdomId) {
+    this.id = id;
+    this.username = username;
+    this.kingdomId = kingdomId;
+  }
+
+  public RegistrationResDTO() {
+  }
+
   public int getId() {
     return id;
   }

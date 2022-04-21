@@ -23,22 +23,32 @@ public class KingdomServiceTest {
   KingdomServiceImpl kingdomService;
 
   @Test
-  public void when_save_kingdom_with_name_it_should_return_kingdom() {
+  public void when_saveKingdomWithName_should_returnKingdomWithGivenName() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+
     Kingdom created = kingdomService.save("testkingdom", player);
 
     Assert.assertEquals("testkingdom", created.getName());
-    Assert.assertEquals(player, created.getPlayer());
   }
 
   @Test
-  public void when_save_kingdom_without_name_it_should_return_kingdom() {
+  public void when_saveKingdomWithoutName_should_returnKingdomWithGeneratedName() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+
     Kingdom created = kingdomService.save("", player);
 
     Assert.assertEquals("testuser's kingdom", created.getName());
+  }
+
+  @Test
+  public void when_saveKingdom_should_returnKingdomWithGivenPlayer() {
+    Player player = new Player("testuser", "", null, "", 0);
+    when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+
+    Kingdom created = kingdomService.save("testkingdom", player);
+
     Assert.assertEquals(player, created.getPlayer());
   }
 }

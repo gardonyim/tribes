@@ -1,10 +1,8 @@
 package com.greenfoxacademy.springwebapp.player;
 
-import com.greenfoxacademy.springwebapp.exceptions.NoPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.NoUsernameAndPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.NoUsernameException;
-import com.greenfoxacademy.springwebapp.exceptions.ShortPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.UsernameAlreadyExistsException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
@@ -38,20 +36,20 @@ public class PlayerServiceImpl implements PlayerService {
   private void validateRegistration(RegistrationReqDTO reqDTO) {
     if (reqDTO.getPassword() == null || reqDTO.getPassword().trim().isEmpty()) {
       if (reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty()) {
-        throw new NoUsernameAndPasswordException();
+        throw new RequestParameterMissingException("Username and password are required.");
       } else {
-        throw new NoPasswordException();
+        throw new RequestParameterMissingException("Password is required.");
       }
     }
     if (reqDTO.getUsername() == null || reqDTO.getUsername().trim().isEmpty()) {
-      throw new NoUsernameException();
-    }
-    if (playerRepository.findFirstByUsername(reqDTO.getUsername()).isPresent()) {
-      throw new UsernameAlreadyExistsException();
+      throw new RequestParameterMissingException("Username is required.");
     }
     int minPasswordLength = 8;
     if (reqDTO.getPassword().trim().length() < minPasswordLength) {
-      throw new ShortPasswordException();
+      throw new RequestNotAcceptableException("Password must be at least 8 characters.");
+    }
+    if (playerRepository.findFirstByUsername(reqDTO.getUsername()).isPresent()) {
+      throw new RequestCauseConflictException("Username is already taken.");
     }
   }
 

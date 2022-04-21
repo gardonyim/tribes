@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.player;
 
-import com.greenfoxacademy.springwebapp.exceptions.ParameterMissingException;
-import com.greenfoxacademy.springwebapp.exceptions.ShortPasswordException;
-import com.greenfoxacademy.springwebapp.exceptions.UsernameAlreadyExistsException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +22,18 @@ public class PlayerController {
     this.playerService = playerService;
   }
 
-  @ExceptionHandler(ParameterMissingException.class)
-  public ResponseEntity handleShortPassword(ParameterMissingException e) {
+  @ExceptionHandler(RequestParameterMissingException.class)
+  public ResponseEntity handleShortPassword(RequestParameterMissingException e) {
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(ShortPasswordException.class)
-  public ResponseEntity handleShortPassword(ShortPasswordException e) {
+  @ExceptionHandler(RequestNotAcceptableException.class)
+  public ResponseEntity handleShortPassword(RequestNotAcceptableException e) {
     return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(UsernameAlreadyExistsException.class)
-  public ResponseEntity handleShortPassword(UsernameAlreadyExistsException e) {
+  @ExceptionHandler(RequestCauseConflictException.class)
+  public ResponseEntity handleShortPassword(RequestCauseConflictException e) {
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 
