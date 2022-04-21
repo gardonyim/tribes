@@ -13,14 +13,6 @@ public enum BuildingType {
   private BuildingType(String name, int hpParameter) {
     this.name = name;
     this.hpParameter = hpParameter;
-=======
-  TOWNHALL("townhall"), MINE("mine"), FARM("farm"), ACADEMY("academy");
-
-  private String name;
-
-  private BuildingType(String name) {
-    this.name = name;
->>>>>>> f951a4494fd1c894b52377851e09ee94280121d1
   }
 
   public String getName() {
