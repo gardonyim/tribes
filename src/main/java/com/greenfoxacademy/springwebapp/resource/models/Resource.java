@@ -11,7 +11,7 @@ public class Resource {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-  private ResourceType type;
+  private ResourceType resourceType;
   private int amount;
   private int generation;
   private LocalDateTime updatedAt;
@@ -30,12 +30,12 @@ public class Resource {
     this.id = id;
   }
 
-  public ResourceType getType() {
-    return type;
+  public ResourceType getResourceType() {
+    return resourceType;
   }
 
-  public void setType(ResourceType type) {
-    this.type = type;
+  public void setResourceType(ResourceType resourceType) {
+    this.resourceType = resourceType;
   }
 
   public int getAmount() {
