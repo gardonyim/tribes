@@ -2,10 +2,15 @@ package com.greenfoxacademy.springwebapp.resource.models;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 import java.time.LocalDateTime;
 
-@Entity(name= "resources")
+@Entity(name = "resources")
 public class Resource {
 
   @Id

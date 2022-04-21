@@ -3,7 +3,13 @@ package com.greenfoxacademy.springwebapp.kingdom.models;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
+
 import java.util.List;
 
 @Entity(name = "kingdoms")

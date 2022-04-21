@@ -10,7 +10,7 @@ public class ResourceTypeConverter implements AttributeConverter<ResourceType, S
 
   @Override
   public String convertToDatabaseColumn(ResourceType resourceType) {
-    if (resourceType == null ) {
+    if (resourceType == null) {
       return null;
     }
     return resourceType.getDescription();
