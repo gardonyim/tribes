@@ -32,20 +32,7 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
         SecretKey key = Keys.hmacShaKeyFor(
             SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8)
         );
-
-        Claims claims = Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(jwt)
-            .getBody();
-        String username = String.valueOf(claims.get("username"));
-        Integer kingdomId = claims.get("kingdomId", Integer.class);
-        String kingdomName = String.valueOf(claims.get("kingdomName"));
-
-        Authentication auth = new UsernamePasswordAuthenticationToken(
-            new PlayerTokenDTO(-1, username, kingdomId, kingdomName, null, null),
-            null,
-            null);
+        Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
         SecurityContextHolder.getContext().setAuthentication(auth);
       } catch (Exception e) {
         throw new BadCredentialsException("Authentication token is invalid!");
@@ -58,5 +45,17 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
   protected boolean shouldNotFilter(HttpServletRequest request) {
     String reqPath = request.getServletPath();
     return (reqPath.equals("/login") || reqPath.equals("/register"));
+  }
+
+  private PlayerTokenDTO convert(String jwt, SecretKey key) {
+    Claims claims = Jwts.parserBuilder()
+        .setSigningKey(key)
+        .build()
+        .parseClaimsJws(jwt)
+        .getBody();
+    String username = String.valueOf(claims.get("username"));
+    Integer kingdomId = claims.get("kingdomId", Integer.class);
+    String kingdomName = String.valueOf(claims.get("kingdomName"));
+    return new PlayerTokenDTO(-1,username,kingdomId, kingdomName);
   }
 }
