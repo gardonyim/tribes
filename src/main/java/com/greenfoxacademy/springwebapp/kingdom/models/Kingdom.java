@@ -24,6 +24,11 @@ public class Kingdom {
     this.player = player;
   }
 
+  public Kingdom(String name, Player player) {
+    this.name = name;
+    this.player = player;
+  }
+
   public Kingdom() {
   }
 

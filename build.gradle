@@ -35,12 +35,15 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.3'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.6'
     implementation "org.flywaydb:flyway-core"
     runtimeOnly 'mysql:mysql-connector-java'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testCompile 'com.h2database:h2'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine'
+    testCompile 'org.mockito:mockito-junit-jupiter'
 }
 
 test {
