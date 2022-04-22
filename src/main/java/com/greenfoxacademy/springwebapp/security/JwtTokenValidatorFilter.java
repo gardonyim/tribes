@@ -5,8 +5,7 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-
-import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,21 +29,23 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
   }
 
   @Override
-  public Environment getEnvironment() {
-    return super.getEnvironment();
-  }
-
-  @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException, ResponseStatusException {
-    String jwt = request.getHeader("Authorization").substring(7).trim();
-
-    SecretKey key = Keys.hmacShaKeyFor(
-            getJWT_KEY().getBytes(StandardCharsets.UTF_8));
-
-    Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
-    SecurityContextHolder.getContext().setAuthentication(auth);
-
+    String jwt = request.getHeader(SecurityConstants.JWT_HEADER);
+    if (jwt == null) {
+      throw new BadCredentialsException("No authentication token is provided!");
+    } else {
+      jwt = jwt.substring(7).trim();
+      try {
+        SecretKey key = Keys.hmacShaKeyFor(
+            SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8)
+        );
+        Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+      } catch (Exception e) {
+        throw new BadCredentialsException("Authentication token is invalid!");
+      }
+    }
     filterChain.doFilter(request, response);
   }
 
@@ -63,9 +64,4 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
     String username = String.valueOf(claims.get("username"));
     return playerService.findFirstByUsername(username).get();
   }
-
-  private String getJWT_KEY() {
-    return getEnvironment().getProperty("JWT_KEY");
-  }
-
 }
