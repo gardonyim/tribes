@@ -23,17 +23,17 @@ public class PlayerController {
   }
 
   @ExceptionHandler(RequestParameterMissingException.class)
-  public ResponseEntity handleShortPassword(RequestParameterMissingException e) {
+  public ResponseEntity handleMissingParameter(RequestParameterMissingException e) {
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
   @ExceptionHandler(RequestNotAcceptableException.class)
-  public ResponseEntity handleShortPassword(RequestNotAcceptableException e) {
+  public ResponseEntity handleNotAcceptableRequest(RequestNotAcceptableException e) {
     return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
   }
 
   @ExceptionHandler(RequestCauseConflictException.class)
-  public ResponseEntity handleShortPassword(RequestCauseConflictException e) {
+  public ResponseEntity handleConflictCausedByRequest(RequestCauseConflictException e) {
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 

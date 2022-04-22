@@ -1,7 +1,6 @@
 package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.kingdom.KingdomRepository;
-import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,9 +27,6 @@ public class PlayerControllerIntegrationTest {
 
   @Autowired
   private KingdomRepository kingdomRepository;
-
-  @Autowired
-  private PlayerRepository playerRepository;
 
   @Test
   public void when_postRegisterWithoutPassword_should_respondBadRequestStatusAndProperJson()
@@ -83,9 +79,6 @@ public class PlayerControllerIntegrationTest {
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
         + "\"Username is already taken.\" }";
 
-    playerRepository.save(new Player("existingtestuser", "testpassword",
-        null, "", 0));
-
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
             .contentType("application/json")
             .content(jsonRequest))
@@ -129,7 +122,6 @@ public class PlayerControllerIntegrationTest {
   @Test
   public void when_postRegisterWithUsernamePasswordNoKingdom_should_respondCreatedStatusAndJson()
       throws Exception {
-    int count = kingdomRepository.findAll().size() + 1;
     String jsonRequest = "{ \"username\" : \"luke\",  \"password\" : \"hellothere\",  "
         + "\"kingdomname\" : \"\" }";
 
@@ -142,6 +134,6 @@ public class PlayerControllerIntegrationTest {
         .andExpect(jsonPath("$.username").value("luke"))
         .andExpect(jsonPath("$.kingdomId").isNumber())
         .andExpect(jsonPath("$.kingdomId", Matchers.greaterThan(0)));
-    Assert.assertEquals("luke's kingdom", kingdomRepository.findById(count).get().getName());
+    Assert.assertTrue(kingdomRepository.findFirstByName("luke's kingdom").isPresent());
   }
 }
