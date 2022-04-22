@@ -2,7 +2,6 @@ package com.greenfoxacademy.springwebapp.security;
 
 import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
-import com.greenfoxacademy.springwebapp.player.models.PlayerTokenDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
