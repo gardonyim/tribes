@@ -23,9 +23,8 @@ import java.nio.charset.StandardCharsets;
 
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
-  private final PlayerService playerService;
+  private PlayerService playerService;
 
-  @Autowired
   public JwtTokenValidatorFilter(PlayerService playerService) {
     this.playerService = playerService;
   }
