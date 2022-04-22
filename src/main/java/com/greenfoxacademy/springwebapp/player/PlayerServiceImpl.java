@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PlayerServiceImpl implements PlayerService {
 
@@ -62,4 +64,11 @@ public class PlayerServiceImpl implements PlayerService {
     player.setPoints(0);
     return player;
   }
+
+  @Override
+  public Optional<Player> findByName(String username) {
+    return playerRepository.findByUsername(username);
+  }
+
+
 }

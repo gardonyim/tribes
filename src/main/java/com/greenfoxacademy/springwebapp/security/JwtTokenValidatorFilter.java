@@ -1,9 +1,12 @@
 package com.greenfoxacademy.springwebapp.security;
 
+import com.greenfoxacademy.springwebapp.player.PlayerService;
+import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.player.models.PlayerTokenDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +23,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
+
+  private final PlayerService playerService;
+
+  @Autowired
+  public JwtTokenValidatorFilter(PlayerService playerService) {
+    this.playerService = playerService;
+  }
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException, ResponseStatusException {
@@ -47,15 +58,14 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
     return (reqPath.equals("/login") || reqPath.equals("/register"));
   }
 
-  private PlayerTokenDTO convert(String jwt, SecretKey key) {
+  private Player convert(String jwt, SecretKey key) {
     Claims claims = Jwts.parserBuilder()
         .setSigningKey(key)
         .build()
         .parseClaimsJws(jwt)
         .getBody();
     String username = String.valueOf(claims.get("username"));
-    Integer kingdomId = claims.get("kingdomId", Integer.class);
-    String kingdomName = String.valueOf(claims.get("kingdomName"));
-    return new PlayerTokenDTO(-1,username,kingdomId, kingdomName);
+    Player player = playerService.findByName(username).get();
+    return player;
   }
 }
