@@ -5,7 +5,6 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,7 +62,6 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
         .parseClaimsJws(jwt)
         .getBody();
     String username = String.valueOf(claims.get("username"));
-    Player player = playerService.findByName(username).get();
-    return player;
+    return playerService.findFirstByUsername(username).get();
   }
 }

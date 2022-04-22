@@ -10,6 +10,6 @@ public interface PlayerService {
 
   public RegistrationResDTO savePlayer(RegistrationReqDTO reqDTO);
 
-  Optional<Player> findByName(String username);
+  Optional<Player> findFirstByUsername(String username);
 
 }

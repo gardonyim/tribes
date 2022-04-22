@@ -66,8 +66,9 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
-  public Optional<Player> findByName(String username) {
-    return playerRepository.findByUsername(username);
+  public Optional<Player> findFirstByUsername(String username) {
+    Optional<Player> player = playerRepository.findFirstByUsername(username);
+    return player;
   }
 
 
