@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -101,16 +100,19 @@ public class PlayerServiceTest {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setUsername("testuser");
     reqDTO.setPassword("password");
-    Kingdom testkingdom = new Kingdom();
-    testkingdom.setId(999);
+    Kingdom testKingdom = new Kingdom();
+    testKingdom.setId(999);
+    Player testPlayer = new Player(reqDTO.getUsername(), reqDTO.getPassword(), testKingdom, "", 0);
+    testPlayer.setId(999);
 
-    when(playerRepository.save(any(Player.class))).then(returnsFirstArg());
-    when(kingdomService.save(any(), any())).thenReturn(testkingdom);
+    when(playerRepository.save(any(Player.class))).thenReturn(testPlayer);
+    when(kingdomService.save(any(), any())).thenReturn(testKingdom);
     when(passwordEncoder.encode(anyString())).thenReturn("encodedpassword");
 
     RegistrationResDTO result = playerService.savePlayer(reqDTO);
 
+    Assert.assertEquals(testPlayer.getId(), result.getId());
     Assert.assertEquals(reqDTO.getUsername(), result.getUsername());
-    Assert.assertEquals(testkingdom.getId(), result.getKingdomId());
+    Assert.assertEquals(testKingdom.getId(), result.getKingdomId());
   }
 }
