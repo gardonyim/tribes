@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.troop.repositories;
+package com.greenfoxacademy.springwebapp.troop;
 
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import org.springframework.data.repository.CrudRepository;

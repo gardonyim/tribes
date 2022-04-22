@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.player.repositories;
+package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.data.repository.CrudRepository;

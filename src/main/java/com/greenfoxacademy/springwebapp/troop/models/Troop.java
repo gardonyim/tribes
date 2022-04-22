@@ -1,7 +1,11 @@
 package com.greenfoxacademy.springwebapp.troop.models;
 
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
@@ -18,22 +22,22 @@ public class Troop {
   private Integer defence;
   private LocalDateTime startedAt;
   private LocalDateTime finishedAt;
+  @ManyToOne
+  @JoinColumn(name = "kingdom_id")
+  private Kingdom kingdom;
 
   public Troop() {
   }
 
-  public Troop(Integer level,
-               Integer hp,
-               Integer attack,
-               Integer defence,
-               LocalDateTime startedAt,
-               LocalDateTime finishedAt) {
+  public Troop(Integer level, Integer hp, Integer attack, Integer defence,
+               LocalDateTime startedAt, LocalDateTime finishedAt, Kingdom kingdom) {
     this.level = level;
     this.hp = hp;
     this.attack = attack;
     this.defence = defence;
     this.startedAt = startedAt;
     this.finishedAt = finishedAt;
+    this.kingdom = kingdom;
   }
 
   public Integer getId() {
@@ -90,5 +94,13 @@ public class Troop {
 
   public void setFinishedAt(LocalDateTime finishedAt) {
     this.finishedAt = finishedAt;
+  }
+
+  public Kingdom getKingdom() {
+    return kingdom;
+  }
+
+  public void setKingdom(Kingdom kingdom) {
+    this.kingdom = kingdom;
   }
 }

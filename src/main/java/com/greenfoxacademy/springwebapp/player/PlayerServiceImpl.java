@@ -2,7 +2,6 @@ package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
-import com.greenfoxacademy.springwebapp.player.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
