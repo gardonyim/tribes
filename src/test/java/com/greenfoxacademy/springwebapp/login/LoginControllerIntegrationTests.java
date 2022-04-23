@@ -75,11 +75,18 @@ public class LoginControllerIntegrationTests {
                     .contentType("application/json")
                     .content(jsonRequest))
             .andExpect(status().is(401))
-            .andExpect(content().json(expectedResponse));}
+            .andExpect(content().json(expectedResponse));
+  }
 
   @Test
   public void when_postLoginWithValidUsernameAndPassword_should_respondOkStatusAndJwtToken() throws Exception {
-    when(loginService.authenticate(any(), any())).thenReturn(new Player() {{this.setUsername("krumpli"); this.setKingdom(new Kingdom() {{this.setName("krumpli"); this.setId(1);}});}});
+    Player player = new Player();
+    player.setUsername("krumpli");
+    Kingdom kingdom = new Kingdom();
+    kingdom.setId(1);
+    kingdom.setName("krumpli");
+    player.setKingdom(kingdom);
+    when(loginService.authenticate(any(), any())).thenReturn(player);
 
     String jsonRequest = "{ \"username\" : \"krumpli\",  \"password\" : \"\"}";
 
