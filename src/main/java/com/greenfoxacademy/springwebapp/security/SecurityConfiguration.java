@@ -18,7 +18,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   private AuthenticationExceptionHandler authenticationExceptionHandler;
 
   @Autowired
-  public SecurityConfiguration(PlayerService playerService, AuthenticationExceptionHandler authenticationExceptionHandler) {
+  public SecurityConfiguration(PlayerService playerService,
+                               AuthenticationExceptionHandler authenticationExceptionHandler) {
     this.playerService = playerService;
     this.authenticationExceptionHandler = authenticationExceptionHandler;
   }
@@ -26,7 +27,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      .addFilterBefore(new JwtTokenValidatorFilter(playerService, authenticationExceptionHandler), BasicAuthenticationFilter.class)
+      .addFilterBefore(new JwtTokenValidatorFilter(playerService, authenticationExceptionHandler),
+          BasicAuthenticationFilter.class)
       .authorizeRequests()
       .antMatchers("/h2-console").permitAll()
       .antMatchers("/login").permitAll()
