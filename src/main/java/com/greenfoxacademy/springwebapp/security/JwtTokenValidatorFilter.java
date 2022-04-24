@@ -1,12 +1,10 @@
 package com.greenfoxacademy.springwebapp.security;
 
-import com.greenfoxacademy.springwebapp.player.PlayerRepository;
 import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,11 +24,11 @@ import java.nio.charset.StandardCharsets;
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
   private PlayerService playerService;
-  private AuthenticationExceptionHandler authenticationExceptionHandler;
+  private AuthenticationExceptionHandler authExceptionHandler;
 
-  public JwtTokenValidatorFilter(PlayerService playerService, AuthenticationExceptionHandler authenticationExceptionHandler) {
+  public JwtTokenValidatorFilter(PlayerService playerService, AuthenticationExceptionHandler authExceptionHandler) {
     this.playerService = playerService;
-    this.authenticationExceptionHandler = authenticationExceptionHandler;
+    this.authExceptionHandler = authExceptionHandler;
   }
 
   @Override
@@ -43,7 +41,7 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
       throws ServletException, IOException, ResponseStatusException {
     String jwt = request.getHeader("Authorization");
     if (jwt == null) {
-      authenticationExceptionHandler.commence(
+      authExceptionHandler.commence(
           request, response, new InsufficientAuthenticationException("No authentication token is provided!"));
     } else {
       jwt = jwt.substring(7).trim();
@@ -54,7 +52,7 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
         Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
         SecurityContextHolder.getContext().setAuthentication(auth);
       } catch (Exception e) {
-        authenticationExceptionHandler.commence(
+        authExceptionHandler.commence(
             request, response, new InsufficientAuthenticationException("Authentication token is invalid!"));
       }
     }
