@@ -1,11 +1,14 @@
 package com.greenfoxacademy.springwebapp.security;
 
+import com.greenfoxacademy.springwebapp.player.PlayerRepository;
 import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,27 +26,36 @@ import java.nio.charset.StandardCharsets;
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
   private PlayerService playerService;
+  private AuthenticationExceptionHandler authenticationExceptionHandler;
 
-  public JwtTokenValidatorFilter(PlayerService playerService) {
+  public JwtTokenValidatorFilter(PlayerService playerService, AuthenticationExceptionHandler authenticationExceptionHandler) {
     this.playerService = playerService;
+    this.authenticationExceptionHandler = authenticationExceptionHandler;
+  }
+
+  @Override
+  public Environment getEnvironment() {
+    return super.getEnvironment();
   }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException, ResponseStatusException {
-    String jwt = request.getHeader(SecurityConstants.JWT_HEADER);
+    String jwt = request.getHeader("Authorization");
     if (jwt == null) {
-      throw new BadCredentialsException("No authentication token is provided!");
+      authenticationExceptionHandler.commence(
+          request, response, new InsufficientAuthenticationException("No authentication token is provided!"));
     } else {
       jwt = jwt.substring(7).trim();
       try {
         SecretKey key = Keys.hmacShaKeyFor(
-            SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8)
+            getJWT_KEY().getBytes(StandardCharsets.UTF_8)
         );
         Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
         SecurityContextHolder.getContext().setAuthentication(auth);
       } catch (Exception e) {
-        throw new BadCredentialsException("Authentication token is invalid!");
+        authenticationExceptionHandler.commence(
+            request, response, new InsufficientAuthenticationException("Authentication token is invalid!"));
       }
     }
     filterChain.doFilter(request, response);
@@ -64,4 +76,9 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
     String username = String.valueOf(claims.get("username"));
     return playerService.findFirstByUsername(username).get();
   }
+
+  private String getJWT_KEY() {
+    return getEnvironment().getProperty("JWT_KEY");
+  }
+
 }

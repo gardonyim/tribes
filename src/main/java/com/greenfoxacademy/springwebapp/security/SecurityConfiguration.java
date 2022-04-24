@@ -15,17 +15,18 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private PlayerService playerService;
+  private AuthenticationExceptionHandler authenticationExceptionHandler;
 
   @Autowired
-  public SecurityConfiguration(PlayerService playerService) {
+  public SecurityConfiguration(PlayerService playerService, AuthenticationExceptionHandler authenticationExceptionHandler) {
     this.playerService = playerService;
+    this.authenticationExceptionHandler = authenticationExceptionHandler;
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      .addFilterBefore(new JwtTokenValidatorFilter(playerService),
-          BasicAuthenticationFilter.class)
+      .addFilterBefore(new JwtTokenValidatorFilter(playerService, authenticationExceptionHandler), BasicAuthenticationFilter.class)
       .authorizeRequests()
       .antMatchers("/h2-console").permitAll()
       .antMatchers("/login").permitAll()
@@ -35,7 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       .csrf().disable()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
-      .exceptionHandling().authenticationEntryPoint(new AuthenticationExceptionHandler());
+      .exceptionHandling().authenticationEntryPoint(new AuthenticationExceptionHandler());;
   }
 
   @Bean
