@@ -17,7 +17,9 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
       throws IOException, ServletException {
-    ErrorDTO error = new ErrorDTO(authException.getMessage());
+    String token = request.getHeader("Authorization");
+    String errorMessage = token == null ? "No authentication token is provided!" : "Authentication token is invalid!";
+    ErrorDTO error = new ErrorDTO(errorMessage);
     response.setStatus(401);
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
