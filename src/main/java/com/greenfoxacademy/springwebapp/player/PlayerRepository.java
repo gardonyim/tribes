@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PlayerRepository extends CrudRepository<Player, Integer> {
 
   Optional<Player> findFirstByUsername(String username);
+
 }

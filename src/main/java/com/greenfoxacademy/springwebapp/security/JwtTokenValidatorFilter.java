@@ -5,8 +5,8 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,11 +24,9 @@ import java.nio.charset.StandardCharsets;
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
   private PlayerService playerService;
-  private AuthenticationExceptionHandler authExceptionHandler;
 
-  public JwtTokenValidatorFilter(PlayerService playerService, AuthenticationExceptionHandler authExceptionHandler) {
+  public JwtTokenValidatorFilter(PlayerService playerService) {
     this.playerService = playerService;
-    this.authExceptionHandler = authExceptionHandler;
   }
 
   @Override
@@ -39,23 +37,14 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException, ResponseStatusException {
-    String jwt = request.getHeader("Authorization");
-    if (jwt == null) {
-      authExceptionHandler.commence(
-          request, response, new InsufficientAuthenticationException("No authentication token is provided!"));
-    } else {
-      jwt = jwt.substring(7).trim();
-      try {
-        SecretKey key = Keys.hmacShaKeyFor(
-            getJWT_KEY().getBytes(StandardCharsets.UTF_8)
-        );
-        Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-      } catch (Exception e) {
-        authExceptionHandler.commence(
-            request, response, new InsufficientAuthenticationException("Authentication token is invalid!"));
-      }
-    }
+    String jwt = request.getHeader("Authorization").substring(7).trim();
+
+    SecretKey key = Keys.hmacShaKeyFor(
+            getJWT_KEY().getBytes(StandardCharsets.UTF_8));
+
+    Authentication auth = new UsernamePasswordAuthenticationToken(convert(jwt, key), null, null);
+    SecurityContextHolder.getContext().setAuthentication(auth);
+
     filterChain.doFilter(request, response);
   }
 
