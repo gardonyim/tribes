@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.time_service;
+package com.greenfoxacademy.springwebapp.utilities;
 
 import java.time.LocalDateTime;
 
