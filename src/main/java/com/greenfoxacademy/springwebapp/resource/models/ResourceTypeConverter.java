@@ -27,4 +27,8 @@ public class ResourceTypeConverter implements AttributeConverter<ResourceType, S
         .findFirst()
         .orElseThrow(IllegalArgumentException::new);
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 0a3759ce5fb19b8f1bb855de1a4fdf97f723d169
