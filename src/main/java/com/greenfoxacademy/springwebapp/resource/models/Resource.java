@@ -74,8 +74,4 @@ public class Resource {
   public void setKingdom(Kingdom kingdom) {
     this.kingdom = kingdom;
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 0a3759ce5fb19b8f1bb855de1a4fdf97f723d169
