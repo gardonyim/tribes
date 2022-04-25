@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +25,7 @@ public class LoginServiceTests {
 
   @Test
   public void authenticateTest_returnPlayer() {
-    when(playerRepository.findPlayerByUsernameAndPassword(any(), any())).thenReturn(new Player());
+    when(playerRepository.findPlayerByUsernameAndPassword(any(), any())).thenReturn(Optional.of(new Player()));
     Assertions.assertNotNull(loginService.authenticate("krumpli", "krumpli"));
   }
 

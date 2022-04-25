@@ -9,6 +9,5 @@ public interface PlayerRepository extends CrudRepository<Player, Integer> {
 
   Optional<Player> findFirstByUsername(String username);
 
-  Player findPlayerByUsernameAndPassword(String username, String password);
-
+  Optional<Player> findPlayerByUsernameAndPassword(String username, String password);
 }
