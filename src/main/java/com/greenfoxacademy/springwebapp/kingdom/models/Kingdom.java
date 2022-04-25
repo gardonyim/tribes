@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
+import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 
@@ -23,11 +24,19 @@ public class Kingdom {
   private Player player;
   @OneToMany(mappedBy = "kingdom")
   private List<Resource> resources;
+  @OneToOne()
+  private Location location;
 
   public Kingdom(int id, String name, Player player) {
     this.id = id;
     this.name = name;
     this.player = player;
+  }
+
+  public Kingdom(String name, Player player, Location location) {
+    this.name = name;
+    this.player = player;
+    this.location = location;
   }
 
   public Kingdom(String name, Player player) {
@@ -68,5 +77,13 @@ public class Kingdom {
 
   public void setResources(List<Resource> resources) {
     this.resources = resources;
+  }
+
+  public Location getLocation() {
+    return location;
+  }
+
+  public void setLocation(Location location) {
+    this.location = location;
   }
 }
