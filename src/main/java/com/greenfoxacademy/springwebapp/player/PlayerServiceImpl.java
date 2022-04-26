@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PlayerServiceImpl implements PlayerService {
 
@@ -19,9 +21,17 @@ public class PlayerServiceImpl implements PlayerService {
   private PasswordEncoder pwEnc;
 
   @Autowired
-  public PlayerServiceImpl(PlayerRepository playerRepository, KingdomService kingdomService, PasswordEncoder pwEnc) {
+  public void setPlayerRepository(PlayerRepository playerRepository) {
     this.playerRepository = playerRepository;
+  }
+
+  @Autowired
+  public void setKingdomService(KingdomService kingdomService) {
     this.kingdomService = kingdomService;
+  }
+
+  @Autowired
+  public void setPwEnc(PasswordEncoder pwEnc) {
     this.pwEnc = pwEnc;
   }
 
@@ -62,4 +72,11 @@ public class PlayerServiceImpl implements PlayerService {
     player.setPoints(0);
     return player;
   }
+
+  @Override
+  public Optional<Player> findFirstByUsername(String username) {
+    Optional<Player> player = playerRepository.findFirstByUsername(username);
+    return player;
+  }
+
 }
