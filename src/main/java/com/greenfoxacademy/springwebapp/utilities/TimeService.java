@@ -6,11 +6,16 @@ public interface TimeService {
 
   LocalDateTime actualTime();
 
-  LocalDateTime timeAtNSecondsLater(int n);
+  LocalDateTime timeAtNSecondsLater(long n);
 
-  LocalDateTime timeAtNSecondsAfterTimeStamp(int n, LocalDateTime time);
+  LocalDateTime timeAtNSecondsAfterTimeStamp(long n, LocalDateTime time);
 
   boolean timePast(LocalDateTime time);
 
-  int secondsElapsed(LocalDateTime timeStart, LocalDateTime timeEnd);
+  long secondsElapsed(LocalDateTime timeStart, LocalDateTime timeEnd);
+
+  long toEpochSecond(LocalDateTime time);
+
+  LocalDateTime toLocalDateTime(long epochSecond);
+
 }
