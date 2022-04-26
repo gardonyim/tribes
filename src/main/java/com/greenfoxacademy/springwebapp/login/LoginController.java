@@ -1,9 +1,9 @@
 package com.greenfoxacademy.springwebapp.login;
 
+import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.LoginDTO;
 import com.greenfoxacademy.springwebapp.login.exceptions.InputMissingException;
 import com.greenfoxacademy.springwebapp.login.exceptions.InputWrongException;
-import com.greenfoxacademy.springwebapp.player.models.exceptions.models.ErrorDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,7 +20,8 @@ public class LoginController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<Object> authentication(@RequestBody LoginDTO loginDTO) throws InputMissingException, InputWrongException {
+  public ResponseEntity<Object> authentication(@RequestBody LoginDTO loginDTO)
+          throws InputMissingException, InputWrongException {
     return loginService.authenticateWithLoginDTO(loginDTO);
   }
 

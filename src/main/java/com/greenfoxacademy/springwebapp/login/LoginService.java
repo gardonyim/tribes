@@ -12,5 +12,6 @@ public interface LoginService {
 
   Optional<Player> authenticate(String username);
 
-  ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO) throws InputMissingException, InputWrongException;
+  ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO)
+          throws InputMissingException, InputWrongException;
 }

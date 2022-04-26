@@ -28,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
 
   private final PasswordEncoder passwordEncoder;
 
-  @Value("${jwt.key}")
+  @Value("${security.jwt-key}")
   private String jwtKey;
 
   @Autowired
@@ -43,17 +43,12 @@ public class LoginServiceImpl implements LoginService {
   }
 
   @Override
-  public ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO) throws InputMissingException, InputWrongException {
+  public ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO)
+          throws InputMissingException, InputWrongException {
     String username = loginDTO.getUsername();
     String password = loginDTO.getPassword();
 
-    if (username == null && password == null) {
-      throw new InputMissingException("All fields are required.");
-    } else if (username == null) {
-      throw new InputMissingException("Username is required.");
-    } else if (password == null) {
-      throw new InputMissingException("Password is required.");
-    }
+    checkLoginDTO(username, password);
 
     Optional<Player> player = authenticate(username);
     if (player.isPresent()) {
@@ -79,5 +74,17 @@ public class LoginServiceImpl implements LoginService {
             .setExpiration(Date.from(Instant.now().plus(30 * 60, ChronoUnit.SECONDS)))
             .signWith(key)
             .compact();
+  }
+
+  private void checkLoginDTO(String username, String password)
+          throws InputMissingException {
+
+    if (username == null && password == null) {
+      throw new InputMissingException("All fields are required.");
+    } else if (username == null) {
+      throw new InputMissingException("Username is required.");
+    } else if (password == null) {
+      throw new InputMissingException("Password is required.");
+    }
   }
 }
