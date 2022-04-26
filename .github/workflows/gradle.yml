@@ -29,4 +29,8 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
     - name: Build with Gradle
+      env:
+        DATABASE_URL: ${{env.DATABASE_URL}}
+        USERNAME: ${{env.USERNAME}}
+        DATABASE_PASSWORD: ${{env.DATABASE_PASSWORD}}
       run: ./gradlew build

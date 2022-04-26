@@ -2,12 +2,12 @@ package com.greenfoxacademy.springwebapp.player.models;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Column;
+import javax.persistence.Id;
 
 @Entity(name = "players")
 public class Player {
