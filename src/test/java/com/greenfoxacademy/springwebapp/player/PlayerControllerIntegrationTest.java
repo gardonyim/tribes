@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomRepository;
+import javax.transaction.Transactional;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
