@@ -16,4 +16,5 @@ public class ResourceServiceImpl implements ResourceService {
   public Resource save(Resource resource) {
     return resourceRepository.save(resource);
   }
+
 }
