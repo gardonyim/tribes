@@ -1,8 +1,9 @@
 package com.greenfoxacademy.springwebapp.login;
 
-import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.LoginDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.StatusResponseDTO;
+import com.greenfoxacademy.springwebapp.login.exceptions.InputMissingException;
+import com.greenfoxacademy.springwebapp.login.exceptions.InputWrongException;
 import com.greenfoxacademy.springwebapp.player.PlayerRepository;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +11,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -24,37 +26,44 @@ public class LoginServiceImpl implements LoginService {
 
   private final PlayerRepository playerRepository;
 
+  private final PasswordEncoder passwordEncoder;
+
   @Value("${jwt.key}")
   private String jwtKey;
 
   @Autowired
-  public LoginServiceImpl(PlayerRepository playerRepository) {
+  public LoginServiceImpl(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
     this.playerRepository = playerRepository;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
-  public Optional<Player> authenticate(String username, String password) {
-    return playerRepository.findPlayerByUsernameAndPassword(username, password);
+  public Optional<Player> authenticate(String username) {
+    return playerRepository.findFirstByUsername(username);
   }
 
   @Override
-  public ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO) {
+  public ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO) throws InputMissingException, InputWrongException {
     String username = loginDTO.getUsername();
     String password = loginDTO.getPassword();
 
     if (username == null && password == null) {
-      return ResponseEntity.badRequest().body(new ErrorDTO("All fields are required."));
+      throw new InputMissingException("All fields are required.");
     } else if (username == null) {
-      return ResponseEntity.badRequest().body(new ErrorDTO("Username is required."));
+      throw new InputMissingException("Username is required.");
     } else if (password == null) {
-      return ResponseEntity.badRequest().body(new ErrorDTO("Password is required."));
+      throw new InputMissingException("Password is required.");
     }
 
-    Optional<Player> player = authenticate(username, password);
-    if (!player.isPresent()) {
-      return ResponseEntity.status(401).body(new ErrorDTO("Username or password is incorrect."));
+    Optional<Player> player = authenticate(username);
+    if (player.isPresent()) {
+      if (passwordEncoder.matches(password, player.get().getPassword())) {
+        return ResponseEntity.ok(new StatusResponseDTO("ok", generateJwtString(player.get())));
+      } else {
+        throw new InputWrongException("Username or password is incorrect.");
+      }
     } else {
-      return ResponseEntity.ok(new StatusResponseDTO("ok", generateJwtString(player.get())));
+      throw new InputWrongException("Username or password is incorrect.");
     }
   }
 

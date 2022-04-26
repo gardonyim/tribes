@@ -25,13 +25,13 @@ public class LoginServiceTests {
 
   @Test
   public void authenticateTest_returnPlayer() {
-    when(playerRepository.findPlayerByUsernameAndPassword(any(), any())).thenReturn(Optional.of(new Player()));
-    Assertions.assertNotNull(loginService.authenticate("krumpli", "krumpli"));
+    when(playerRepository.findFirstByUsername(any())).thenReturn(Optional.of(new Player()));
+    Assertions.assertNotNull(loginService.authenticate("krumpli"));
   }
 
   @Test
   public void authenticateTest_returnNull() {
-    when(playerRepository.findPlayerByUsernameAndPassword(any(), any())).thenReturn(null);
-    Assertions.assertNull(loginService.authenticate("krumpli", "krumpli"));
+    when(playerRepository.findFirstByUsername(any())).thenReturn(null);
+    Assertions.assertNull(loginService.authenticate("krumpli"));
   }
 }
