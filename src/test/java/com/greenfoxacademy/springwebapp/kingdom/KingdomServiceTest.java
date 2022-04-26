@@ -50,7 +50,7 @@ public class KingdomServiceTest {
   }
 
   @Test
-  public void when_saveKingdom_should_returnKingdomWithGivenPlayer() {
+  public void when_saveKingdom_should_returnKingdomWithGivenPlayerAndALocation() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
     when(locationService.createLocation()).thenReturn(new Location(0, 0));
@@ -58,5 +58,7 @@ public class KingdomServiceTest {
     Kingdom created = kingdomService.save("testkingdom", player);
 
     Assert.assertEquals(player, created.getPlayer());
+    Assert.assertNotNull(created.getLocation());
   }
+
 }

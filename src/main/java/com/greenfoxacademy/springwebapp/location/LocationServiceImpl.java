@@ -25,12 +25,8 @@ public class LocationServiceImpl implements LocationService {
     do {
       x = random.nextInt(boardSize) + offset;
       y = random.nextInt(boardSize) + offset;
-    } while (checkLocationOccupancy(x, y));
+    } while (locationRepository.findFirstByXcoordinateAndYcoordinate(x, y).isPresent());
     return locationRepository.save(new Location(x, y));
   }
 
-  private boolean checkLocationOccupancy(int x, int y) {
-    return locationRepository.findAll().stream()
-        .anyMatch(location -> (location.getxXcoordinate() == x && location.getyYcoordinate() == y));
-  }
 }

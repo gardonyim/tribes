@@ -30,11 +30,11 @@ public class Location {
   public Location() {
   }
 
-  public int getxXcoordinate() {
+  public int getxcoordinate() {
     return xcoordinate;
   }
 
-  public int getyYcoordinate() {
+  public int getycoordinate() {
     return ycoordinate;
   }
 }
