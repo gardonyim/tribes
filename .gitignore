@@ -36,6 +36,7 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
+*.iml
 *.jar
 *.war
 *.nar
