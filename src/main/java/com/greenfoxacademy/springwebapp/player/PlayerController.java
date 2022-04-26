@@ -1,13 +1,8 @@
 package com.greenfoxacademy.springwebapp.player;
 
-import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
-import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,21 +15,6 @@ public class PlayerController {
   @Autowired
   public PlayerController(PlayerService playerService) {
     this.playerService = playerService;
-  }
-
-  @ExceptionHandler(RequestParameterMissingException.class)
-  public ResponseEntity handleMissingParameter(RequestParameterMissingException e) {
-    return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(RequestNotAcceptableException.class)
-  public ResponseEntity handleNotAcceptableRequest(RequestNotAcceptableException e) {
-    return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(RequestCauseConflictException.class)
-  public ResponseEntity handleConflictCausedByRequest(RequestCauseConflictException e) {
-    return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 
   @PostMapping("/register")
