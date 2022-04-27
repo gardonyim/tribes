@@ -2,7 +2,9 @@ package com.greenfoxacademy.springwebapp.resource;
 
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ResourceServiceImpl implements ResourceService {
 
   private final ResourceRepository resourceRepository;
