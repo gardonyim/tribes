@@ -11,11 +11,11 @@ import org.junit.Test;
 
 public class TimeServiceTest {
 
-  private TimeServiceImpl timeService;
+  private TimeService timeService;
 
   @Before
   public void init() {
-    timeService = new TimeServiceImpl();
+    timeService = new TimeService();
   }
 
   @Test
