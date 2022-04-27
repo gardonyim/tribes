@@ -5,8 +5,11 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.player.models.PlayerListDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,6 +80,19 @@ public class PlayerServiceImpl implements PlayerService {
   public Optional<Player> findFirstByUsername(String username) {
     Optional<Player> player = playerRepository.findFirstByUsername(username);
     return player;
+  }
+
+  public PlayerListDTO findNearByPlayers(Player authPlayer, Integer distance) {
+    distance = distance == null ? 10 : distance;
+    int currentX = authPlayer.getKingdom().getLocation().getxcoordinate();
+    int currentY = authPlayer.getKingdom().getLocation().getycoordinate();
+    List<RegistrationResDTO> nearByPlayers = playerRepository.findAllNearBy(
+        currentX - distance, currentX + distance,
+        currentY - distance, currentY + distance).stream()
+        .filter(p -> p.getId() != authPlayer.getId())
+        .map(RegistrationResDTO::new)
+        .collect(Collectors.toList());
+    return new PlayerListDTO(nearByPlayers);
   }
 
 }
