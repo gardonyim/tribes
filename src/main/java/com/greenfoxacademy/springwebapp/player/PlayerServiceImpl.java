@@ -82,17 +82,18 @@ public class PlayerServiceImpl implements PlayerService {
     return player;
   }
 
-  public PlayerListDTO findNearByPlayers(Player authPlayer, Integer distance) {
+  @Override
+  public PlayerListDTO findNearbyPlayers(Player authPlayer, Integer distance) {
     distance = distance == null ? 10 : distance;
     int currentX = authPlayer.getKingdom().getLocation().getxcoordinate();
     int currentY = authPlayer.getKingdom().getLocation().getycoordinate();
-    List<RegistrationResDTO> nearByPlayers = playerRepository.findAllNearBy(
+    List<RegistrationResDTO> nearbyPlayers = playerRepository.findAllNearBy(
         currentX - distance, currentX + distance,
         currentY - distance, currentY + distance).stream()
         .filter(p -> p.getId() != authPlayer.getId())
         .map(RegistrationResDTO::new)
         .collect(Collectors.toList());
-    return new PlayerListDTO(nearByPlayers);
+    return new PlayerListDTO(nearbyPlayers);
   }
 
 }

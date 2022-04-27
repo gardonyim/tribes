@@ -30,7 +30,7 @@ public class PlayerController {
   public ResponseEntity getPlayers(UsernamePasswordAuthenticationToken user,
                                    @RequestParam(required = false) Integer distance) {
     return ResponseEntity.ok(
-        playerService.findNearByPlayers((Player) user.getPrincipal(), distance));
+        playerService.findNearbyPlayers((Player) user.getPrincipal(), distance));
   }
 
 }

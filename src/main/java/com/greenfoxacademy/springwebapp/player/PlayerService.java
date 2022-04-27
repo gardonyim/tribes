@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public interface PlayerService {
 
-  public RegistrationResDTO savePlayer(RegistrationReqDTO reqDTO);
+  RegistrationResDTO savePlayer(RegistrationReqDTO reqDTO);
 
   Optional<Player> findFirstByUsername(String username);
 
-  PlayerListDTO findNearByPlayers(Player authPlayer, Integer distance);
+  PlayerListDTO findNearbyPlayers(Player authPlayer, Integer distance);
 
 }
