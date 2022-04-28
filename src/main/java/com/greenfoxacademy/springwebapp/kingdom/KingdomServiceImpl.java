@@ -1,7 +1,17 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
+import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.building.models.BuildingType;
+import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.resource.ResourceService;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +19,17 @@ import org.springframework.stereotype.Service;
 public class KingdomServiceImpl implements KingdomService {
 
   private KingdomRepository kingdomRepository;
+  private BuildingService buildingService;
+  private ResourceService resourceService;
 
-  @Autowired
-  public KingdomServiceImpl(KingdomRepository kingdomRepository) {
+@Autowired
+  public KingdomServiceImpl(
+      KingdomRepository kingdomRepository,
+      BuildingService buildingService,
+      ResourceService resourceService) {
     this.kingdomRepository = kingdomRepository;
+    this.buildingService = buildingService;
+    this.resourceService = resourceService;
   }
 
   @Override
@@ -20,7 +37,31 @@ public class KingdomServiceImpl implements KingdomService {
     if (kingdomName == null || kingdomName.isEmpty()) {
       kingdomName = player.getUsername() + "'s kingdom";
     }
-    return kingdomRepository.save(new Kingdom(kingdomName, player));
+    Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player));
+    return defaultPackCreator(savedKingdom);
   }
 
+  private Kingdom defaultPackCreator(Kingdom kingdom) {
+    LocalDateTime currentTimestamp = LocalDateTime.now();
+    int initialFoodAmount = 1000;
+    int initialGoldAmount = 1000;
+
+    Building defaultTownhall = new Building(BuildingType.TOWNHALL, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultMine = new Building(BuildingType.FARM, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultFarm = new Building(BuildingType.MINE, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultAcademy = new Building(BuildingType.ACADEMY, 1, kingdom, currentTimestamp, currentTimestamp);
+    List<Building> initialBuildings = new ArrayList<>();
+    Collections.addAll(initialBuildings, defaultTownhall, defaultMine, defaultFarm, defaultAcademy);
+    buildingService.saveAll(initialBuildings);
+    kingdom.setBuildings(initialBuildings);
+
+    Resource initialFood = new Resource(ResourceType.FOOD, initialFoodAmount, 0, currentTimestamp, kingdom);
+    Resource initialGold = new Resource(ResourceType.GOLD, initialGoldAmount, 0, currentTimestamp, kingdom);
+    List<Resource> initialResources = new ArrayList<>();
+    Collections.addAll(initialResources, initialFood, initialGold);
+    resourceService.saveAll(initialResources);
+    kingdom.setResources(initialResources);
+
+    return kingdom;
+  }
 }
