@@ -7,9 +7,6 @@
 
 name: Java CI with Gradle
 
-env:
-  JWT_KEY: jxgEQeXHuPq8VdbyYFNkANdudQ53YUn4
-
 on:
   push:
     branches: [ "*" ]
@@ -36,4 +33,5 @@ jobs:
         DATABASE_URL: ${{env.DATABASE_URL}}
         USERNAME: ${{env.USERNAME}}
         DATABASE_PASSWORD: ${{env.DATABASE_PASSWORD}}
+        JWT_KEY: ${{env.JWT_KEY}}
       run: ./gradlew build

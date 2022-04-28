@@ -10,9 +10,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -38,34 +38,30 @@ public class LoginServiceImpl implements LoginService {
   }
 
   @Override
-  public Optional<Player> authenticate(String username) {
+  public Optional<Player> findPlayerByName(String username) {
     return playerRepository.findFirstByUsername(username);
   }
 
   @Override
-  public ResponseEntity<Object> authenticateWithLoginDTO(LoginDTO loginDTO)
+  public StatusResponseDTO authenticateWithLoginDTO(LoginDTO loginDTO)
           throws InputMissingException, InputWrongException {
     String username = loginDTO.getUsername();
     String password = loginDTO.getPassword();
 
     checkLoginDTO(username, password);
 
-    Optional<Player> player = authenticate(username);
+    Optional<Player> player = findPlayerByName(username);
     if (player.isPresent()) {
       if (passwordEncoder.matches(password, player.get().getPassword())) {
-        return ResponseEntity.ok(new StatusResponseDTO("ok", generateJwtString(player.get())));
-      } else {
-        throw new InputWrongException("Username or password is incorrect.");
+        return new StatusResponseDTO("ok", generateJwtString(player.get()));
       }
-    } else {
-      throw new InputWrongException("Username or password is incorrect.");
     }
+    throw new InputWrongException("Username or password is incorrect.");
   }
 
   private String generateJwtString(Player player) {
     SecretKey key = Keys.hmacShaKeyFor(jwtKey.getBytes(StandardCharsets.UTF_8));
     return Jwts.builder()
-            .setIssuer("CH4-2")
             .setSubject("CH4")
             .claim("username", player.getUsername())
             .claim("kingdomId", player.getKingdom().getId())
@@ -79,11 +75,11 @@ public class LoginServiceImpl implements LoginService {
   private void checkLoginDTO(String username, String password)
           throws InputMissingException {
 
-    if (username == null && password == null) {
+    if (StringUtils.isEmpty(username) && StringUtils.isEmpty(password)) {
       throw new InputMissingException("All fields are required.");
-    } else if (username == null) {
+    } else if (StringUtils.isEmpty(username)) {
       throw new InputMissingException("Username is required.");
-    } else if (password == null) {
+    } else if (StringUtils.isEmpty(password)) {
       throw new InputMissingException("Password is required.");
     }
   }

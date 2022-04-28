@@ -1,12 +1,8 @@
 package com.greenfoxacademy.springwebapp.login.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class StatusResponseDTO {
 
-  @JsonProperty("status")
   private String status;
-  @JsonProperty("token")
   private String token;
 
   public StatusResponseDTO(String status, String token) {

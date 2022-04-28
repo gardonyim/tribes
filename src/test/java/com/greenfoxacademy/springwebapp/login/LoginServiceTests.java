@@ -1,9 +1,14 @@
 package com.greenfoxacademy.springwebapp.login;
 
+import com.greenfoxacademy.springwebapp.login.dtos.LoginDTO;
+import com.greenfoxacademy.springwebapp.login.exceptions.InputMissingException;
+import com.greenfoxacademy.springwebapp.login.exceptions.InputWrongException;
 import com.greenfoxacademy.springwebapp.player.PlayerRepository;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,15 +28,73 @@ public class LoginServiceTests {
   @Mock
   PlayerRepository playerRepository;
 
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
+
   @Test
   public void authenticateTest_returnPlayer() {
-    when(playerRepository.findFirstByUsername(any())).thenReturn(Optional.of(new Player()));
-    Assertions.assertNotNull(loginService.authenticate("krumpli"));
+    Optional<Player> expected = Optional.of(new Player());
+    when(playerRepository.findFirstByUsername(any())).thenReturn(expected);
+
+    Optional<Player> actual = loginService.findPlayerByName("krumpli");
+
+    Assertions.assertEquals(expected, actual);
   }
 
   @Test
   public void authenticateTest_returnNull() {
-    when(playerRepository.findFirstByUsername(any())).thenReturn(null);
-    Assertions.assertNull(loginService.authenticate("krumpli"));
+    Optional<Player> expected = Optional.empty();
+    when(playerRepository.findFirstByUsername("krumpli")).thenReturn(expected);
+
+    Optional<Player> actual = loginService.findPlayerByName("krumpli");
+    Assertions.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void when_authenticateWithoutPassword_should_throwException()
+          throws InputMissingException, InputWrongException {
+    LoginDTO loginDTO = new LoginDTO();
+    loginDTO.setUsername("testusername");
+
+    exceptionRule.expect(InputMissingException.class);
+    exceptionRule.expectMessage("Password is required.");
+    loginService.authenticateWithLoginDTO(loginDTO);
+  }
+
+  @Test
+  public void when_authenticateWithoutUsername_should_throwException()
+          throws InputMissingException, InputWrongException {
+    LoginDTO loginDTO = new LoginDTO();
+    loginDTO.setUsername(null);
+    loginDTO.setPassword("testpassword");
+
+    exceptionRule.expect(InputMissingException.class);
+    exceptionRule.expectMessage("Username is required.");
+    loginService.authenticateWithLoginDTO(loginDTO);
+  }
+
+  @Test
+  public void when_authenticateWithoutUsernameOrPassword_should_throwException()
+          throws InputMissingException, InputWrongException {
+    LoginDTO loginDTO = new LoginDTO();
+    loginDTO.setUsername(null);
+    loginDTO.setPassword(null);
+
+    exceptionRule.expect(InputMissingException.class);
+    exceptionRule.expectMessage("All fields are required.");
+    loginService.authenticateWithLoginDTO(loginDTO);
+  }
+
+  @Test
+  public void when_authenticateWithWrongUsernameOrPassword_should_throwException()
+          throws InputMissingException, InputWrongException {
+    LoginDTO loginDTO = new LoginDTO();
+    loginDTO.setUsername("krumpli");
+    loginDTO.setPassword("krumpli2");
+
+    exceptionRule.expect(InputWrongException.class);
+    exceptionRule.expectMessage("Username or password is incorrect.");
+    loginService.authenticateWithLoginDTO(loginDTO);
   }
 }
+
