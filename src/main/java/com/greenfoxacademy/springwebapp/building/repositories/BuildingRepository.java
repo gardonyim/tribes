@@ -5,6 +5,6 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 public interface BuildingRepository extends CrudRepository<Building, Integer> {
- public List<Building> saveAll(List<Building> buildings);
+  public List<Building> saveAll(List<Building> buildings);
 
 }

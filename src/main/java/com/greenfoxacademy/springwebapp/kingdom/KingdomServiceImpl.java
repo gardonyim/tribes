@@ -22,7 +22,7 @@ public class KingdomServiceImpl implements KingdomService {
   private BuildingService buildingService;
   private ResourceService resourceService;
 
-@Autowired
+  @Autowired
   public KingdomServiceImpl(
       KingdomRepository kingdomRepository,
       BuildingService buildingService,
@@ -38,23 +38,32 @@ public class KingdomServiceImpl implements KingdomService {
       kingdomName = player.getUsername() + "'s kingdom";
     }
     Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player));
-    return defaultPackCreator(savedKingdom);
+    return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
   }
 
-  private Kingdom defaultPackCreator(Kingdom kingdom) {
+  private Kingdom defaultBuildingCreator(Kingdom kingdom) {
     LocalDateTime currentTimestamp = LocalDateTime.now();
-    int initialFoodAmount = 1000;
-    int initialGoldAmount = 1000;
 
-    Building defaultTownhall = new Building(BuildingType.TOWNHALL, 1, kingdom, currentTimestamp, currentTimestamp);
-    Building defaultMine = new Building(BuildingType.FARM, 1, kingdom, currentTimestamp, currentTimestamp);
-    Building defaultFarm = new Building(BuildingType.MINE, 1, kingdom, currentTimestamp, currentTimestamp);
-    Building defaultAcademy = new Building(BuildingType.ACADEMY, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultTownhall =
+        new Building(BuildingType.TOWNHALL, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultMine =
+        new Building(BuildingType.FARM, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultFarm =
+        new Building(BuildingType.MINE, 1, kingdom, currentTimestamp, currentTimestamp);
+    Building defaultAcademy =
+        new Building(BuildingType.ACADEMY, 1, kingdom, currentTimestamp, currentTimestamp);
     List<Building> initialBuildings = new ArrayList<>();
     Collections.addAll(initialBuildings, defaultTownhall, defaultMine, defaultFarm, defaultAcademy);
     buildingService.saveAll(initialBuildings);
     kingdom.setBuildings(initialBuildings);
 
+    return kingdom;
+  }
+
+  private Kingdom defaultResourceCreator(Kingdom kingdom) {
+    LocalDateTime currentTimestamp = LocalDateTime.now();
+    int initialFoodAmount = 1000;
+    int initialGoldAmount = 1000;
     Resource initialFood = new Resource(ResourceType.FOOD, initialFoodAmount, 0, currentTimestamp, kingdom);
     Resource initialGold = new Resource(ResourceType.GOLD, initialGoldAmount, 0, currentTimestamp, kingdom);
     List<Resource> initialResources = new ArrayList<>();
