@@ -16,11 +16,11 @@ public class RegistrationResDTO {
     this.points = player.getPoints();
   }
 
-  //  public RegistrationResDTO(int id, String username, int kingdomId) {
-  //    this.id = id;
-  //    this.username = username;
-  //    this.kingdomId = kingdomId;
-  //  }
+  public RegistrationResDTO(int id, String username, int kingdomId) {
+    this.id = id;
+    this.username = username;
+    this.kingdomId = kingdomId;
+  }
 
   public RegistrationResDTO() {
   }

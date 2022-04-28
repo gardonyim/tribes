@@ -17,8 +17,8 @@ public interface PlayerRepository extends CrudRepository<Player, Integer> {
   @Query(value = "SELECT * FROM players "
       + "JOIN kingdoms k on players.id = k.player_id "
       + "JOIN locations l on l.id = k.location_id "
-      + "WHERE x_coordinate BETWEEN :xMin AND :xMax + 1 "
-      + "AND y_coordinate BETWEEN :yMin AND :yMax + 1",
+      + "WHERE x_coordinate BETWEEN :xMin AND :xMax "
+      + "AND y_coordinate BETWEEN :yMin AND :yMax",
       nativeQuery = true)
   List<Player> findAllNearBy(@Param("xMin") int xmin, @Param("xMax") int xmax,
                              @Param("yMin") int ymin, @Param("yMax") int ymax);

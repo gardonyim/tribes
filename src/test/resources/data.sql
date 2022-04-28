@@ -1,4 +1,12 @@
 INSERT INTO players (id, username, password) VALUES (1, 'existingtestuser', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK');
 INSERT INTO locations VALUES (1, 0, 0);
 INSERT INTO kingdoms VALUES (1, 'existingkingdom', 1, 1);
-
+INSERT INTO players (id, username, password) VALUES (2, 'testuser2', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK');
+INSERT INTO locations VALUES (2, 5, -5);
+INSERT INTO kingdoms VALUES (2, 'testkingdom2', 2, 2);
+INSERT INTO players (id, username, password) VALUES (3, 'testuser3', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK');
+INSERT INTO locations VALUES (3, 5, -6);
+INSERT INTO kingdoms VALUES (3, 'testkingdom3', 3, 3);
+INSERT INTO players (id, username, password) VALUES (4, 'testuser4', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK');
+INSERT INTO locations VALUES (4, 11, -5);
+INSERT INTO kingdoms VALUES (4, 'testkingdom4', 4, 4);
