@@ -1,16 +1,37 @@
 package com.greenfoxacademy.springwebapp.utilities;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
-public interface TimeService {
+public class TimeService {
 
-  LocalDateTime actualTime();
+  public static LocalDateTime actualTime() {
+    return LocalDateTime.now(ZoneId.of("UTC"));
+  }
 
-  LocalDateTime timeAtNSecondsLater(int n);
+  public static LocalDateTime timeAtNSecondsLater(long n) {
+    return timeAtNSecondsAfterTimeStamp(n, actualTime());
+  }
 
-  LocalDateTime timeAtNSecondsAfterTimeStamp(int n, LocalDateTime time);
+  public static LocalDateTime timeAtNSecondsAfterTimeStamp(long n, LocalDateTime time) {
+    return time.plusSeconds(n);
+  }
 
-  boolean timePast(LocalDateTime time);
+  public static boolean timePast(LocalDateTime time) {
+    return time.isBefore(actualTime());
+  }
 
-  int secondsElapsed(LocalDateTime timeStart, LocalDateTime timeEnd);
+  public static long secondsElapsed(LocalDateTime timeStart, LocalDateTime timeEnd) {
+    return ChronoUnit.SECONDS.between(timeStart, timeEnd);
+  }
+
+  public static long toEpochSecond(LocalDateTime time) {
+    return time.toEpochSecond(ZoneOffset.UTC);
+  }
+
+  public static LocalDateTime toLocalDateTime(long epochSecond) {
+    return LocalDateTime.ofEpochSecond(epochSecond, 0, ZoneOffset.UTC);
+  }
 }
