@@ -23,6 +23,8 @@ public class PlayerServiceImpl implements PlayerService {
   private KingdomService kingdomService;
   private PasswordEncoder pwEnc;
 
+  public static final int DEFAULT_DISTANCE = 10;
+
   @Autowired
   public void setPlayerRepository(PlayerRepository playerRepository) {
     this.playerRepository = playerRepository;
@@ -84,16 +86,16 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   public PlayerListDTO findNearbyPlayers(Player authPlayer, Integer distance) {
-    distance = distance == null ? 10 : distance;
+    distance = distance == null ? DEFAULT_DISTANCE : distance;
     int currentX = authPlayer.getKingdom().getLocation().getxcoordinate();
     int currentY = authPlayer.getKingdom().getLocation().getycoordinate();
-    List<RegistrationResDTO> nearbyPlayers = playerRepository.findAllNearBy(
+    List<RegistrationResDTO> nearbyPlayerDTOs = playerRepository.findAllNearBy(
         currentX - distance, currentX + distance,
         currentY - distance, currentY + distance).stream()
         .filter(p -> p.getId() != authPlayer.getId())
         .map(RegistrationResDTO::new)
         .collect(Collectors.toList());
-    return new PlayerListDTO(nearbyPlayers);
+    return new PlayerListDTO(nearbyPlayerDTOs);
   }
 
 }

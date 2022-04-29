@@ -31,8 +31,4 @@ public class PlayerListDTO {
         : that.players == null;
   }
 
-  //  @Override
-  //  public int hashCode() {
-  //    return players != null ? players.hashCode() : 0;
-  //  }
 }
