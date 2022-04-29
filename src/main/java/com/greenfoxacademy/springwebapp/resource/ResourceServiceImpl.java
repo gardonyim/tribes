@@ -1,12 +1,12 @@
 package com.greenfoxacademy.springwebapp.resource;
 
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
-
 import java.util.List;
-
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +50,17 @@ public class ResourceServiceImpl implements ResourceService {
     return new ResourcesResDTO(resourceList.stream()
         .map(this::convertToResourceDTO)
         .collect(Collectors.toList()));
+
+  @Override
+  public Resource getResourceByKingdomAndType(Kingdom kingdom, ResourceType type) {
+    return resourceRepository.findFirstByKingdomAndResourceType(kingdom, type).get();
+  }
+
+  @Override
+  public Resource pay(Kingdom kingdom, ResourceType type, int price) {
+    Resource gold = getResourceByKingdomAndType(kingdom, ResourceType.GOLD);
+    gold.setAmount(gold.getAmount() - price);
+    return save(gold);
   }
 
 }
