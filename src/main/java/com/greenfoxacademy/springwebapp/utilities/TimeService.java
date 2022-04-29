@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 public class TimeService {
 
   public static LocalDateTime actualTime() {
-    return LocalDateTime.now(ZoneId.of("UTC"));
+    return LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS);
   }
 
   public static LocalDateTime timeAtNSecondsLater(long n) {
