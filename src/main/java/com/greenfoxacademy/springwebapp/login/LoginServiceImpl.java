@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -74,13 +73,18 @@ public class LoginServiceImpl implements LoginService {
 
   private void checkLoginDTO(String username, String password)
           throws InputMissingException {
-
-    if (StringUtils.isEmpty(username) && StringUtils.isEmpty(password)) {
+    boolean isUsernameCorrect = notBlank(username);
+    boolean isPasswordCorrect = notBlank(password);
+    if (!isUsernameCorrect && !isPasswordCorrect) {
       throw new InputMissingException("All fields are required.");
-    } else if (StringUtils.isEmpty(username)) {
+    } else if (!isUsernameCorrect) {
       throw new InputMissingException("Username is required.");
-    } else if (StringUtils.isEmpty(password)) {
+    } else if (!isPasswordCorrect) {
       throw new InputMissingException("Password is required.");
     }
+  }
+
+  private boolean notBlank(String text) {
+    return text != null && !text.trim().isEmpty();
   }
 }
