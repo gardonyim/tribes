@@ -19,6 +19,6 @@ public interface ResourceService {
 
   Resource getResourceByKingdomAndType(Kingdom kingdom, ResourceType type);
 
-  Resource pay(Kingdom kingdom, ResourceType type, int amount);
+  Resource pay(Kingdom kingdom, int amount);
 
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
@@ -23,12 +24,15 @@ public class BuildingServiceImpl implements BuildingService {
 
   private BuildingRepository buildingRepository;
   private ResourceService resourceService;
+  private GameObjectRuleHolder gameObjectRuleHolder;
 
   @Autowired
   public BuildingServiceImpl(BuildingRepository buildingRepository,
-                             ResourceServiceImpl resourceService) {
+                             ResourceServiceImpl resourceService,
+                             GameObjectRuleHolder gameObjectRuleHolder) {
     this.buildingRepository = buildingRepository;
     this.resourceService = resourceService;
+    this.gameObjectRuleHolder = gameObjectRuleHolder;
   }
 
   @Override
@@ -43,41 +47,41 @@ public class BuildingServiceImpl implements BuildingService {
 
   public BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom) {
     validateAddBuildingRequest(typeDTO, kingdom);
-    return new BuildingDTO(buildingRepository.save(constructBuilding(typeDTO, kingdom)));
+    return new BuildingDTO(buildingRepository.save(constructBuilding(typeDTO.getType(), kingdom)));
   }
 
   private void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
-    if (typeDTO == null || typeDTO.getType() == null || typeDTO.getType().trim().isEmpty()) {
+    if (typeDTO.getType() == null || typeDTO.getType().trim().isEmpty()) {
       throw new RequestParameterMissingException("Missing parameter(s): type!");
     }
     if (!ObjectUtils.containsConstant(BuildingType.values(), typeDTO.getType())) {
       throw new RequestNotAcceptableException("Invalid building type");
     }
-    if (typeDTO.getType().toUpperCase().equals("TOWNHALL")) {
-      throw new RequestCauseConflictException("There must be only one Townhall in a kingdom");
+    if (typeDTO.getType().equalsIgnoreCase("TOWNHALL")) {
+      throw new RequestCauseConflictException("There must only be one Townhall in a kingdom");
     }
     if (buildingRepository.findFirstByBuildingTypeAndKingdom(BuildingType.TOWNHALL, kingdom)
         .get().getLevel() < 1) {
-      throw new RequestNotAcceptableException(
-          "Cannot build buildings with higher level than the Townhall");
+      throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
-    int required = BuildingType.valueOf(typeDTO.getType().toUpperCase()).getHpParameter();  // TODO: change when Game settings merged
+    int required = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
     int available = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
     if (available < required) {
-      throw new RequestCauseConflictException("Not enough resource");
+      throw new RequestCauseConflictException("Not enough resources");
     }
   }
 
-  private Building constructBuilding(BuildingTypeDTO typeDTO,
+  private Building constructBuilding(String type,
                                      Kingdom kingdom) {
     Building building = new Building();
-    building.setBuildingType(BuildingType.valueOf(typeDTO.getType().toUpperCase()));
+    building.setBuildingType(BuildingType.valueOf(type.toUpperCase()));
     building.setLevel(1);
-    building.setHp(building.getBuildingType().getHpParameter());
+    building.setHp(gameObjectRuleHolder.getHpMultiplier(type, 1));
     building.setKingdom(kingdom);
     building.setStartedAt(TimeService.actualTime());
-    building.setFinishedAt(TimeService.timeAtNSecondsLater(60L));  // TODO: Change when Game settings merged
-    resourceService.pay(kingdom, ResourceType.GOLD, 100); // TODO: Change price when Game settings merged
+    building.setFinishedAt(TimeService.timeAtNSecondsLater(
+        gameObjectRuleHolder.getBuildingTimeMultiplier(type, 1)));
+    resourceService.pay(kingdom, gameObjectRuleHolder.getBuildingCostMultiplier(type, 1));
     return building;
   }
 

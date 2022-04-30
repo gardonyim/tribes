@@ -7,6 +7,7 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
+import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,9 +58,10 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   @Override
-  public Resource pay(Kingdom kingdom, ResourceType type, int price) {
+  public Resource pay(Kingdom kingdom, int price) {
     Resource gold = getResourceByKingdomAndType(kingdom, ResourceType.GOLD);
     gold.setAmount(gold.getAmount() - price);
+    gold.setUpdatedAt(TimeService.actualTime());
     return save(gold);
   }
 
