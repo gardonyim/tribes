@@ -2,46 +2,100 @@ package com.greenfoxacademy.springwebapp.location;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.location.models.Location;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-
 public class LocationServiceTest {
 
   @Mock
   LocationRepository locationRepository;
 
+  @Spy
   @InjectMocks
   LocationServiceImpl locationService;
 
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
+
   @Test
   public void when_createLocation_should_returnUnoccupiedLocation() {
-    Location existingLocation = new Location();
-    when(locationRepository.findFirstByXcoordinateAndYcoordinate(anyInt(), anyInt()))
-        .thenReturn(Optional.of(existingLocation))
-        .thenReturn(Optional.of(existingLocation))
-        .thenReturn(Optional.empty());
+    List<Location> occupiedLocations = Arrays.asList(
+        new Location(0, 0),
+        new Location(0, 1),
+        new Location(1, 0)
+    );
+    when(locationRepository.findAll()).thenReturn(occupiedLocations);
     when(locationRepository.save(any(Location.class))).then(returnsFirstArg());
 
-    Location created = locationService.createLocation();
+    for (int i = 0; i < 10; i++) {
+      Location createdLocation = locationService.createLocation(2, 0);
 
-    Mockito.verify(locationRepository, times(3))
-        .findFirstByXcoordinateAndYcoordinate(anyInt(), anyInt());
-    Assert.assertNotNull(created);
-    Assert.assertTrue(created.getxcoordinate() >= -100 && created.getxcoordinate() <= 100);
-    Assert.assertTrue(created.getycoordinate() >= -100 && created.getycoordinate() <= 100);
+      Assert.assertEquals(1, createdLocation.getxcoordinate());
+      Assert.assertEquals(1, createdLocation.getycoordinate());
+    }
+  }
+
+  @Test
+  public void when_createLocation_should_returnValidLocation() {
+    List<Location> occupiedLocations = new ArrayList<>();
+    when(locationRepository.findAll()).thenReturn(occupiedLocations);
+    when(locationRepository.save(any(Location.class))).then(returnsFirstArg());
+
+    for (int i = 0; i < 10; i++) {
+      Location createdLocation = locationService.createLocation(2, 0);
+
+      Assert.assertTrue(createdLocation.getxcoordinate() >= 0
+          && createdLocation.getxcoordinate() <= 1);
+      Assert.assertTrue(createdLocation.getycoordinate() >= 0
+          && createdLocation.getycoordinate() <= 1);
+    }
+  }
+
+  @Test
+  public void when_createLocationOnFullBoard_should_returnException() {
+    List<Location> occupiedLocations = Arrays.asList(
+        new Location(0, 0),
+        new Location(0, 1),
+        new Location(1, 0),
+        new Location(1, 1)
+    );
+    when(locationRepository.findAll()).thenReturn(occupiedLocations);
+
+    exceptionRule.expect(RequestCauseConflictException.class);
+    exceptionRule.expectMessage("Too many items on the board, unable to place new kingdom");
+    locationService.createLocation(2, 0);
+  }
+
+  @Test
+  public void when_createLocation_should_returnLocationOnTheBoard() {
+    List<Location> occupiedLocations = new ArrayList<>();
+    when(locationRepository.findAll()).thenReturn(occupiedLocations);
+    when(locationRepository.save(any(Location.class))).then(returnsFirstArg());
+    ArgumentCaptor<Integer> boardSize = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> offset = ArgumentCaptor.forClass(Integer.class);
+
+    Location createdLocation = locationService.createLocation();
+
+    Mockito.verify(locationService).createLocation(boardSize.capture(), offset.capture());
+    Assert.assertEquals(201, (int) boardSize.getValue());
+    Assert.assertEquals(-100, (int) offset.getValue());
   }
 
 }

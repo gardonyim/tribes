@@ -1,16 +1,17 @@
 package com.greenfoxacademy.springwebapp.location;
 
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.location.models.Location;
+import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LocationServiceImpl implements LocationService {
 
   private LocationRepository locationRepository;
-  private final int boardSize = 201;
-  private final int offset = -100;
 
   @Autowired
   public LocationServiceImpl(LocationRepository locationRepository) {
@@ -19,14 +20,30 @@ public class LocationServiceImpl implements LocationService {
 
   @Override
   public Location createLocation() {
+    int boardSize = 201;
+    int offset = -100;
+    return createLocation(boardSize, offset);
+  }
+
+  @Override
+  public Location createLocation(int boardSize, int offset) {
+    List<Location> locations = locationRepository.findAll();
+    Location newLocation;
     Random random = new Random();
-    int x;
-    int y;
-    do {
-      x = random.nextInt(boardSize) + offset;
-      y = random.nextInt(boardSize) + offset;
-    } while (locationRepository.findFirstByXcoordinateAndYcoordinate(x, y).isPresent());
-    return locationRepository.save(new Location(x, y));
+    for (int i = 0; i < 100; i++) {
+      int x = random.nextInt(boardSize) + offset;
+      int y = random.nextInt(boardSize) + offset;
+      if (locations.stream()
+          .noneMatch(location -> location.getxcoordinate() == x && location.getycoordinate() == y)) {
+        try {
+          newLocation = locationRepository.save(new Location(x, y));
+        } catch (DataIntegrityViolationException e) {
+          newLocation = createLocation();
+        }
+        return newLocation;
+      }
+    }
+    throw new RequestCauseConflictException("Too many items on the board, unable to place new kingdom");
   }
 
 }

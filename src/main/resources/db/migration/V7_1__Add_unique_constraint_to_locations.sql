@@ -1,0 +1,1 @@
+ALTER TABLE locations ADD CONSTRAINT uq_location UNIQUE (x_coordinate, y_coordinate);
