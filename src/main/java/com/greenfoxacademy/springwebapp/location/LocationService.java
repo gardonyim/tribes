@@ -6,6 +6,6 @@ public interface LocationService {
 
   Location createLocation();
 
-  Location createLocation(int boardSiza, int offset);
+  Location createLocation(int boardSize, int offset);
 
 }
