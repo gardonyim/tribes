@@ -41,9 +41,6 @@ public class PlayerControllerIntegrationTest {
   @Autowired
   private KingdomRepository kingdomRepository;
 
-  @Autowired
-  private PlayerRepository playerRepository;
-
   @Test
   public void when_postRegisterWithoutPassword_should_respondBadRequestStatusAndProperJson()
           throws Exception {

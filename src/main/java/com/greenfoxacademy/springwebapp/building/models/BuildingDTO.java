@@ -5,7 +5,7 @@ import com.greenfoxacademy.springwebapp.utilities.TimeService;
 public class BuildingDTO {
 
   private int id;
-  private BuildingType buildingType;
+  private String buildingType;
   private int level;
   private int hp;
   private long startedAt;
@@ -13,7 +13,7 @@ public class BuildingDTO {
 
   public BuildingDTO(Building building) {
     id = building.getId();
-    buildingType = building.getBuildingType();
+    buildingType = building.getBuildingType().name().toLowerCase();
     level = building.getLevel();
     hp = building.getHp();
     startedAt = TimeService.toEpochSecond(building.getStartedAt());
@@ -24,7 +24,7 @@ public class BuildingDTO {
                      BuildingType buildingType, int level, int hp, long startedAt,
                      long finishedAt) {
     this.id = id;
-    this.buildingType = buildingType;
+    this.buildingType = buildingType.name().toLowerCase();
     this.level = level;
     this.hp = hp;
     this.startedAt = startedAt;
@@ -39,11 +39,11 @@ public class BuildingDTO {
     this.id = id;
   }
 
-  public BuildingType getBuildingType() {
+  public String getBuildingType() {
     return buildingType;
   }
 
-  public void setBuildingType(BuildingType buildingType) {
+  public void setBuildingType(String buildingType) {
     this.buildingType = buildingType;
   }
 
@@ -92,7 +92,7 @@ public class BuildingDTO {
         || finishedAt != that.finishedAt) {
       return false;
     }
-    return buildingType == that.buildingType;
+    return buildingType.equals(that.buildingType);
   }
 
 }
