@@ -4,6 +4,13 @@ public class BuildingTypeDTO {
 
   private String type;
 
+  public BuildingTypeDTO(String type) {
+    this.type = type;
+  }
+
+  public BuildingTypeDTO() {
+  }
+
   public String getType() {
     return type;
   }

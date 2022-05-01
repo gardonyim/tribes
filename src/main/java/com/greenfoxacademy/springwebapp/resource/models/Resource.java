@@ -24,6 +24,11 @@ public class Resource {
   @JoinColumn(name = "kingdom_id", referencedColumnName = "id")
   private Kingdom kingdom;
 
+  public Resource(ResourceType resourceType, int amount) {
+    this.resourceType = resourceType;
+    this.amount = amount;
+  }
+
   public Resource() {
   }
 

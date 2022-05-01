@@ -20,6 +20,17 @@ public class BuildingDTO {
     finishedAt = TimeService.toEpochSecond(building.getFinishedAt());
   }
 
+  public BuildingDTO(int id,
+                     BuildingType buildingType, int level, int hp, long startedAt,
+                     long finishedAt) {
+    this.id = id;
+    this.buildingType = buildingType;
+    this.level = level;
+    this.hp = hp;
+    this.startedAt = startedAt;
+    this.finishedAt = finishedAt;
+  }
+
   public int getId() {
     return id;
   }
@@ -67,4 +78,21 @@ public class BuildingDTO {
   public void setFinishedAt(long finishedAt) {
     this.finishedAt = finishedAt;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    BuildingDTO that = (BuildingDTO) o;
+    if (id != that.id || level != that.level || hp != that.hp || startedAt != that.startedAt
+        || finishedAt != that.finishedAt) {
+      return false;
+    }
+    return buildingType == that.buildingType;
+  }
+
 }
