@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
@@ -21,15 +22,18 @@ public class KingdomServiceImpl implements KingdomService {
   private KingdomRepository kingdomRepository;
   private BuildingService buildingService;
   private ResourceService resourceService;
+  private LocationService locationService;
 
   @Autowired
   public KingdomServiceImpl(
       KingdomRepository kingdomRepository,
       BuildingService buildingService,
-      ResourceService resourceService) {
+      ResourceService resourceService,
+      LocationService locationService) {
     this.kingdomRepository = kingdomRepository;
     this.buildingService = buildingService;
     this.resourceService = resourceService;
+    this.locationService = locationService;
   }
 
   @Override
@@ -37,7 +41,8 @@ public class KingdomServiceImpl implements KingdomService {
     if (kingdomName == null || kingdomName.isEmpty()) {
       kingdomName = player.getUsername() + "'s kingdom";
     }
-    Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player));
+    Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player,
+        locationService.createLocation()));
     return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
   }
 

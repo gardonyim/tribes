@@ -5,9 +5,12 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomServiceImpl;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.player.models.PlayerListDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -19,8 +22,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -104,7 +110,6 @@ public class PlayerServiceTest {
     testKingdom.setId(999);
     Player testPlayer = new Player(reqDTO.getUsername(), reqDTO.getPassword(), testKingdom, "", 0);
     testPlayer.setId(999);
-
     when(playerRepository.save(any(Player.class))).thenReturn(testPlayer);
     when(kingdomService.save(any(), any())).thenReturn(testKingdom);
     when(passwordEncoder.encode(anyString())).thenReturn("encodedpassword");
@@ -114,5 +119,49 @@ public class PlayerServiceTest {
     Assert.assertEquals(testPlayer.getId(), result.getId());
     Assert.assertEquals(reqDTO.getUsername(), result.getUsername());
     Assert.assertEquals(testKingdom.getId(), result.getKingdomId());
+  }
+
+  @Test
+  public void when_FindNearbyPlayersWithoutDistance_should_ReturnListWithPlayersWithin10units() {
+    Player player = createTestPlayer(999);
+    Player foundPlayer = createTestPlayer(888);
+    PlayerListDTO expected = new PlayerListDTO(
+        Collections.singletonList(new RegistrationResDTO(foundPlayer)));
+    when(playerRepository.findAllNearBy(anyInt(), anyInt(), anyInt(), anyInt()))
+        .thenReturn(Collections.singletonList(foundPlayer));
+
+    PlayerListDTO result = playerService.findNearbyPlayers(player, null);
+
+    Assert.assertEquals(expected, result);
+    verify(playerRepository, times(1))
+        .findAllNearBy(42, 62, -23, -3);
+  }
+
+  @Test
+  public void when_FindNearbyPlayersWithDistance_should_ReturnListWithPlayersWithinDistance() {
+    Player player = createTestPlayer(999);
+    int distance = 5;
+    Player foundPlayer = createTestPlayer(888);
+    PlayerListDTO expected = new PlayerListDTO(
+        Collections.singletonList(new RegistrationResDTO(foundPlayer)));
+    when(playerRepository.findAllNearBy(anyInt(), anyInt(), anyInt(), anyInt()))
+        .thenReturn(Collections.singletonList(foundPlayer));
+
+    PlayerListDTO result = playerService.findNearbyPlayers(player, distance);
+
+    Assert.assertEquals(expected, result);
+    verify(playerRepository, times(1))
+        .findAllNearBy(47, 57, -18, -8);
+  }
+
+  private Player createTestPlayer(int id) {
+    Location location = new Location(52, -13);
+    Kingdom kingdom = new Kingdom();
+    kingdom.setLocation(location);
+    kingdom.setId(id);
+    Player player = new Player();
+    player.setId(id);
+    player.setKingdom(kingdom);
+    return player;
   }
 }

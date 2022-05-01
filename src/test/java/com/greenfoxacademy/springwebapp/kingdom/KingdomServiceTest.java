@@ -4,6 +4,8 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingServiceImpl;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.LocationService;
+import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
@@ -33,6 +35,9 @@ public class KingdomServiceTest {
   @Mock
   ResourceServiceImpl resourceService;
 
+  @Mock
+  LocationService locationService;
+
   @InjectMocks
   KingdomServiceImpl kingdomService;
 
@@ -42,6 +47,7 @@ public class KingdomServiceTest {
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
     when(buildingService.saveAll(any())).thenReturn(buildingListCreator());
     when(resourceService.saveAll(any())).thenReturn(resourceListCreator());
+    when(locationService.createLocation()).thenReturn(new Location(0, 0));
 
     Kingdom created = kingdomService.save("testkingdom", player);
 
@@ -54,6 +60,7 @@ public class KingdomServiceTest {
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
     when(buildingService.saveAll(any())).thenReturn(buildingListCreator());
     when(resourceService.saveAll(any())).thenReturn(resourceListCreator());
+    when(locationService.createLocation()).thenReturn(new Location(0, 0));
 
     Kingdom created = kingdomService.save("", player);
 
@@ -61,15 +68,17 @@ public class KingdomServiceTest {
   }
 
   @Test
-  public void when_saveKingdom_should_returnKingdomWithGivenPlayer() {
+  public void when_saveKingdom_should_returnKingdomWithGivenPlayerAndALocation() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
     when(buildingService.saveAll(any())).thenReturn(buildingListCreator());
     when(resourceService.saveAll(any())).thenReturn(resourceListCreator());
+    when(locationService.createLocation()).thenReturn(new Location(0, 0));
 
     Kingdom created = kingdomService.save("testkingdom", player);
 
     Assert.assertEquals(player, created.getPlayer());
+    Assert.assertNotNull(created.getLocation());
   }
 
   @Test
@@ -109,4 +118,5 @@ public class KingdomServiceTest {
     resourceList.add(new Resource(ResourceType.GOLD, 1000, 0, null, null));
     return resourceList;
   }
+  
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,29 +21,28 @@ public class TimeServiceTest {
 
   @Test
   public void actualTime_ValidExpectedValue_Equals() {
-    Assert.assertTrue(LocalDateTime.now(ZoneId.of("UTC")).equals(timeService.actualTime()));
+    Assert.assertTrue(now().equals(timeService.actualTime()));
   }
 
   @Test
   public void timeAtNSecondsLater_ValidExpectedValue_Equals() {
-    Assert.assertEquals(6L, ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneId.of("UTC")),
-        timeService.timeAtNSecondsLater(6)));
+    Assert.assertEquals(6L, ChronoUnit.SECONDS.between(now(), timeService.timeAtNSecondsLater(6)));
   }
 
   @Test
   public void timeAtNSecondsAfterTimeStamp_ValidExpectedValue_Equals() {
-    Assert.assertEquals(6L, ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneId.of("UTC")),
-        timeService.timeAtNSecondsAfterTimeStamp(6, LocalDateTime.now(ZoneId.of("UTC")))));
+    Assert.assertEquals(6L, ChronoUnit.SECONDS.between(now(),
+            timeService.timeAtNSecondsAfterTimeStamp(6, now())));
   }
 
   @Test
   public void timePast_ValidExpectedValue_True() {
-    Assert.assertTrue(timeService.timePast(LocalDateTime.now(ZoneId.of("UTC")).minusSeconds(6L)));
+    Assert.assertTrue(timeService.timePast(now().minusSeconds(6L)));
   }
 
   @Test
   public void timePast_InvalidExpectedValue_False() {
-    Assert.assertFalse(timeService.timePast(LocalDateTime.now(ZoneId.of("UTC")).plusSeconds(6L)));
+    Assert.assertFalse(timeService.timePast(now().plusSeconds(6L)));
   }
 
   @Test
@@ -62,6 +62,10 @@ public class TimeServiceTest {
     long epochTime = Instant.now().getEpochSecond();
     Assert.assertEquals(LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC),
         timeService.toLocalDateTime(epochTime));
+  }
+
+  private LocalDateTime now() {
+    return LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS);
   }
 
 }
