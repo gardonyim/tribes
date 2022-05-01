@@ -36,6 +36,16 @@ public class Kingdom {
     this.player = player;
   }
 
+  public Kingdom(int id, String name, Player player,
+                 List<Building> buildings, List<Resource> resources, Location location) {
+    this.id = id;
+    this.name = name;
+    this.player = player;
+    this.buildings = buildings;
+    this.resources = resources;
+    this.location = location;
+  }
+
   public Kingdom(String name, Player player, Location location) {
     this.name = name;
     this.player = player;
