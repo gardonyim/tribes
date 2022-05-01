@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,10 +10,13 @@ import org.springframework.stereotype.Service;
 public class KingdomServiceImpl implements KingdomService {
 
   private KingdomRepository kingdomRepository;
+  private LocationService locationService;
 
   @Autowired
-  public KingdomServiceImpl(KingdomRepository kingdomRepository) {
+  public KingdomServiceImpl(
+      KingdomRepository kingdomRepository, LocationService locationService) {
     this.kingdomRepository = kingdomRepository;
+    this.locationService = locationService;
   }
 
   @Override
@@ -20,7 +24,9 @@ public class KingdomServiceImpl implements KingdomService {
     if (kingdomName == null || kingdomName.isEmpty()) {
       kingdomName = player.getUsername() + "'s kingdom";
     }
-    return kingdomRepository.save(new Kingdom(kingdomName, player));
+    Kingdom kingdom = kingdomRepository.save(new Kingdom(kingdomName, player,
+        locationService.createLocation()));
+    return kingdom;
   }
 
 }

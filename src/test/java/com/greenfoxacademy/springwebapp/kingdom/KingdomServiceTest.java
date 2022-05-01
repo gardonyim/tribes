@@ -1,6 +1,8 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.LocationService;
+import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,6 +21,9 @@ public class KingdomServiceTest {
   @Mock
   KingdomRepository kingdomRepository;
 
+  @Mock
+  LocationService locationService;
+
   @InjectMocks
   KingdomServiceImpl kingdomService;
 
@@ -26,6 +31,7 @@ public class KingdomServiceTest {
   public void when_saveKingdomWithName_should_returnKingdomWithGivenName() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+    when(locationService.createLocation()).thenReturn(new Location(0, 0));
 
     Kingdom created = kingdomService.save("testkingdom", player);
 
@@ -36,6 +42,7 @@ public class KingdomServiceTest {
   public void when_saveKingdomWithoutName_should_returnKingdomWithGeneratedName() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+    when(locationService.createLocation()).thenReturn(new Location(0, 0));
 
     Kingdom created = kingdomService.save("", player);
 
@@ -43,12 +50,15 @@ public class KingdomServiceTest {
   }
 
   @Test
-  public void when_saveKingdom_should_returnKingdomWithGivenPlayer() {
+  public void when_saveKingdom_should_returnKingdomWithGivenPlayerAndALocation() {
     Player player = new Player("testuser", "", null, "", 0);
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+    when(locationService.createLocation()).thenReturn(new Location(0, 0));
 
     Kingdom created = kingdomService.save("testkingdom", player);
 
     Assert.assertEquals(player, created.getPlayer());
+    Assert.assertNotNull(created.getLocation());
   }
+
 }
