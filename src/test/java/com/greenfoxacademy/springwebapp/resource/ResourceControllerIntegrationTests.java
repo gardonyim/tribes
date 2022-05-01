@@ -45,29 +45,15 @@ public class ResourceControllerIntegrationTests {
   @Test
   public void when_getResource_should_respondResourcesJson() throws Exception {
     LocalDateTime ldt = LocalDateTime.now();
-    Resource resource1 = new Resource();
-    resource1.setResourceType(ResourceType.FOOD);
-    resource1.setAmount(100);
-    resource1.setGeneration(10);
-    resource1.setUpdatedAt(ldt);
-    Resource resource2 = new Resource();
-    resource2.setResourceType(ResourceType.GOLD);
-    resource2.setAmount(1000);
-    resource2.setGeneration(100);
-    resource2.setUpdatedAt(ldt);
-
+    Resource resource1 = new Resource(ResourceType.FOOD, 100, 10, ldt, null);
+    Resource resource2 = new Resource(ResourceType.GOLD, 1000, 100, ldt, null);
     Kingdom myKingdom = new Kingdom();
     myKingdom.setResources(new ArrayList<>(Arrays.asList(resource1, resource2)));
-    Player myPlayer = new Player();
-    myPlayer.setKingdom(myKingdom);
+    Player myPlayer = new Player(null, null, myKingdom, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(myPlayer, null);
     long ldtEpochInSec = TimeService.toEpochSecond(ldt);
-
-    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/resources")
-            .principal(auth))
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/resources").principal(auth))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.resources").exists())
-        .andExpect(jsonPath("$.resources.length()").value(2))
         .andExpect(jsonPath("$.resources[0].type").value("food"))
         .andExpect(jsonPath("$.resources[0].amount").value(100))
         .andExpect(jsonPath("$.resources[0].generation").value(10))
@@ -75,9 +61,7 @@ public class ResourceControllerIntegrationTests {
         .andExpect(jsonPath("$.resources[1].type").value("gold"))
         .andExpect(jsonPath("$.resources[1].amount").value(1000))
         .andExpect(jsonPath("$.resources[1].generation").value(100))
-        .andExpect(jsonPath("$.resources[1].updatedAt").value(ldtEpochInSec))
-    ;
-
+        .andExpect(jsonPath("$.resources[1].updatedAt").value(ldtEpochInSec));
   }
 
 
