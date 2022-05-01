@@ -5,7 +5,7 @@ import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import java.util.List;
 
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
-import com.greenfoxacademy.springwebapp.utilities.EpochConverter;
+import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class ResourceServiceImpl implements ResourceService {
         resource.getResourceType().getDescription(),
         resource.getAmount(),
         resource.getGeneration(),
-        EpochConverter.convertToEpochMilli(resource.getUpdatedAt())
+        TimeService.toEpochSecond(resource.getUpdatedAt())
     );
   }
 
