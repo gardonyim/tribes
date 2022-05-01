@@ -5,11 +5,15 @@ public class RegistrationResDTO {
   private int id;
   private String username;
   private int kingdomId;
+  private String avatar;
+  private Integer points;
 
   public RegistrationResDTO(Player player) {
     this.id = player.getId();
     this.username = player.getUsername();
     this.kingdomId = player.getKingdom().getId();
+    this.avatar = player.getAvatar();
+    this.points = player.getPoints();
   }
 
   public RegistrationResDTO(int id, String username, int kingdomId) {
@@ -43,5 +47,21 @@ public class RegistrationResDTO {
 
   public void setKingdomId(int kingdomId) {
     this.kingdomId = kingdomId;
+  }
+
+  public String getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(String avatar) {
+    this.avatar = avatar;
+  }
+
+  public Integer getPoints() {
+    return points;
+  }
+
+  public void setPoints(Integer points) {
+    this.points = points;
   }
 }

@@ -44,6 +44,11 @@ public class Kingdom {
     this.player = player;
   }
 
+  public Kingdom(int id, Location location) {
+    this.id = id;
+    this.location = location;
+  }
+
   public Kingdom() {
   }
 

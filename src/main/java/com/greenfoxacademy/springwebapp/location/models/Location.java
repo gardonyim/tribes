@@ -22,6 +22,12 @@ public class Location {
   @OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
   private Kingdom kingdom;
 
+  public Location(int id, int xcoordinate, int ycoordinate) {
+    this.id = id;
+    this.xcoordinate = xcoordinate;
+    this.ycoordinate = ycoordinate;
+  }
+
   public Location(int xcoordinate, int ycoordinate) {
     this.xcoordinate = xcoordinate;
     this.ycoordinate = ycoordinate;

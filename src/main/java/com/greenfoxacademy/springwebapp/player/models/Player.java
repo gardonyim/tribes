@@ -23,6 +23,16 @@ public class Player {
   private String avatar;
   private Integer points;
 
+  public Player(int id, String username, String password,
+                Kingdom kingdom, String avatar, Integer points) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+    this.kingdom = kingdom;
+    this.avatar = avatar;
+    this.points = points;
+  }
+
   public Player(String username, String password, Kingdom kingdom, String avatar, Integer points) {
     this.username = username;
     this.password = password;

@@ -2,6 +2,9 @@ package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomRepository;
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.models.Location;
+import com.greenfoxacademy.springwebapp.player.models.Player;
 import javax.transaction.Transactional;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -12,6 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,6 +40,9 @@ public class PlayerControllerIntegrationTest {
 
   @Autowired
   private KingdomRepository kingdomRepository;
+
+  @Autowired
+  private PlayerRepository playerRepository;
 
   @Test
   public void when_postRegisterWithoutPassword_should_respondBadRequestStatusAndProperJson()
@@ -144,4 +152,39 @@ public class PlayerControllerIntegrationTest {
             .andExpect(jsonPath("$.kingdomId", Matchers.greaterThan(0)));
     Assert.assertTrue(kingdomRepository.findFirstByName("luke's kingdom").isPresent());
   }
+
+  @Test
+  public void when_getPlayersWithoutDistance_should_respondOkStatusAndJsonWithPlayersIn10units()
+      throws Exception {
+    Location location = new Location(1, 0,0);
+    Kingdom existingkingdom = new Kingdom(1, location);
+    Player existingtestuser =
+        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/players")
+                .principal(auth))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.players").exists())
+        .andExpect(jsonPath("$.players.length()").value(2))
+        .andExpect(jsonPath("$..id", Matchers.containsInAnyOrder(2, 3)));
+  }
+
+  @Test
+  public void when_getPlayersWithDistance_should_respondOkStatusAndJsonWithPlayersWithinDistance()
+      throws Exception {
+    Location location = new Location(1, 0,0);
+    Kingdom existingkingdom = new Kingdom(1, location);
+    Player existingtestuser =
+        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/players?distance=5")
+            .principal(auth))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.players").exists())
+        .andExpect(jsonPath("$.players.length()").value(1))
+        .andExpect(jsonPath("$..id", Matchers.contains(2)));
+  }
+
 }
