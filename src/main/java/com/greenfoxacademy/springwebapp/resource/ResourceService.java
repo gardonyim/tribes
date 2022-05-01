@@ -6,6 +6,6 @@ import java.util.List;
 public interface ResourceService {
   Resource save(Resource resource);
 
-  List<Resource> saveAll(List<Resource> resources);
+  Iterable<Resource> saveAll(List<Resource> resources);
 
 }

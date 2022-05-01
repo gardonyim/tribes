@@ -21,7 +21,7 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   @Override
-  public List<Resource> saveAll(List<Resource> resources) {
+  public Iterable<Resource> saveAll(List<Resource> resources) {
     return resourceRepository.saveAll(resources);
   }
 }

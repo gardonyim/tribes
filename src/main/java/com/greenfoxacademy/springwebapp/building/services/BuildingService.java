@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface BuildingService {
 
-  public Building saveBuilding(Building building);
+  Building saveBuilding(Building building);
 
-  public List<Building> saveAll(List<Building> buildings);
+  Iterable<Building> saveAll(List<Building> buildings);
 }

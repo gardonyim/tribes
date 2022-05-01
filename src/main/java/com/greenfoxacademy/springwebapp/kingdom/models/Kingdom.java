@@ -91,9 +91,9 @@ public class Kingdom {
     return buildings;
   }
 
-  public void setBuildings(
-      List<Building> buildings) {
+  public void setBuildings(List<Building> buildings) {
     this.buildings = buildings;
+  }
 
   public Location getLocation() {
     return location;
