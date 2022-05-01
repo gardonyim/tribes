@@ -27,6 +27,16 @@ public class Resource {
   public Resource() {
   }
 
+  public Resource(ResourceType resourceType, int amount, int generation,
+                  LocalDateTime updatedAt,
+                  Kingdom kingdom) {
+    this.resourceType = resourceType;
+    this.amount = amount;
+    this.generation = generation;
+    this.updatedAt = updatedAt;
+    this.kingdom = kingdom;
+  }
+
   public int getId() {
     return id;
   }

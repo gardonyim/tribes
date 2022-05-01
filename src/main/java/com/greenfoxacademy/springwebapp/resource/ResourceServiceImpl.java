@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.resource;
 
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,8 @@ public class ResourceServiceImpl implements ResourceService {
     return resourceRepository.save(resource);
   }
 
+  @Override
+  public Iterable<Resource> saveAll(List<Resource> resources) {
+    return resourceRepository.saveAll(resources);
+  }
 }

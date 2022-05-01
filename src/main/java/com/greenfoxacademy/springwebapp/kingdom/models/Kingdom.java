@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
@@ -22,6 +23,8 @@ public class Kingdom {
   private String name;
   @OneToOne()
   private Player player;
+  @OneToMany(mappedBy = "kingdom")
+  private List<Building> buildings;
   @OneToMany(mappedBy = "kingdom")
   private List<Resource> resources;
   @OneToOne()
@@ -84,6 +87,14 @@ public class Kingdom {
     this.resources = resources;
   }
 
+  public List<Building> getBuildings() {
+    return buildings;
+  }
+
+  public void setBuildings(List<Building> buildings) {
+    this.buildings = buildings;
+  }
+
   public Location getLocation() {
     return location;
   }
@@ -91,4 +102,5 @@ public class Kingdom {
   public void setLocation(Location location) {
     this.location = location;
   }
+  
 }
