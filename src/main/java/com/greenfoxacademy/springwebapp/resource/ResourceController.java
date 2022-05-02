@@ -18,7 +18,7 @@ public class ResourceController {
   }
 
   @GetMapping("/kingdom/resources")
-  public ResponseEntity registerUser(UsernamePasswordAuthenticationToken user) {
+  public ResponseEntity getResources(UsernamePasswordAuthenticationToken user) {
     Player player = (Player)user.getPrincipal();
     return ResponseEntity
         .status(200)
