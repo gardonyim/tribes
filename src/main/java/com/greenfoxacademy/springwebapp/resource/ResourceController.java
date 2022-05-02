@@ -23,7 +23,7 @@ public class ResourceController {
     Player player = (Player)user.getPrincipal();
     ResourcesResDTO resourcesResDTO = new ResourcesResDTO(
         resourceService.convertToResourceDtoList(player.getKingdom().getResources()));
-    return ResponseEntity.status(201).body(resourcesResDTO);
+    return ResponseEntity.status(200).body(resourcesResDTO);
   }
 
 }

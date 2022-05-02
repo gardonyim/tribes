@@ -9,9 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,10 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(TimeService.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ResourceServiceTest {
 
   @Mock
@@ -34,18 +32,18 @@ public class ResourceServiceTest {
   @Test
   public void when_convertResource_should_returnResourceDTO() {
     Resource resource = new Resource(ResourceType.FOOD, 100, 10, LocalDateTime.now(), null);
+    ResourceDTO expected;
+    ResourceDTO actual;
 
-    PowerMockito.mockStatic(TimeService.class);
-    when(TimeService.toEpochSecond(any(LocalDateTime.class))).thenReturn(5000L);
-
-    ResourceDTO expected = new ResourceDTO(
-        resource.getResourceType().getDescription(),
-        resource.getAmount(),
-        resource.getGeneration(),
-        TimeService.toEpochSecond(resource.getUpdatedAt())
-    );
-
-    ResourceDTO actual = resourceService.convertToResourceDTO(resource);
+    try (MockedStatic<TimeService> timeServiceMockedStatic = Mockito.mockStatic(TimeService.class)) {
+      timeServiceMockedStatic.when(() -> TimeService.toEpochSecond(any(LocalDateTime.class))).thenReturn(5000L);
+      expected = new ResourceDTO(
+          resource.getResourceType().getDescription(),
+          resource.getAmount(),
+          resource.getGeneration(),
+          TimeService.toEpochSecond(resource.getUpdatedAt()));
+      actual = resourceService.convertToResourceDTO(resource);
+    }
 
     Assert.assertEquals(expected.getType(), actual.getType());
     Assert.assertEquals(expected.getAmount(), actual.getAmount());
@@ -61,12 +59,12 @@ public class ResourceServiceTest {
         resource1.getResourceType().getDescription(), resource1.getAmount(), resource1.getGeneration(), 5000L);
     ResourceDTO resourceDTO2 = new ResourceDTO(
         resource2.getResourceType().getDescription(), resource2.getAmount(), resource2.getGeneration(), 5000L);
-
-    PowerMockito.mockStatic(TimeService.class);
-    when(TimeService.toEpochSecond(any(LocalDateTime.class))).thenReturn(5000L);
     List<ResourceDTO> expected = new ArrayList<>(Arrays.asList(resourceDTO1, resourceDTO2));
-    List<ResourceDTO> actual =
-        resourceService.convertToResourceDtoList(new ArrayList<>(Arrays.asList(resource1, resource2)));
+    List<ResourceDTO> actual;
+    try (MockedStatic<TimeService> timeServiceMockedStatic = Mockito.mockStatic(TimeService.class)) {
+      timeServiceMockedStatic.when(() -> TimeService.toEpochSecond(any())).thenReturn(5000L);
+      actual = resourceService.convertToResourceDtoList(new ArrayList<>(Arrays.asList(resource1, resource2)));
+    }
 
     Assert.assertEquals(expected.size(), actual.size());
     Assert.assertEquals(expected.get(0).getType(), actual.get(0).getType());
