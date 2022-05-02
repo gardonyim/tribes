@@ -1,0 +1,1 @@
+INSERT INTO troops (level,hp,attack,defence,started_at,finished_at,kingdom_id) VALUES (1,1,1,1,'2022-05-01 22:23:49','2022-05-01 22:23:44',1);

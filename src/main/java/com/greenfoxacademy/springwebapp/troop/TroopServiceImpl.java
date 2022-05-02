@@ -1,13 +1,24 @@
 package com.greenfoxacademy.springwebapp.troop;
 
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.troop.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class TroopServiceImpl implements TroopService {
 
   private final TroopRepository troopRepository;
+
+  @Autowired
+  @Qualifier("modelMapper")
+  private ModelMapper modelMapper;
 
   @Autowired
   public TroopServiceImpl(TroopRepository troopRepository) {
@@ -17,5 +28,19 @@ public class TroopServiceImpl implements TroopService {
   @Override
   public Troop addNewTroop(Troop troop) {
     return troopRepository.save(troop);
+  }
+
+  @Override
+  public TroopDTO saveAndGetTroopAsDTO(int level, Kingdom kingdom) {
+    Troop troop = new Troop();
+    troop.setLevel(level);
+    troop.setHp(level * 20);
+    troop.setKingdom(kingdom);
+    troop.setAttack(level * 10);
+    troop.setDefence(level * 5);
+    troop.setStartedAt(LocalDateTime.now());
+    troop.setFinishedAt(LocalDateTime.now().plus(level * 30L, ChronoUnit.SECONDS));
+    return modelMapper.map(addNewTroop(troop), TroopDTO.class);
+
   }
 }

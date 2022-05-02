@@ -24,4 +24,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 
+  @ExceptionHandler(BuildingDoesNotBelongToPlayerException.class)
+  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(BuildingDoesNotBelongToPlayerException e) {
+    return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(BuildingTypeException.class)
+  public ResponseEntity handleConflictCausedByNotCorrectBuildingType(BuildingTypeException e) {
+    return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(NotEnoughResourceException.class)
+  public ResponseEntity handleConflictCausedByNotEnoughResources(NotEnoughResourceException e) {
+    return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
+  }
 }

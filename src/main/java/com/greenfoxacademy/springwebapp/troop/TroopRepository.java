@@ -8,4 +8,6 @@ import java.util.List;
 public interface TroopRepository extends CrudRepository<Troop, Integer> {
 
   List<Troop> findAll();
+
+  List<Troop> findTroopsByKingdomId(Integer kingdomId);
 }
