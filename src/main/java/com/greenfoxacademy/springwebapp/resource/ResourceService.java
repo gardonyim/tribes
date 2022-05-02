@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.resource;
 
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
+import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 
 import java.util.List;
 
@@ -12,6 +13,6 @@ public interface ResourceService {
 
   ResourceDTO convertToResourceDTO(Resource resource);
 
-  List<ResourceDTO> convertToResourceDtoList(List<Resource> resourceList);
+  ResourcesResDTO convertToResourcesResDto(List<Resource> resourceList);
 
 }

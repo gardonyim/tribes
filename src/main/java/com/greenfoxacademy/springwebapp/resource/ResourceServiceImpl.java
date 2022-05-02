@@ -5,6 +5,7 @@ import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import java.util.List;
 
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
+import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,10 +46,10 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   @Override
-  public List<ResourceDTO> convertToResourceDtoList(List<Resource> resourceList) {
-    return resourceList.stream()
+  public ResourcesResDTO convertToResourcesResDto(List<Resource> resourceList) {
+    return new ResourcesResDTO(resourceList.stream()
         .map(this::convertToResourceDTO)
-        .collect(Collectors.toList());
+        .collect(Collectors.toList()));
   }
 
 }

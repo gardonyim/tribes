@@ -1,7 +1,6 @@
 package com.greenfoxacademy.springwebapp.resource;
 
 import com.greenfoxacademy.springwebapp.player.models.Player;
-import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,9 +20,9 @@ public class ResourceController {
   @GetMapping("/kingdom/resources")
   public ResponseEntity registerUser(UsernamePasswordAuthenticationToken user) {
     Player player = (Player)user.getPrincipal();
-    ResourcesResDTO resourcesResDTO = new ResourcesResDTO(
-        resourceService.convertToResourceDtoList(player.getKingdom().getResources()));
-    return ResponseEntity.status(200).body(resourcesResDTO);
+    return ResponseEntity
+        .status(200)
+        .body(resourceService.convertToResourcesResDto(player.getKingdom().getResources()));
   }
 
 }
