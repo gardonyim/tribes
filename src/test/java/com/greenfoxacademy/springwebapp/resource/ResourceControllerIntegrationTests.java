@@ -64,5 +64,4 @@ public class ResourceControllerIntegrationTests {
         .andExpect(jsonPath("$.resources[1].updatedAt").value(ldtEpochInSec));
   }
 
-
 }

@@ -1,5 +1,7 @@
 package com.greenfoxacademy.springwebapp.resource.models;
 
+import java.util.Objects;
+
 public class ResourceDTO {
   private String type;
   private int amount;
@@ -46,5 +48,25 @@ public class ResourceDTO {
 
   public void setUpdatedAt(long updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    } else if (o == null || getClass() != o.getClass()) {
+      return false;
+    } else {
+      ResourceDTO that = (ResourceDTO) o;
+      return amount == that.amount
+          && generation == that.generation
+          && updatedAt == that.updatedAt
+          && Objects.equals(type, that.type);
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, amount, generation, updatedAt);
   }
 }

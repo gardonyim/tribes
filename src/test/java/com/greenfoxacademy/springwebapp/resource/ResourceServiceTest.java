@@ -3,6 +3,7 @@ package com.greenfoxacademy.springwebapp.resource;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
+import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +17,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -45,10 +45,7 @@ public class ResourceServiceTest {
       actual = resourceService.convertToResourceDTO(resource);
     }
 
-    Assert.assertEquals(expected.getType(), actual.getType());
-    Assert.assertEquals(expected.getAmount(), actual.getAmount());
-    Assert.assertEquals(expected.getGeneration(), actual.getGeneration());
-    Assert.assertEquals(expected.getUpdatedAt(), actual.getUpdatedAt());
+    Assert.assertTrue(expected.equals(actual));
   }
 
   @Test
@@ -59,18 +56,17 @@ public class ResourceServiceTest {
         resource1.getResourceType().getDescription(), resource1.getAmount(), resource1.getGeneration(), 5000L);
     ResourceDTO resourceDTO2 = new ResourceDTO(
         resource2.getResourceType().getDescription(), resource2.getAmount(), resource2.getGeneration(), 5000L);
-    List<ResourceDTO> expected = new ArrayList<>(Arrays.asList(resourceDTO1, resourceDTO2));
-    List<ResourceDTO> actual;
+    ResourcesResDTO expected = new ResourcesResDTO(new ArrayList<>(Arrays.asList(resourceDTO1, resourceDTO2)));
+    ResourcesResDTO actual;
     try (MockedStatic<TimeService> timeServiceMockedStatic = Mockito.mockStatic(TimeService.class)) {
       timeServiceMockedStatic.when(() -> TimeService.toEpochSecond(any())).thenReturn(5000L);
-      actual = resourceService.convertToResourceDtoList(new ArrayList<>(Arrays.asList(resource1, resource2)));
+      actual = resourceService.convertToResourcesResDto(new ArrayList<>(Arrays.asList(resource1, resource2)));
     }
 
-    Assert.assertEquals(expected.size(), actual.size());
-    Assert.assertEquals(expected.get(0).getType(), actual.get(0).getType());
-    Assert.assertEquals(expected.get(0).getAmount(), actual.get(0).getAmount());
-    Assert.assertEquals(expected.get(0).getGeneration(), actual.get(0).getGeneration());
-    Assert.assertEquals(expected.get(0).getUpdatedAt(), actual.get(0).getUpdatedAt());
+    Assert.assertEquals(expected.getResources().size(), actual.getResources().size());
+    Assert.assertTrue(expected.getResources().get(0).equals(actual.getResources().get(0)));
+    Assert.assertTrue(expected.getResources().get(1).equals(actual.getResources().get(1)));
+
   }
 
 }
