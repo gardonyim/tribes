@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -32,6 +33,9 @@ public class Kingdom {
   @OneToMany(mappedBy = "kingdom")
   @LazyCollection(LazyCollectionOption.FALSE)
   private List<Resource> resources;
+  @OneToMany(mappedBy = "kingdom")
+  @LazyCollection(LazyCollectionOption.FALSE)
+  private List<Troop> troops;
   @OneToOne()
   private Location location;
 
@@ -117,5 +121,12 @@ public class Kingdom {
   public void setLocation(Location location) {
     this.location = location;
   }
-  
+
+  public List<Troop> getTroops() {
+    return troops;
+  }
+
+  public void setTroops(List<Troop> troops) {
+    this.troops = troops;
+  }
 }
