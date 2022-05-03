@@ -11,13 +11,7 @@ public class BuildingDTO {
   private long startedAt;
   private long finishedAt;
 
-  public BuildingDTO(Building building) {
-    id = building.getId();
-    buildingType = building.getBuildingType().name().toLowerCase();
-    level = building.getLevel();
-    hp = building.getHp();
-    startedAt = TimeService.toEpochSecond(building.getStartedAt());
-    finishedAt = TimeService.toEpochSecond(building.getFinishedAt());
+  public BuildingDTO() {
   }
 
   public BuildingDTO(int id,

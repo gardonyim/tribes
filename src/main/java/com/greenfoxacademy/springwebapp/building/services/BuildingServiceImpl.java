@@ -47,10 +47,13 @@ public class BuildingServiceImpl implements BuildingService {
 
   public BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom) {
     validateAddBuildingRequest(typeDTO, kingdom);
-    return new BuildingDTO(buildingRepository.save(constructBuilding(typeDTO.getType(), kingdom)));
+    String type = typeDTO.getType();
+    Building building = constructBuilding(type, 1, kingdom);
+    resourceService.pay(kingdom, gameObjectRuleHolder.getBuildingCostMultiplier(type, 1));
+    return convertToDTO(buildingRepository.save(building));
   }
 
-  private void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
+  public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
     if (typeDTO.getType() == null || typeDTO.getType().trim().isEmpty()) {
       throw new RequestParameterMissingException("Missing parameter(s): type!");
     }
@@ -71,18 +74,27 @@ public class BuildingServiceImpl implements BuildingService {
     }
   }
 
-  private Building constructBuilding(String type,
-                                     Kingdom kingdom) {
+  public Building constructBuilding(String type, int level, Kingdom kingdom) {
     Building building = new Building();
     building.setBuildingType(BuildingType.valueOf(type.toUpperCase()));
-    building.setLevel(1);
-    building.setHp(gameObjectRuleHolder.getHpMultiplier(type, 1));
+    building.setLevel(level);
+    building.setHp(gameObjectRuleHolder.getHpMultiplier(type, level));
     building.setKingdom(kingdom);
     building.setStartedAt(TimeService.actualTime());
     building.setFinishedAt(TimeService.timeAtNSecondsLater(
-        gameObjectRuleHolder.getBuildingTimeMultiplier(type, 1)));
-    resourceService.pay(kingdom, gameObjectRuleHolder.getBuildingCostMultiplier(type, 1));
+        gameObjectRuleHolder.getBuildingTimeMultiplier(type, level)));
     return building;
+  }
+
+  public BuildingDTO convertToDTO(Building building) {
+    BuildingDTO dto = new BuildingDTO();
+    dto.setId(building.getId());
+    dto.setBuildingType(building.getBuildingType().name().toLowerCase());
+    dto.setLevel(building.getLevel());
+    dto.setHp(building.getHp());
+    dto.setStartedAt(TimeService.toEpochSecond(building.getStartedAt()));
+    dto.setFinishedAt(TimeService.toEpochSecond(building.getFinishedAt()));
+    return dto;
   }
 
 }
