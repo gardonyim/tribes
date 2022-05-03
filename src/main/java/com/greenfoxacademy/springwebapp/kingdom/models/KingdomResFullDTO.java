@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.kingdom.models;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
-import com.greenfoxacademy.springwebapp.troop.models.TroopDTO;
+import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
 import java.util.List;
 

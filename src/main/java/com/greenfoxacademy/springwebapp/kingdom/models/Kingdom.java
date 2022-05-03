@@ -128,11 +128,4 @@ public class Kingdom {
     this.location = location;
   }
 
-  public List<Troop> getTroops() {
-    return troops;
-  }
-
-  public void setTroops(List<Troop> troops) {
-    this.troops = troops;
-  }
 }
