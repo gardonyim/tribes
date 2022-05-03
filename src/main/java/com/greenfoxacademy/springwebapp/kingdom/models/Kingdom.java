@@ -4,8 +4,11 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,8 +27,10 @@ public class Kingdom {
   @OneToOne()
   private Player player;
   @OneToMany(mappedBy = "kingdom")
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<Building> buildings;
   @OneToMany(mappedBy = "kingdom")
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<Resource> resources;
   @OneToOne()
   private Location location;
