@@ -6,6 +6,9 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
@@ -94,15 +97,64 @@ public class ResourceServiceTest {
   }
 
   @Test
-  public void when_pay_should_setGoldToValidAmount() {
-    Resource gold = new Resource(ResourceType.GOLD, 1000);
+  public void when_pay_should_setGoldToValidAmountAndUpdatedAtToCurrentTime() {
+    Kingdom kingdom = new Kingdom();
+    Resource gold = new Resource(ResourceType.GOLD, 1000, 2,
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
     when(resourceRepository.findFirstByKingdomAndResourceType(any(), any())).thenReturn(Optional.of(gold));
     when(resourceRepository.save(any())).then(returnsFirstArg());
 
-    Resource actual = resourceService.pay(new Kingdom(), 100);
+    Resource actual = resourceService.pay(kingdom, 100);
 
     Assert.assertEquals(ResourceType.GOLD, actual.getResourceType());
-    Assert.assertEquals(900, actual.getAmount());
+    Assert.assertEquals(1100, actual.getAmount());
+  }
+
+  @Test
+  public void when_updateResources_should_returnKingdomWithUpdatedResources() {
+    LocalDateTime previousUpdate = LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101);
+    Kingdom kingdom = new Kingdom();
+    List<Resource> resources = new ArrayList<>();
+    resources.add(new Resource(ResourceType.GOLD, 1000, 1, previousUpdate, kingdom));
+    resources.add(new Resource(ResourceType.FOOD, 1000, 2, previousUpdate, kingdom));
+    kingdom.setResources(resources);
+    when(resourceRepository.save(any())).then(returnsFirstArg());
+
+    Kingdom actual = resourceService.updateResources(kingdom);
+
+    Assert.assertEquals(1100, actual.getResources().get(0).getAmount());
+    Assert.assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS),
+        actual.getResources().get(0).getUpdatedAt());
+    Assert.assertEquals(1200, actual.getResources().get(1).getAmount());
+    Assert.assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS),
+        actual.getResources().get(1).getUpdatedAt());
+  }
+
+  @Test
+  public void when_updateResource_should_returnResourceWithUpdatedAmountAndUpdateTime() {
+    Kingdom kingdom = new Kingdom();
+    Resource resource = new Resource(ResourceType.FOOD, 1000, 5,
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
+    when(resourceRepository.save(any())).then(returnsFirstArg());
+
+    Resource actual = resourceService.updateResource(resource);
+
+    Assert.assertEquals(ResourceType.FOOD, actual.getResourceType());
+    Assert.assertEquals(1500, actual.getAmount());
+    Assert.assertEquals(5, actual.getGeneration());
+    Assert.assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS), actual.getUpdatedAt());
+    Assert.assertEquals(kingdom, actual.getKingdom());
+  }
+
+  @Test
+  public void when_calculateAvailableResource_should_returnValidAmount() {
+    Kingdom kingdom = new Kingdom();
+    Resource resource = new Resource(ResourceType.FOOD, 1000, 10,
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
+
+    int actual = resourceService.calculateAvailableResource(resource);
+
+    Assert.assertEquals(2000, actual);
   }
 
 }
