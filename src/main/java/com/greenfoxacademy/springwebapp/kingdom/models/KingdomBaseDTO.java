@@ -2,16 +2,16 @@ package com.greenfoxacademy.springwebapp.kingdom.models;
 
 import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 
-public class KingdomDTO {
+public class KingdomBaseDTO {
   private int kingdomId;
   private String name;
   private int userId;
   private LocationDTO location;
 
-  public KingdomDTO() {
+  public KingdomBaseDTO() {
   }
 
-  public KingdomDTO(int kingdomId, String name, int userId, LocationDTO location) {
+  public KingdomBaseDTO(int kingdomId, String name, int userId, LocationDTO location) {
     this.kingdomId = kingdomId;
     this.name = name;
     this.userId = userId;
