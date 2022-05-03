@@ -4,6 +4,9 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
 import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
@@ -13,6 +16,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.greenfoxacademy.springwebapp.troop.TroopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +29,20 @@ public class KingdomServiceImpl implements KingdomService {
   private BuildingService buildingService;
   private ResourceService resourceService;
   private LocationService locationService;
+  private TroopService troopService;
 
   @Autowired
   public KingdomServiceImpl(
       KingdomRepository kingdomRepository,
       BuildingService buildingService,
       ResourceService resourceService,
-      LocationService locationService) {
+      LocationService locationService,
+      TroopService troopService) {
     this.kingdomRepository = kingdomRepository;
     this.buildingService = buildingService;
     this.resourceService = resourceService;
     this.locationService = locationService;
+    this.troopService = troopService;
   }
 
   @Override
@@ -45,6 +54,35 @@ public class KingdomServiceImpl implements KingdomService {
         locationService.createLocation()));
     return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
   }
+
+  @Override
+  public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
+    return new KingdomResFullDTO(
+        kingdom.getId(),
+        kingdom.getName(),
+        kingdom.getPlayer().getId(),
+        locationService.convertToLocationDTO(kingdom.getLocation()),
+        kingdom.getBuildings().stream()
+            .map(buildingService::convertToDTO).collect(Collectors.toList()),
+        kingdom.getResources().stream()
+            .map(resourceService::convertToResourceDTO).collect(Collectors.toList()),
+        kingdom.getTroops().stream()
+            .map(troopService::convertToTroopDTO).collect(Collectors.toList())
+    );
+  }
+
+  @Override
+  public KingdomResWrappedDTO convertToKingdomResWrappedDTO(Kingdom kingdom) {
+    return new KingdomResWrappedDTO(
+        new KingdomBaseDTO(
+            kingdom.getId(),
+            kingdom.getName(),
+            kingdom.getPlayer().getId(),
+            locationService.convertToLocationDTO(kingdom.getLocation())
+        )
+    );
+  }
+
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {
     LocalDateTime currentTimestamp = LocalDateTime.now();
