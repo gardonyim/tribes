@@ -1,7 +1,5 @@
 package com.greenfoxacademy.springwebapp.building.models;
 
-import com.greenfoxacademy.springwebapp.utilities.TimeService;
-
 public class BuildingDTO {
 
   private int id;
@@ -89,4 +87,14 @@ public class BuildingDTO {
     return buildingType.equals(that.buildingType);
   }
 
+  @Override
+  public int hashCode() {
+    int result = id;
+    result = 31 * result + (buildingType != null ? buildingType.hashCode() : 0);
+    result = 31 * result + level;
+    result = 31 * result + hp;
+    result = 31 * result + (int) (startedAt ^ (startedAt >>> 32));
+    result = 31 * result + (int) (finishedAt ^ (finishedAt >>> 32));
+    return result;
+  }
 }

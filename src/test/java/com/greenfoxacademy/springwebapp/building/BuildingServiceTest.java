@@ -16,7 +16,6 @@ import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -37,7 +36,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -127,28 +125,6 @@ public class BuildingServiceTest {
     buildingService.addBuilding(buildingTypeDTO, kingdom);
   }
 
-//  @Test
-//  public void when_addBuildingWithValidParameters_should_returnBuildingDTO() {
-//    BuildingTypeDTO buildingTypeDTO = new BuildingTypeDTO("mine");
-//    Kingdom kingdom = new Kingdom();
-//    Resource gold = new Resource(ResourceType.GOLD, 100);
-//    Building townhall = new Building(BuildingType.TOWNHALL, 1, kingdom, null, null);
-//    when(buildingRepository.findFirstByBuildingTypeAndKingdom(any(), any()))
-//        .thenReturn(Optional.of(townhall));
-//    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
-//    when(gameObjectRuleHolder.getHpMultiplier(anyString(), anyInt())).thenReturn(100);
-//    when(gameObjectRuleHolder.getBuildingTimeMultiplier(anyString(), anyInt())).thenReturn(60);
-//    when(resourceService.getResourceByKingdomAndType(any(), any())).thenReturn(gold);
-//    when(buildingRepository.save(any())).then(returnsFirstArg());
-//    BuildingDTO expected = new BuildingDTO(0, BuildingType.MINE, 1, 100,
-//        TimeService.toEpochSecond(TimeService.actualTime()),
-//        TimeService.toEpochSecond(TimeService.timeAtNSecondsLater(60)));
-//
-//    BuildingDTO actual = buildingService.addBuilding(buildingTypeDTO, kingdom);
-//
-//    Assert.assertEquals(expected, actual);
-//  }
-
   @Test
   public void when_constructBuilding_should_returnValidBuilding() {
     Kingdom kingdom = new Kingdom();
@@ -182,46 +158,29 @@ public class BuildingServiceTest {
 
     BuildingDTO actual = buildingService.convertToDTO(building);
 
-    Assert.assertTrue(expected.equals(actual));
+    Assert.assertEquals(expected, actual);
   }
 
   @Test
   public void when_addBuilding_should_returnValidBuildingDTO() {
     BuildingTypeDTO typeDTO = new BuildingTypeDTO("academy");
     Kingdom kingdom = new Kingdom();
-//    Mockito.doNothing().when(buildingService.validateAddBuildingRequest(typeDTO, kingdom));
-    when(buildingService.constructBuilding(anyString(), anyInt(), any())).thenReturn(new Building());
-    Mockito.doNothing().when(resourceService.pay(any(), anyInt()));
+    Building building = new Building();
+    Mockito.doNothing().when(buildingService).validateAddBuildingRequest(typeDTO, kingdom);
+    Mockito.doReturn(building).when(buildingService).constructBuilding(anyString(), anyInt(), any());
+    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
+    when(resourceService.pay(any(), anyInt())).thenReturn(null);
     when(buildingRepository.save(any())).then(returnsFirstArg());
-    when(buildingService.convertToDTO(any())).thenReturn(new BuildingDTO());
+    Mockito.doReturn(new BuildingDTO()).when(buildingService).convertToDTO(any());
 
     buildingService.addBuilding(typeDTO, kingdom);
 
+    Mockito.verify(buildingService, times(1)).validateAddBuildingRequest(typeDTO, kingdom);
     Mockito.verify(buildingService, times(1)).constructBuilding("academy", 1, kingdom);
+    Mockito.verify(gameObjectRuleHolder, times(1)).getBuildingCostMultiplier("academy", 1);
+    Mockito.verify(resourceService, times(1)).pay(kingdom, 100);
+    Mockito.verify(buildingRepository, times(1)).save(building);
+    Mockito.verify(buildingService, times(1)).convertToDTO(building);
   }
-
-//  @Test
-//  public void when_addBuildingWithValidParameters_should_returnBuildingDTO() {
-//    BuildingTypeDTO buildingTypeDTO = new BuildingTypeDTO("mine");
-//    Kingdom kingdom = new Kingdom();
-//    Resource gold = new Resource(ResourceType.GOLD, 100);
-//    Building townhall = new Building(BuildingType.TOWNHALL, 1, kingdom, null, null);
-//    when(buildingRepository.findFirstByBuildingTypeAndKingdom(any(), any()))
-//        .thenReturn(Optional.of(townhall));
-//    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
-//    when(gameObjectRuleHolder.getHpMultiplier(anyString(), anyInt())).thenReturn(100);
-//    when(gameObjectRuleHolder.getBuildingTimeMultiplier(anyString(), anyInt())).thenReturn(60);
-//    when(resourceService.getResourceByKingdomAndType(any(), any())).thenReturn(gold);
-//    when(buildingRepository.save(any())).then(returnsFirstArg());
-//    try (MockedStatic<TimeService> timeServiceMockedStatic = Mockito.mockStatic(TimeService.class)) {
-//      timeServiceMockedStatic.when(() -> TimeService.toEpochSecond(any())).thenReturn(5000L);
-//      BuildingDTO expected = new BuildingDTO(0, BuildingType.MINE, 1, 100,
-//          5000L, 5000L);
-//
-//      BuildingDTO actual = buildingService.addBuilding(buildingTypeDTO, kingdom);
-//
-//      Assert.assertEquals(expected, actual);
-//    }
-//  }
 
 }
