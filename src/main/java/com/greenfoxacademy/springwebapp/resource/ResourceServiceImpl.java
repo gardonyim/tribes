@@ -50,6 +50,7 @@ public class ResourceServiceImpl implements ResourceService {
     return new ResourcesResDTO(resourceList.stream()
         .map(this::convertToResourceDTO)
         .collect(Collectors.toList()));
+  }
 
   @Override
   public Resource getResourceByKingdomAndType(Kingdom kingdom, ResourceType type) {
