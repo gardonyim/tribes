@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.kingdom.models;
 
 import java.util.Objects;
 
+
 public class KingdomResWrappedDTO {
 
   private KingdomBaseDTO kingdom;
