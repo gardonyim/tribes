@@ -127,5 +127,5 @@ public class Kingdom {
   public void setLocation(Location location) {
     this.location = location;
   }
-
+  
 }
