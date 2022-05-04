@@ -13,6 +13,8 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedForbiddenResourceException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,6 +91,29 @@ public class TroopServiceImpl implements TroopService {
     if (troopPostDTO == null || troopPostDTO.getBuildingId() == null) {
       throw new RequestParameterMissingException("buildingId must be present");
     }
+  }
+
+  public TroopDTO getTroopById(Kingdom kingdom, Integer id) {
+    Troop troop = troopRepository.findById(id).orElse(null);
+    if (troop == null) {
+      throw new RequestedResourceNotFoundException("Id not found");
+    }
+    if (troop.getKingdom().getId() != kingdom.getId()) {
+      throw new RequestedForbiddenResourceException("Forbidden action");
+    }
+    return convertToDTO(troop);
+  }
+
+  private TroopDTO convertToDTO(Troop troop) {
+    TroopDTO dto = new TroopDTO();
+    dto.setId(troop.getId());
+    dto.setLevel(troop.getLevel());
+    dto.setHp(troop.getHp());
+    dto.setAttack(troop.getAttack());
+    dto.setDefence(troop.getDefence());
+    dto.setStartedAt(TimeService.toEpochSecond(troop.getStartedAt()));
+    dto.setFinishedAt(TimeService.toEpochSecond(troop.getFinishedAt()));
+    return dto;
   }
 
 }

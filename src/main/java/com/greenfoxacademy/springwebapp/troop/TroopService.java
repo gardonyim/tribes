@@ -16,4 +16,6 @@ public interface TroopService {
 
   TroopDTO saveTroop(Kingdom kingdom, TroopPostDTO troopPostDTO);
 
+  TroopDTO getTroopById(Kingdom kingdom, Integer id);
+
 }
