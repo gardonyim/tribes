@@ -1,7 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.google.gson.Gson;
-import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.dtos.KingdomPostDTO;
 import com.greenfoxacademy.springwebapp.player.PlayerService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -29,10 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-@Import(TestNoSecurityConfig.class)
+@AutoConfigureMockMvc
+//@Import(TestNoSecurityConfig.class)
 @Transactional
 public class KingdomIntegrationTests {
   @Autowired
@@ -113,7 +113,9 @@ public class KingdomIntegrationTests {
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + getJwtToken()))
             .andExpect(status().is(400))
-            .andExpect(content().json(gson.toJson(new ErrorDTO("buildingId must be present"))));
+            .andExpect(content().json(
+                    gson.toJson(
+                            new ErrorDTO("buildingId must be present"))));
   }
 
   @Sql({"classpath:data.sql", "classpath:resource.sql"})
@@ -130,7 +132,7 @@ public class KingdomIntegrationTests {
             .andExpect(status().is(403))
             .andExpect(content().json(
                     gson.toJson(
-                            new ErrorDTO("There is no building with id " + kingdomPostDTO.getBuildingId())
+                            new ErrorDTO("There is no building with this id")
                     )
             ));
   }
@@ -147,7 +149,9 @@ public class KingdomIntegrationTests {
                     .content(gson.toJson(kingdomPostDTO))
                     .header("Authorization", "Bearer " + getJwtToken()))
             .andExpect(status().is(406))
-            .andExpect(content().json(gson.toJson(new ErrorDTO("Not a valid academy id"))));
+            .andExpect(content().json(
+                    gson.toJson(
+                            new ErrorDTO("Not a valid academy id"))));
   }
 
   @Sql({"classpath:data.sql", "classpath:building.sql"})
@@ -162,6 +166,8 @@ public class KingdomIntegrationTests {
                     .content(gson.toJson(kingdomPostDTO))
                     .header("Authorization", "Bearer " + getJwtToken()))
             .andExpect(status().is(409))
-            .andExpect(content().json(gson.toJson(new ErrorDTO("Not enough resource"))));
+            .andExpect(content().json(
+                    gson.toJson(
+                            new ErrorDTO("Not enough resource"))));
   }
 }

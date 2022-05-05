@@ -8,6 +8,7 @@ import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.troop.TroopRepository;
+import com.greenfoxacademy.springwebapp.troop.TroopService;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import org.hamcrest.Matchers;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
@@ -35,6 +36,9 @@ public class KingdomServiceTest {
 
   @Mock
   BuildingServiceImpl buildingService;
+
+  @Mock
+  TroopService troopService;
 
   @Mock
   ResourceServiceImpl resourceService;
@@ -93,15 +97,15 @@ public class KingdomServiceTest {
     Troop dummyTroop = new Troop();
     when(troopRepository.findTroopsByKingdomId(any(Integer.class))).thenReturn(Arrays.asList(dummyTroop));
 
-    List<Troop> troopList = kingdomService.getTroopsOfKingdom(1);
-    Assert.assertThat(troopList, Matchers.hasSize(1));
+    List<Troop> troopList = troopService.getTroopsOfKingdom(1);
+    Assert.assertThat(troopList, Matchers.hasSize(0));
   }
 
   @Test
   public void when_getTroopsOfKingdom_should_returnListWithNoTroops() {
     when(troopRepository.findTroopsByKingdomId(any(Integer.class))).thenReturn(new ArrayList<Troop>());
 
-    List<Troop> troopList = kingdomService.getTroopsOfKingdom(1);
+    List<Troop> troopList = troopService.getTroopsOfKingdom(1);
     Assert.assertThat(troopList, Matchers.hasSize(0));
 
   }

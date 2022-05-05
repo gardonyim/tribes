@@ -1,15 +1,13 @@
 package com.greenfoxacademy.springwebapp.troop.dtos;
 
-import java.time.LocalDateTime;
-
 public class TroopDTO {
   private Integer id;
   private Integer level;
   private Integer hp;
   private Integer attack;
   private Integer defence;
-  private LocalDateTime startedAt;
-  private LocalDateTime finishedAt;
+  private Long startedAt;
+  private Long finishedAt;
 
   public Integer getId() {
     return id;
@@ -51,19 +49,19 @@ public class TroopDTO {
     this.defence = defence;
   }
 
-  public LocalDateTime getStartedAt() {
+  public Long getStartedAt() {
     return startedAt;
   }
 
-  public void setStartedAt(LocalDateTime startedAt) {
+  public void setStartedAt(Long startedAt) {
     this.startedAt = startedAt;
   }
 
-  public LocalDateTime getFinishedAt() {
+  public Long getFinishedAt() {
     return finishedAt;
   }
 
-  public void setFinishedAt(LocalDateTime finishedAt) {
+  public void setFinishedAt(Long finishedAt) {
     this.finishedAt = finishedAt;
   }
 }

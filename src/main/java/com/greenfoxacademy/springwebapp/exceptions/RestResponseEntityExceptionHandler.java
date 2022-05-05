@@ -14,28 +14,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(RequestNotAcceptableException.class)
-  public ResponseEntity handleNotAcceptableRequest(RequestNotAcceptableException e) {
+  @ExceptionHandler({RequestNotAcceptableException.class})
+  public ResponseEntity handleNotAcceptableRequest(RuntimeException e) {
     return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(RequestCauseConflictException.class)
-  public ResponseEntity handleConflictCausedByRequest(RequestCauseConflictException e) {
+  @ExceptionHandler({RequestCauseConflictException.class, NotEnoughResourceException.class})
+  public ResponseEntity handleConflictCausedByRequest(RuntimeException e) {
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(BuildingDoesNotBelongToPlayerException.class)
-  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(BuildingDoesNotBelongToPlayerException e) {
+  @ExceptionHandler(WrongIdException.class)
+  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(WrongIdException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(BuildingTypeException.class)
-  public ResponseEntity handleConflictCausedByNotCorrectBuildingType(BuildingTypeException e) {
-    return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(NotEnoughResourceException.class)
-  public ResponseEntity handleConflictCausedByNotEnoughResources(NotEnoughResourceException e) {
-    return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 }

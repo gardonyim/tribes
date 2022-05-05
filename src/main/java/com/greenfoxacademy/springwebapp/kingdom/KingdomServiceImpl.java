@@ -2,10 +2,11 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
-import com.greenfoxacademy.springwebapp.exceptions.BuildingDoesNotBelongToPlayerException;
-import com.greenfoxacademy.springwebapp.exceptions.BuildingTypeException;
+import com.greenfoxacademy.springwebapp.exceptions.WrongIdException;
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.dtos.KingdomPostDTO;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -18,33 +19,31 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.greenfoxacademy.springwebapp.troop.TroopRepository;
-import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KingdomServiceImpl implements KingdomService {
 
-  private KingdomRepository kingdomRepository;
-  private BuildingService buildingService;
-  private ResourceService resourceService;
-  private LocationService locationService;
-  private TroopRepository troopRepository;
+  private final KingdomRepository kingdomRepository;
+  private final BuildingService buildingService;
+  private final ResourceService resourceService;
+  private final LocationService locationService;
 
   @Autowired
   public KingdomServiceImpl(
       KingdomRepository kingdomRepository,
       BuildingService buildingService,
       ResourceService resourceService,
-      LocationService locationService,
-      TroopRepository troopRepository) {
+      LocationService locationService) {
     this.kingdomRepository = kingdomRepository;
-    this.troopRepository = troopRepository;
     this.buildingService = buildingService;
     this.resourceService = resourceService;
     this.locationService = locationService;
   }
+
+  @Autowired
+  private GameObjectRuleHolder gameObjectRuleHolder;
 
   @Override
   public Kingdom save(String kingdomName, Player player) {
@@ -57,10 +56,11 @@ public class KingdomServiceImpl implements KingdomService {
   }
 
   @Override
-  public List<Troop> getTroopsOfKingdom(Integer kingdomId) {
-    return troopRepository.findTroopsByKingdomId(kingdomId);
+  public void checkInputParameters(KingdomPostDTO kingdomPostDTO) {
+    if (kingdomPostDTO == null || kingdomPostDTO.getBuildingId() == null) {
+      throw new RequestParameterMissingException("buildingId must be present");
+    }
   }
-
 
   @Override
   public void checkResources(Building building, int level) throws NotEnoughResourceException {
@@ -71,35 +71,29 @@ public class KingdomServiceImpl implements KingdomService {
             .filter(resource -> resource.getResourceType() == ResourceType.GOLD)
             .mapToInt(Resource::getAmount)
             .sum();
-    int requiredGold = level == 1 ? 150 : level * 100;
-    if (requiredGold > goldResourcesNumber) {
+    int requiredCost = gameObjectRuleHolder.getBuildingCostMultiplier(BuildingType.ACADEMY.name(), level);
+    if (requiredCost > goldResourcesNumber) {
       throw new NotEnoughResourceException();
     }
   }
 
   @Override
-  public void checkBuildingType(Building building) throws BuildingTypeException {
+  public void checkBuildingId(Building building, Player player) throws WrongIdException {
+    if (building.getKingdom().getPlayer().getId() != player.getId()) {
+      throw new WrongIdException("Forbidden action");
+    }
+  }
+
+  @Override
+  public void checkBuildingType(Building building) throws RequestNotAcceptableException {
     if (building.getBuildingType() != BuildingType.ACADEMY) {
-      throw new BuildingTypeException();
+      throw new RequestNotAcceptableException("Not a valid academy id");
     }
   }
 
   @Override
-  public void checkOwner(Building building, Integer kingdomId) throws BuildingDoesNotBelongToPlayerException {
-    if (building.getKingdom().getId() != kingdomId) {
-      throw new BuildingDoesNotBelongToPlayerException();
-    }
-  }
+  public void checkOwner(Building building, Integer kingdomId) {
 
-  @Override
-  public void checkInputParameters(KingdomPostDTO kingdomPostDTO, String jwtToken) {
-    if (kingdomPostDTO == null || kingdomPostDTO.getBuildingId() == null) {
-      throw new RequestParameterMissingException("buildingId must be present");
-    }
-
-    if (jwtToken == null) {
-      throw new RequestParameterMissingException("JWT token must be present.");
-    }
   }
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {

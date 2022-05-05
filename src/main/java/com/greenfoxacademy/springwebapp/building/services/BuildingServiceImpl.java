@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.building.services;
 
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -30,5 +31,12 @@ public class BuildingServiceImpl implements BuildingService {
   @Override
   public Iterable<Building> saveAll(List<Building> buildings) {
     return buildingRepository.saveAll(buildings);
+  }
+
+  @Override
+  public void checkOwner(Building building, Integer kingdomId) throws RequestNotAcceptableException {
+    if (building.getKingdom().getId() != kingdomId) {
+      throw new RequestNotAcceptableException("Not a valid academy id");
+    }
   }
 }

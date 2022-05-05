@@ -12,4 +12,6 @@ public interface BuildingService {
   Building saveBuilding(Building building);
 
   Iterable<Building> saveAll(List<Building> buildings);
+
+  public void checkOwner(Building building, Integer kingdomId);
 }
