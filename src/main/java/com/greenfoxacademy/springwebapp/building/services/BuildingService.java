@@ -1,17 +1,22 @@
 package com.greenfoxacademy.springwebapp.building.services;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
+import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import java.util.List;
-
-import java.util.Optional;
 
 public interface BuildingService {
 
-  public Optional<Building> getBuildingById(Integer buildingId);
+  Building getBuildingById(Integer buildingId);
 
   Building saveBuilding(Building building);
 
   Iterable<Building> saveAll(List<Building> buildings);
 
-  public void checkOwner(Building building, Integer kingdomId);
+  void checkOwner(Building building, Integer kingdomId) throws ForbiddenActionException;
+
+  BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom);
+
 }

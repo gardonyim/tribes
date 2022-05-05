@@ -1,12 +1,12 @@
-package com.greenfoxacademy.springwebapp.kingdom.dtos;
+package com.greenfoxacademy.springwebapp.troop.models.dtos;
 
-public class KingdomPostDTO {
+public class TroopPostDTO {
   private Integer buildingId;
 
-  public KingdomPostDTO() {
+  public TroopPostDTO() {
   }
 
-  public KingdomPostDTO(Integer buildingId) {
+  public TroopPostDTO(Integer buildingId) {
     this.buildingId = buildingId;
   }
 

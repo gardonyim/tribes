@@ -2,12 +2,7 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
-import com.greenfoxacademy.springwebapp.exceptions.WrongIdException;
-import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
-import com.greenfoxacademy.springwebapp.kingdom.dtos.KingdomPostDTO;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.LocationService;
@@ -53,47 +48,6 @@ public class KingdomServiceImpl implements KingdomService {
     Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player,
         locationService.createLocation()));
     return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
-  }
-
-  @Override
-  public void checkInputParameters(KingdomPostDTO kingdomPostDTO) {
-    if (kingdomPostDTO == null || kingdomPostDTO.getBuildingId() == null) {
-      throw new RequestParameterMissingException("buildingId must be present");
-    }
-  }
-
-  @Override
-  public void checkResources(Building building, int level) throws NotEnoughResourceException {
-    int goldResourcesNumber = building
-            .getKingdom()
-            .getResources()
-            .stream()
-            .filter(resource -> resource.getResourceType() == ResourceType.GOLD)
-            .mapToInt(Resource::getAmount)
-            .sum();
-    int requiredCost = gameObjectRuleHolder.getBuildingCostMultiplier(BuildingType.ACADEMY.name(), level);
-    if (requiredCost > goldResourcesNumber) {
-      throw new NotEnoughResourceException();
-    }
-  }
-
-  @Override
-  public void checkBuildingId(Building building, Player player) throws WrongIdException {
-    if (building.getKingdom().getPlayer().getId() != player.getId()) {
-      throw new WrongIdException("Forbidden action");
-    }
-  }
-
-  @Override
-  public void checkBuildingType(Building building) throws RequestNotAcceptableException {
-    if (building.getBuildingType() != BuildingType.ACADEMY) {
-      throw new RequestNotAcceptableException("Not a valid academy id");
-    }
-  }
-
-  @Override
-  public void checkOwner(Building building, Integer kingdomId) {
-
   }
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {

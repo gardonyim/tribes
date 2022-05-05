@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Entity(name = "troops")
 public class Troop {
@@ -110,19 +109,4 @@ public class Troop {
     this.kingdom = kingdom;
   }
 
-  public Long getStartedAtAsLong() {
-    if (startedAt == null) {
-      return 0L;
-    } else {
-      return this.startedAt.toInstant(ZoneOffset.UTC).toEpochMilli() / 1000;
-    }
-  }
-
-  public Long getFinishedAtAsLong() {
-    if (finishedAt == null) {
-      return 0L;
-    } else {
-      return this.finishedAt.toInstant(ZoneOffset.UTC).toEpochMilli() / 1000;
-    }
-  }
 }

@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.utilities;
 
 import com.greenfoxacademy.springwebapp.player.models.Player;
-import io.jsonwebtoken.Claims;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,16 +19,6 @@ public class JwtUtils {
   @Value("${security.jwt-key:}")
   private String jwtKey;
 
-  public Claims getClaimsFromJwtToken(String jwtToken) {
-    SecretKey key = Keys.hmacShaKeyFor(jwtKey.getBytes(StandardCharsets.UTF_8));
-    Claims claims = Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(jwtToken)
-            .getBody();
-    return claims;
-  }
-
   public String generateJwtString(Player player) {
     SecretKey key = Keys.hmacShaKeyFor(jwtKey.getBytes(StandardCharsets.UTF_8));
     return Jwts.builder()
@@ -42,9 +32,4 @@ public class JwtUtils {
             .compact();
   }
 
-  public Integer getKingdomIdFromJwtToken(String jwtToken) {
-    Claims claims = getClaimsFromJwtToken(jwtToken.substring(7));
-    Integer kingdomId = claims.get("kingdomId", Integer.class);
-    return kingdomId;
-  }
 }

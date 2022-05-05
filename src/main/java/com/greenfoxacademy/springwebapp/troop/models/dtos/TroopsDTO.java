@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.troop.dtos;
+package com.greenfoxacademy.springwebapp.troop.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

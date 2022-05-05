@@ -14,8 +14,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler({RequestNotAcceptableException.class})
-  public ResponseEntity handleNotAcceptableRequest(RuntimeException e) {
+  @ExceptionHandler(RequestedResourceNotFoundException.class)
+  public ResponseEntity<ErrorDTO> handleResourceNotFound(RequestedResourceNotFoundException e) {
+    return ResponseEntity.status(404).body(new ErrorDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(RequestNotAcceptableException.class)
+  public ResponseEntity handleNotAcceptableRequest(RequestNotAcceptableException e) {
     return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
   }
 
@@ -24,8 +29,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(WrongIdException.class)
-  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(WrongIdException e) {
+  @ExceptionHandler(ForbiddenActionException.class)
+  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(ForbiddenActionException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
   }
+
 }
