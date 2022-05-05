@@ -73,7 +73,7 @@ public class BuildingServiceTest {
 
     exceptionRule.expect(RequestParameterMissingException.class);
     exceptionRule.expectMessage("Missing parameter(s): type!");
-    buildingService.addBuilding(buildingTypeDTO, kingdom);
+    buildingService.validateAddBuildingRequest(buildingTypeDTO, kingdom);
   }
 
   @Test
@@ -83,7 +83,7 @@ public class BuildingServiceTest {
 
     exceptionRule.expect(RequestNotAcceptableException.class);
     exceptionRule.expectMessage("Invalid building type");
-    buildingService.addBuilding(buildingTypeDTO, kingdom);
+    buildingService.validateAddBuildingRequest(buildingTypeDTO, kingdom);
   }
 
   @Test
@@ -93,7 +93,7 @@ public class BuildingServiceTest {
 
     exceptionRule.expect(RequestCauseConflictException.class);
     exceptionRule.expectMessage("There must only be one Townhall in a kingdom");
-    buildingService.addBuilding(buildingTypeDTO, kingdom);
+    buildingService.validateAddBuildingRequest(buildingTypeDTO, kingdom);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class BuildingServiceTest {
 
     exceptionRule.expect(RequestNotAcceptableException.class);
     exceptionRule.expectMessage("Cannot build buildings with higher level than the Townhall");
-    buildingService.addBuilding(buildingTypeDTO, kingdom);
+    buildingService.validateAddBuildingRequest(buildingTypeDTO, kingdom);
   }
 
   @Test
@@ -122,7 +122,7 @@ public class BuildingServiceTest {
 
     exceptionRule.expect(RequestCauseConflictException.class);
     exceptionRule.expectMessage("Not enough resources");
-    buildingService.addBuilding(buildingTypeDTO, kingdom);
+    buildingService.validateAddBuildingRequest(buildingTypeDTO, kingdom);
   }
 
   @Test

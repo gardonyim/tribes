@@ -24,8 +24,8 @@ public class BuildingController {
   }
 
   @PostMapping
-  public ResponseEntity addBuilding(UsernamePasswordAuthenticationToken user, @RequestBody
-                                    BuildingTypeDTO typeDTO) {
+  public ResponseEntity addBuilding(UsernamePasswordAuthenticationToken user,
+                                    @RequestBody BuildingTypeDTO typeDTO) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(201).body(buildingService.addBuilding(typeDTO, kingdom));
   }
