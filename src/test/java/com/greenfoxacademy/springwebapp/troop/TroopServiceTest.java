@@ -98,4 +98,5 @@ public class TroopServiceTest {
     Assert.assertEquals(troop.getStartedAt(), actual.getStartedAt());
     Assert.assertEquals(troop.getFinishedAt(), actual.getFinishedAt());
   }
+
 }

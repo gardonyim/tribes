@@ -24,4 +24,6 @@ public interface TroopService {
 
   Troop getTroopById(Kingdom kingdom, int id);
 
+  TroopDTO upgradeTroop(Kingdom kingdom, int troopId, TroopPostDTO dto);
+
 }

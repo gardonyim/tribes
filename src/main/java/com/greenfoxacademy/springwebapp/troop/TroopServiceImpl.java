@@ -6,8 +6,8 @@ import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
-import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
@@ -92,12 +92,7 @@ public class TroopServiceImpl implements TroopService {
     return convert(savedTroop);
   }
 
-  public void checkInputParameters(TroopPostDTO troopPostDTO) {
-    if (troopPostDTO == null || troopPostDTO.getBuildingId() == null) {
-      throw new RequestParameterMissingException("buildingId must be present");
-    }
-  }
-
+  @Override
   public TroopDTO fetchTroop(Kingdom kingdom, int id) {
     return convert(getTroopById(kingdom, id));
   }
@@ -110,6 +105,32 @@ public class TroopServiceImpl implements TroopService {
       throw new RequestedForbiddenResourceException("Forbidden action");
     }
     return troop;
+  }
+
+  @Override
+  public TroopDTO upgradeTroop(Kingdom kingdom, int troopId, TroopPostDTO dto) {
+    checkInputParameters(dto);
+    Building building = buildingService.getBuildingById(dto.getBuildingId());
+    buildingService.checkOwner(building, kingdom.getId());
+    if (building.getBuildingType() != BuildingType.ACADEMY) {
+      throw new RequestNotAcceptableException("Not a valid academy id");
+    }
+    Troop troop = getTroopById(kingdom, troopId);
+
+    int currentLevel = troop.getLevel();
+    int desiredLevel = building.getLevel();
+    int investment = gameObjectRuleHolder.getBuildingCostMultiplier("troop", currentLevel);
+    int price = gameObjectRuleHolder.getBuildingCostMultiplier("troop", desiredLevel);
+    resourceService.hasEnoughGold(kingdom, price - investment);
+    resourceService.pay(kingdom, price - investment);
+    troop.setLevel(desiredLevel);
+    return convert(troopRepository.save(troop));
+  }
+
+  public void checkInputParameters(TroopPostDTO troopPostDTO) {
+    if (troopPostDTO == null || troopPostDTO.getBuildingId() == null) {
+      throw new RequestParameterMissingException("buildingId must be present");
+    }
   }
 
 }

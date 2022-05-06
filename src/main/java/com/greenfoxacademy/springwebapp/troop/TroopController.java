@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.troop;
 
+<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
@@ -13,6 +14,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+=======
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.troop.models.TroopPostDTO;
+import java.security.Principal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+>>>>>>> 1ac9045... feat(put /kingdom/troops/id): implement upgrade troop
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +61,13 @@ public class TroopController {
     Player player = (Player) auth.getPrincipal();
     TroopDTO troop = troopService.saveTroop(player.getKingdom(), troopPostDTO);
     return ResponseEntity.status(201).body(troop);
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity upgradeTroop(Principal principal, @PathVariable int id,
+                                     @RequestBody TroopPostDTO dto) {
+    Player player = (Player) principal;
+    return ResponseEntity.ok(troopService.upgradeTroop(player.getKingdom(), id, dto));
   }
 
 }

@@ -9,7 +9,6 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
-
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import javax.transaction.Transactional;
