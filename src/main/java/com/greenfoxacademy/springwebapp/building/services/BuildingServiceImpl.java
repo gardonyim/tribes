@@ -82,9 +82,9 @@ public class BuildingServiceImpl implements BuildingService {
         .get().getLevel() < 1) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
-    int required = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
-    int available = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
-    if (available < required) {
+    int requiredGoldAmount = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
+    int availableGoldAmount = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
+    if (availableGoldAmount < requiredGoldAmount) {
       throw new RequestCauseConflictException("Not enough resources");
     }
   }

@@ -1,7 +1,9 @@
 package com.greenfoxacademy.springwebapp.troop;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
@@ -9,6 +11,7 @@ import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
+import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.stereotype.Service;
 
@@ -48,13 +51,9 @@ public class TroopServiceImpl implements TroopService {
   }
 
   @Override
-  public List<Troop> getTroopsOfKingdom(Integer kingdomId) {
-    return troopRepository.findTroopsByKingdomId(kingdomId);
-  }
-
-  @Override
-  public List<TroopDTO> mapTroopsToTroopDTO(List<Troop> troopsByKingdom) {
-    return troopsByKingdom.stream().map(this::convert).collect(Collectors.toList());
+  public TroopsDTO getTroopsOfKingdom(Kingdom kingdom) {
+    List<TroopDTO> troops = kingdom.getTroops().stream().map(this::convert).collect(Collectors.toList());
+    return new TroopsDTO(troops);
   }
 
   @Override
@@ -75,7 +74,9 @@ public class TroopServiceImpl implements TroopService {
     checkInputParameters(troopPostDTO);
     Building building = buildingService.getBuildingById(troopPostDTO.getBuildingId());
     buildingService.checkOwner(building, kingdom.getId());
-
+    if (!building.getBuildingType().equals(BuildingType.ACADEMY)) {
+      throw new RequestNotAcceptableException("Not a valid academy id");
+    }
     int level = building.getLevel();
     int price = gameObjectRuleHolder.getBuildingCostMultiplier("troop", level);
     resourceService.hasEnoughGold(kingdom, price);

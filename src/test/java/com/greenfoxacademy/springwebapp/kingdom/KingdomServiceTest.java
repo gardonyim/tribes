@@ -7,10 +7,6 @@ import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
-import com.greenfoxacademy.springwebapp.troop.TroopRepository;
-import com.greenfoxacademy.springwebapp.troop.TroopService;
-import com.greenfoxacademy.springwebapp.troop.models.Troop;
-import org.hamcrest.Matchers;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
@@ -22,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import java.util.Arrays;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,22 +28,12 @@ public class KingdomServiceTest {
 
   @Mock
   KingdomRepository kingdomRepository;
-
   @Mock
   BuildingServiceImpl buildingService;
-
-  @Mock
-  TroopService troopService;
-
   @Mock
   ResourceServiceImpl resourceService;
-
   @Mock
   LocationService locationService;
-
-  @Mock
-  TroopRepository troopRepository;
-
   @InjectMocks
   KingdomServiceImpl kingdomService;
 
@@ -90,24 +75,6 @@ public class KingdomServiceTest {
 
     Assert.assertEquals(player, created.getPlayer());
     Assert.assertNotNull(created.getLocation());
-  }
-
-  @Test
-  public void when_getTroopsOfKingdom_should_returnListWithOneTroop() {
-    Troop dummyTroop = new Troop();
-    when(troopRepository.findTroopsByKingdomId(any(Integer.class))).thenReturn(Arrays.asList(dummyTroop));
-
-    List<Troop> troopList = troopService.getTroopsOfKingdom(1);
-    Assert.assertThat(troopList, Matchers.hasSize(0));
-  }
-
-  @Test
-  public void when_getTroopsOfKingdom_should_returnListWithNoTroops() {
-    when(troopRepository.findTroopsByKingdomId(any(Integer.class))).thenReturn(new ArrayList<Troop>());
-
-    List<Troop> troopList = troopService.getTroopsOfKingdom(1);
-    Assert.assertThat(troopList, Matchers.hasSize(0));
-
   }
 
   @Test

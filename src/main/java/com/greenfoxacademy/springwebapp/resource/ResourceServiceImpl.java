@@ -68,7 +68,26 @@ public class ResourceServiceImpl implements ResourceService {
   public Resource pay(Kingdom kingdom, int price) {
     Resource gold = getResourceByKingdomAndType(kingdom, ResourceType.GOLD);
     gold.setAmount(gold.getAmount() - price);
-    return save(gold);
+    return updateResource(gold);
+  }
+
+  @Override
+  public Kingdom updateResources(Kingdom kingdom) {
+    kingdom.getResources().forEach(this::updateResource);
+    return kingdom;
+  }
+
+  @Override
+  public Resource updateResource(Resource resource) {
+    resource.setAmount(calculateAvailableResource(resource));
+    resource.setUpdatedAt(TimeService.actualTime());
+    return resource;
+  }
+
+  @Override
+  public int calculateAvailableResource(Resource resource) {
+    return resource.getAmount() + resource.getGeneration()
+        * (int) TimeService.secondsElapsed(resource.getUpdatedAt(), TimeService.actualTime());
   }
 
   @Override
@@ -79,21 +98,6 @@ public class ResourceServiceImpl implements ResourceService {
             .findFirst()
             .orElseThrow(NotEnoughResourceException::new);
     return gold.getAmount() >= amount;
-  }
-
-  @Override
-  public Kingdom updateResources(Kingdom kingdom) {
-    return kingdom;
-  }
-
-  @Override
-  public Resource updateResource(Resource resource) {
-    return resource;
-  }
-
-  @Override
-  public int calculateAvailableResource(Resource resource) {
-    return 0;
   }
 
 }
