@@ -102,7 +102,6 @@ public class ResourceServiceTest {
     Resource gold = new Resource(ResourceType.GOLD, 1000, 2,
         LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
     when(resourceRepository.findFirstByKingdomAndResourceType(any(), any())).thenReturn(Optional.of(gold));
-    when(resourceRepository.save(any())).then(returnsFirstArg());
 
     Resource actual = resourceService.pay(kingdom, 100);
 
@@ -118,7 +117,6 @@ public class ResourceServiceTest {
     resources.add(new Resource(ResourceType.GOLD, 1000, 1, previousUpdate, kingdom));
     resources.add(new Resource(ResourceType.FOOD, 1000, 2, previousUpdate, kingdom));
     kingdom.setResources(resources);
-    when(resourceRepository.save(any())).then(returnsFirstArg());
 
     Kingdom actual = resourceService.updateResources(kingdom);
 
@@ -135,7 +133,6 @@ public class ResourceServiceTest {
     Kingdom kingdom = new Kingdom();
     Resource resource = new Resource(ResourceType.FOOD, 1000, 5,
         LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
-    when(resourceRepository.save(any())).then(returnsFirstArg());
 
     Resource actual = resourceService.updateResource(resource);
 

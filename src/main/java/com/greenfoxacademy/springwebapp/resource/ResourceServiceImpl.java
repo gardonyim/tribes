@@ -80,7 +80,7 @@ public class ResourceServiceImpl implements ResourceService {
   public Resource updateResource(Resource resource) {
     resource.setAmount(calculateAvailableResource(resource));
     resource.setUpdatedAt(TimeService.actualTime());
-    return resourceRepository.save(resource);
+    return resource;
   }
 
   @Override
