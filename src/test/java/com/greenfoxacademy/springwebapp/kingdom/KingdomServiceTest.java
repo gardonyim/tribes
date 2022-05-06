@@ -28,16 +28,12 @@ public class KingdomServiceTest {
 
   @Mock
   KingdomRepository kingdomRepository;
-
   @Mock
   BuildingServiceImpl buildingService;
-
   @Mock
   ResourceServiceImpl resourceService;
-
   @Mock
   LocationService locationService;
-
   @InjectMocks
   KingdomServiceImpl kingdomService;
 
@@ -118,5 +114,5 @@ public class KingdomServiceTest {
     resourceList.add(new Resource(ResourceType.GOLD, 1000, 0, null, null));
     return resourceList;
   }
-  
+
 }

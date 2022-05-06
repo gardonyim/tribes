@@ -5,9 +5,13 @@ import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -15,8 +19,6 @@ import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -41,8 +43,21 @@ public class BuildingServiceImpl implements BuildingService {
   }
 
   @Override
+  public Building getBuildingById(Integer buildingId) {
+    return buildingRepository.findById(buildingId)
+            .orElseThrow(() -> new RequestedResourceNotFoundException("No such building."));
+  }
+
+  @Override
   public Iterable<Building> saveAll(List<Building> buildings) {
     return buildingRepository.saveAll(buildings);
+  }
+
+  @Override
+  public void checkOwner(Building building, Integer kingdomId) throws ForbiddenActionException {
+    if (building.getKingdom().getId() != kingdomId) {
+      throw new ForbiddenActionException();
+    }
   }
 
   public BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom) {
