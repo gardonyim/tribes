@@ -81,7 +81,7 @@ public class TroopServiceTest {
   }
 
   @Test
-  public void when_getTroopByValidId_should_returnValidDTO() {
+  public void when_getTroopByKingdomAndValidId_should_returnTroop() {
     Kingdom kingdom = new Kingdom();
     kingdom.setId(999);
     LocalDateTime time = LocalDateTime.now(ZoneOffset.UTC);
@@ -89,14 +89,14 @@ public class TroopServiceTest {
     troop.setId(999);
     when(troopRepository.findById(anyInt())).thenReturn(Optional.of(troop));
 
-    TroopDTO actual = troopService.getTroopById(kingdom, 999);
+    Troop actual = troopService.getTroopById(kingdom, 999);
 
     Assert.assertEquals(troop.getId(), actual.getId());
     Assert.assertEquals(troop.getLevel(), actual.getLevel());
     Assert.assertEquals(troop.getHp(), actual.getHp());
     Assert.assertEquals(troop.getAttack(), actual.getAttack());
     Assert.assertEquals(troop.getDefence(), actual.getDefence());
-    Assert.assertEquals(troop.getStartedAt().toEpochSecond(ZoneOffset.UTC), (long) actual.getStartedAt());
-    Assert.assertEquals(troop.getFinishedAt().toEpochSecond(ZoneOffset.UTC), (long) actual.getFinishedAt());
+    Assert.assertEquals(troop.getStartedAt(), actual.getStartedAt());
+    Assert.assertEquals(troop.getFinishedAt(), actual.getFinishedAt());
   }
 }

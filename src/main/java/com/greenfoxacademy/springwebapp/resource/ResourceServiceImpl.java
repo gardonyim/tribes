@@ -57,11 +57,8 @@ public class ResourceServiceImpl implements ResourceService {
 
   @Override
   public Resource getResourceByKingdomAndType(Kingdom kingdom, ResourceType type) {
-    Optional<Resource> optionalResource = resourceRepository.findFirstByKingdomAndResourceType(kingdom, type);
-    if (optionalResource.isPresent()) {
-      return optionalResource.get();
-    }
-    throw new RequestedResourceNotFoundException("Kingdom or resource is not in database.");
+    return resourceRepository.findFirstByKingdomAndResourceType(kingdom, type)
+        .orElseThrow(() -> new RequestedResourceNotFoundException("Kingdom or resource is not in database."));
   }
 
   @Override

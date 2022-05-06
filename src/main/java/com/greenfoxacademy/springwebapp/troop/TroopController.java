@@ -23,9 +23,9 @@ public class TroopController {
 
   @GetMapping("/{id}")
   public ResponseEntity handleGetTroopById(UsernamePasswordAuthenticationToken user,
-                                           @PathVariable Integer id) {
+                                           @PathVariable int id) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
-    return ResponseEntity.ok(troopService.getTroopById(kingdom, id));
+    return ResponseEntity.ok(troopService.fetchTroop(kingdom, id));
   }
 
 }

@@ -93,15 +93,18 @@ public class TroopServiceImpl implements TroopService {
     }
   }
 
-  public TroopDTO getTroopById(Kingdom kingdom, Integer id) {
-    Troop troop = troopRepository.findById(id).orElse(null);
-    if (troop == null) {
-      throw new RequestedResourceNotFoundException("Id not found");
-    }
+  public TroopDTO fetchTroop(Kingdom kingdom, int id) {
+    return convertToDTO(getTroopById(kingdom, id));
+  }
+
+  @Override
+  public Troop getTroopById(Kingdom kingdom, int id) {
+    Troop troop = troopRepository.findById(id)
+        .orElseThrow(() -> new RequestedResourceNotFoundException("Id not found"));
     if (troop.getKingdom().getId() != kingdom.getId()) {
       throw new RequestedForbiddenResourceException("Forbidden action");
     }
-    return convertToDTO(troop);
+    return troop;
   }
 
   private TroopDTO convertToDTO(Troop troop) {
