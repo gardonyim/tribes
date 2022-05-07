@@ -42,8 +42,12 @@ public class BuildingController {
 =======
   @PutMapping({"/","/{id}"})
   public ResponseEntity modifyBuildingLevel(UsernamePasswordAuthenticationToken user,
+<<<<<<< HEAD
                                             @PathVariable(required = false, name = "id") String buildingId,
 >>>>>>> 2f08f54 (fix(Get Buildings): change an endpoint parameter type)
+=======
+                                            @PathVariable(required = false, name = "id") Integer buildingId,
+>>>>>>> e7933d9 (feat(Put Buildings): add new service methodes for modify the building level)
                                             @RequestBody BuildingDTO buildingDTO) {
     return ResponseEntity.status(200).body(buildingService.provideDtoAboutBuildingDevResoult(
             buildingDTO, ((Player) user.getPrincipal()).getKingdom(), buildingId));

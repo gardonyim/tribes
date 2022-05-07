@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
+import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.util.ObjectUtils;
@@ -45,11 +46,6 @@ public class BuildingServiceImpl implements BuildingService {
   @Autowired
   public void setKingdomService(KingdomService kingdomService) {
     this.kingdomService = kingdomService;
-  }
-
-  @Autowired
-  public void setGameObjectRuleHolder(GameObjectRuleHolder gameObjectRuleHolder) {
-    this.gameObjectRuleHolder = gameObjectRuleHolder;
   }
 
   @Override
@@ -133,12 +129,6 @@ public class BuildingServiceImpl implements BuildingService {
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
       throw new NotEnoughResourceException();
     }
-  }
-
-  private int calcRequiredGoldAmount(Building modifiableBuilding, int reqBuildingLevel) {
-    return (modifiableBuilding.getLevel() >= reqBuildingLevel) ? 0
-        : reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
