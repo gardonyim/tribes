@@ -24,4 +24,8 @@ public interface BuildingService {
 
   List<BuildingDTO> convertToDTOs(List<Building> buildings);
 
+  BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+
+  Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+
 }
