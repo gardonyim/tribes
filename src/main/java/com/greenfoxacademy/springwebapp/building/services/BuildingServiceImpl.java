@@ -15,6 +15,7 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
