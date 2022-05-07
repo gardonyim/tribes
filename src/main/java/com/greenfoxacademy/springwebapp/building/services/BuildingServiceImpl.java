@@ -22,6 +22,7 @@ import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
+import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import org.springframework.util.ObjectUtils;
 
@@ -31,26 +32,14 @@ public class BuildingServiceImpl implements BuildingService {
 
   private BuildingRepository buildingRepository;
   private ResourceService resourceService;
-  private KingdomService kingdomService;
   private GameObjectRuleHolder gameObjectRuleHolder;
 
   @Autowired
-  public void setBuildingRepository(BuildingRepository buildingRepository) {
+  public BuildingServiceImpl(BuildingRepository buildingRepository,
+                             ResourceServiceImpl resourceService,
+                             GameObjectRuleHolder gameObjectRuleHolder) {
     this.buildingRepository = buildingRepository;
-  }
-
-  @Autowired
-  public void setResourceService(ResourceService resourceService) {
     this.resourceService = resourceService;
-  }
-
-  @Autowired
-  public void setKingdomService(KingdomService kingdomService) {
-    this.kingdomService = kingdomService;
-  }
-
-  @Autowired
-  public void setGameObjectRuleHolder(GameObjectRuleHolder gameObjectRuleHolder) {
     this.gameObjectRuleHolder = gameObjectRuleHolder;
   }
 
@@ -134,12 +123,7 @@ public class BuildingServiceImpl implements BuildingService {
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
       throw new NotEnoughResourceException();
     }
-  }
-
-  private int calcRequiredGoldAmount(Building modifiableBuilding, int reqBuildingLevel) {
-    return (modifiableBuilding.getLevel() >= reqBuildingLevel) ? 0
-        : reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
+    return modifiableBuilding;
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
