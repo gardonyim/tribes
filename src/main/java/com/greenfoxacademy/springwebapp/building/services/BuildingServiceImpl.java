@@ -68,6 +68,32 @@ public class BuildingServiceImpl implements BuildingService {
     return convertToDTO(buildingRepository.save(building));
   }
 
+  @Override
+  public BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
+    Building modifiableBuilding = validateModifyBuildingLevelRequest(buildingDTO, kingdom, buildingId);
+    modifiableBuilding.setLevel(buildingDTO.getLevel());
+    return convertToDTO(saveBuilding(modifiableBuilding));
+  }
+
+  @Override
+  public Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
+    if (buildingDTO == null) {
+      throw new RequestParameterMissingException("Missing parameter(s): level!");
+    }
+    Building modifiableBuilding = buildingRepository.findFirstByIdAndAndKingdom(buildingId, kingdom)
+        .orElseThrow(() -> new RequestNotAcceptableException("Id not found"));
+    if (buildingRepository.findFirstByBuildingTypeAndKingdom(BuildingType.TOWNHALL, kingdom)
+        .get().getLevel() < (modifiableBuilding.getLevel() + 1)) {
+      throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
+    }
+    int requiredGoldAmount = buildingDTO.getLevel() * gameObjectRuleHolder.getBuildingCostMultiplier(modifiableBuilding.getBuildingType().getName().toLowerCase(), buildingDTO.getLevel());
+    int availableGoldAmount = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
+    if (availableGoldAmount < requiredGoldAmount) {
+      throw new RequestCauseConflictException("Not enough resources");
+    }
+    return modifiableBuilding;
+  }
+
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
     if (typeDTO.getType() == null || typeDTO.getType().trim().isEmpty()) {
       throw new RequestParameterMissingException("Missing parameter(s): type!");
