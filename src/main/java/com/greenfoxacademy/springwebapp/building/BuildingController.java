@@ -47,5 +47,4 @@ public class BuildingController {
     return ResponseEntity.status(200).body(buildingService.provideDtoAboutBuildingDevResoult(
             buildingDTO, ((Player) user.getPrincipal()).getKingdom(), buildingId));
   }
-
 }
