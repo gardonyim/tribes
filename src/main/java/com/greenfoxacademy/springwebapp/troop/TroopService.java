@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
+<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 
 public interface TroopService {
@@ -16,4 +17,13 @@ public interface TroopService {
 
   TroopDTO saveTroop(Kingdom kingdom, TroopPostDTO troopPostDTO);
 
+=======
+import com.greenfoxacademy.springwebapp.troop.models.TroopDTO;
+
+public interface TroopService {
+
+  Troop addNewTroop(Troop troop);
+
+  TroopDTO convertToTroopDTO(Troop troop);
+>>>>>>> 91dfa9e60c954dea91aadbe4c8d9857e02414d94
 }
