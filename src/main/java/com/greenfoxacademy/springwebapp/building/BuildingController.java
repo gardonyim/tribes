@@ -36,11 +36,10 @@ public class BuildingController {
 
   @PutMapping({"/","/{id}"})
   public ResponseEntity modifyBuildingLevel(UsernamePasswordAuthenticationToken user,
-                                            @PathVariable(required = false, name = "id") String buildingId,
+                                            @PathVariable(required = false, name = "id") Integer buildingId,
                                             @RequestBody BuildingDTO buildingDTO) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(200).body(buildingService.modifyBuildingLevel(buildingDTO, kingdom, buildingId));
   }
-
 
 }
