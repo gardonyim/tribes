@@ -41,5 +41,4 @@ public class BuildingController {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(200).body(buildingService.modifyBuildingLevel(buildingDTO, kingdom, buildingId));
   }
-
 }
