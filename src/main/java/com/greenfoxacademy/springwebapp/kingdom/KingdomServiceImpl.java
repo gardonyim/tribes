@@ -2,8 +2,10 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
+
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
+
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
@@ -45,9 +47,6 @@ public class KingdomServiceImpl implements KingdomService {
     this.locationService = locationService;
     this.troopService = troopService;
   }
-
-  @Autowired
-  private GameObjectRuleHolder gameObjectRuleHolder;
 
   @Override
   public Kingdom save(String kingdomName, Player player) {
@@ -98,6 +97,10 @@ public class KingdomServiceImpl implements KingdomService {
             locationService.convertToLocationDTO(kingdom.getLocation())
         )
     );
+  }
+
+  public Kingdom update(Kingdom kingdom) {
+    return kingdomRepository.save(kingdom);
   }
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {

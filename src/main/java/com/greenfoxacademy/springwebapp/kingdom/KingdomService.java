@@ -19,4 +19,6 @@ public interface KingdomService {
 
   KingdomResWrappedDTO fetchKingdomData(Integer kingdomId);
 
+  Kingdom update(Kingdom kingdom);
+
 }
