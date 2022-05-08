@@ -24,4 +24,6 @@ public interface KingdomService {
   KingdomResWrappedDTO fetchKingdomData(Integer kingdomId);
 
   KingdomResFullDTO renameKingdom(Kingdom kingdom, KingdomPutDTO kingdomPutDTO, Authentication auth);
+
+  Kingdom update(Kingdom kingdom);
 }
