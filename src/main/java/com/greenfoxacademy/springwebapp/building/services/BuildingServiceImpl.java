@@ -20,11 +20,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
-
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
-import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import org.springframework.util.ObjectUtils;
 
@@ -34,14 +32,26 @@ public class BuildingServiceImpl implements BuildingService {
 
   private BuildingRepository buildingRepository;
   private ResourceService resourceService;
+  private KingdomService kingdomService;
   private GameObjectRuleHolder gameObjectRuleHolder;
 
   @Autowired
-  public BuildingServiceImpl(BuildingRepository buildingRepository,
-                             ResourceServiceImpl resourceService,
-                             GameObjectRuleHolder gameObjectRuleHolder) {
+  public void setBuildingRepository(BuildingRepository buildingRepository) {
     this.buildingRepository = buildingRepository;
+  }
+
+  @Autowired
+  public void setResourceService(ResourceService resourceService) {
     this.resourceService = resourceService;
+  }
+
+  @Autowired
+  public void setKingdomService(KingdomService kingdomService) {
+    this.kingdomService = kingdomService;
+  }
+
+  @Autowired
+  public void setGameObjectRuleHolder(GameObjectRuleHolder gameObjectRuleHolder) {
     this.gameObjectRuleHolder = gameObjectRuleHolder;
   }
 

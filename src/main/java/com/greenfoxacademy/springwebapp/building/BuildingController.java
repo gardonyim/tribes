@@ -35,14 +35,8 @@ public class BuildingController {
     return ResponseEntity.status(201).body(buildingService.addBuilding(typeDTO, kingdom));
   }
 
-<<<<<<< HEAD
   @PutMapping({"/{id}"})
   public ResponseEntity modifyBuildingLevel(Authentication user, @PathVariable(name = "id") Integer buildingId,
-=======
-  @PutMapping({"/","/{id}"})
-  public ResponseEntity modifyBuildingLevel(UsernamePasswordAuthenticationToken user,
-                                            @PathVariable(required = false, name = "id") Integer buildingId,
->>>>>>> e02c4db (feat(Put Buildings): add new service methodes for modify the building level)
                                             @RequestBody BuildingDTO buildingDTO) {
     return ResponseEntity.status(200).body(buildingService.provideDtoAboutBuildingDevResoult(
             buildingDTO, ((Player) user.getPrincipal()).getKingdom(), buildingId));
