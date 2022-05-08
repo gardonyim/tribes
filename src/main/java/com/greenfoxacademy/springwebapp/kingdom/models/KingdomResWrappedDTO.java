@@ -1,6 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
 
 public class KingdomResWrappedDTO {
 
@@ -19,5 +19,22 @@ public class KingdomResWrappedDTO {
 
   public void setKingdom(KingdomBaseDTO kingdom) {
     this.kingdom = kingdom;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    KingdomResWrappedDTO that = (KingdomResWrappedDTO) o;
+    return Objects.equals(kingdom, that.kingdom);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(kingdom);
   }
 }

@@ -6,6 +6,7 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
 import java.util.List;
+import java.util.Objects;
 
 public class KingdomResFullDTO extends KingdomBaseDTO {
 
@@ -46,5 +47,27 @@ public class KingdomResFullDTO extends KingdomBaseDTO {
 
   public void setTroops(List<TroopDTO> troops) {
     this.troops = troops;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    KingdomResFullDTO that = (KingdomResFullDTO) o;
+    return that.getKingdomId() == ((KingdomResFullDTO) o).getKingdomId()
+        && that.getName().equals(((KingdomResFullDTO) o).getName())
+        && that.getUserId() == ((KingdomResFullDTO) o).getUserId()
+        && Objects.equals(buildings, that.buildings)
+        && Objects.equals(resources, that.resources)
+        && Objects.equals(troops, that.troops);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(buildings, resources, troops);
   }
 }
