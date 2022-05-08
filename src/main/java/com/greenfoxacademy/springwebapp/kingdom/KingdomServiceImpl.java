@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -60,6 +61,12 @@ public class KingdomServiceImpl implements KingdomService {
   }
 
   @Override
+  public Kingdom findById(Integer kingdomId) {
+    return kingdomRepository.findById(kingdomId)
+        .orElseThrow(() -> new RequestedResourceNotFoundException("The requested kingdom is not exist!"));
+  }
+
+  @Override
   public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
     return new KingdomResFullDTO(
         kingdom.getId(),
@@ -86,6 +93,7 @@ public class KingdomServiceImpl implements KingdomService {
         )
     );
   }
+
 
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {
