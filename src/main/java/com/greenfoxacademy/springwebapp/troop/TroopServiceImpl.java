@@ -94,7 +94,7 @@ public class TroopServiceImpl implements TroopService {
   }
 
   public TroopDTO fetchTroop(Kingdom kingdom, int id) {
-    return convertToDTO(getTroopById(kingdom, id));
+    return convert(getTroopById(kingdom, id));
   }
 
   @Override
@@ -105,18 +105,6 @@ public class TroopServiceImpl implements TroopService {
       throw new RequestedForbiddenResourceException("Forbidden action");
     }
     return troop;
-  }
-
-  private TroopDTO convertToDTO(Troop troop) {
-    TroopDTO dto = new TroopDTO();
-    dto.setId(troop.getId());
-    dto.setLevel(troop.getLevel());
-    dto.setHp(troop.getHp());
-    dto.setAttack(troop.getAttack());
-    dto.setDefence(troop.getDefence());
-    dto.setStartedAt(TimeService.toEpochSecond(troop.getStartedAt()));
-    dto.setFinishedAt(TimeService.toEpochSecond(troop.getFinishedAt()));
-    return dto;
   }
 
 }
