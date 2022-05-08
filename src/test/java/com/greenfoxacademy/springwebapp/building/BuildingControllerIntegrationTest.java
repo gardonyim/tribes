@@ -174,7 +174,8 @@ public class BuildingControllerIntegrationTest {
     Player existingtestuser =
         new Player(1, "existingtestuser", null, existingkingdom, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, \"startedAt\": 1231232312, \"finishedAt\": 7652146122 }";
+    String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
+        + "\"startedAt\": 1231232312, \"finishedAt\": 7652146122 }";
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
             .principal(auth))
@@ -185,35 +186,35 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_requestBuildingInOtherKingdom_should_returnForbiddenRequestException()
       throws Exception {
-  Location location = new Location(1, 0,0);
-  Kingdom existingkingdom = new Kingdom(1, location);
-  Player existingtestuser =
-      new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-  Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    Location location = new Location(1, 0,0);
+    Kingdom existingkingdom = new Kingdom(1, location);
+    Player existingtestuser =
+        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
         + "\"Forbidden action\" }";
 
-  mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/2")
-          .principal(auth))
-      .andExpect(status().isForbidden())
-      .andExpect(content().json(expectedResponse));
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/2")
+            .principal(auth))
+        .andExpect(status().isForbidden())
+        .andExpect(content().json(expectedResponse));
   }
 
   @Test
   public void when_requestBuildingWithNonExistingId_should_returnRequestedResourceNotFoundException()
       throws Exception {
-  Location location = new Location(1, 0,0);
-  Kingdom existingkingdom = new Kingdom(1, location);
-  Player existingtestuser =
-      new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-  Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-  String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
-      + "\"Id not found\" }";
+    Location location = new Location(1, 0,0);
+    Kingdom existingkingdom = new Kingdom(1, location);
+    Player existingtestuser =
+        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
+        + "\"Id not found\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/999")
-      .principal(auth))
-      .andExpect(status().isNotFound())
-      .andExpect(content().json(expectedResponse));
-   }
+            .principal(auth))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json(expectedResponse));
+  }
 
 }
