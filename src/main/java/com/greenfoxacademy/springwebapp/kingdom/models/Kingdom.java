@@ -7,12 +7,8 @@ import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.OneToOne;
-import javax.persistence.OneToMany;
+
+import javax.persistence.*;
 
 import java.util.List;
 
@@ -25,13 +21,13 @@ public class Kingdom {
   private String name;
   @OneToOne()
   private Player player;
-  @OneToMany(mappedBy = "kingdom")
+  @OneToMany(mappedBy = "kingdom", cascade = CascadeType.ALL)
   @LazyCollection(LazyCollectionOption.FALSE)
   private List<Building> buildings;
-  @OneToMany(mappedBy = "kingdom")
+  @OneToMany(mappedBy = "kingdom", cascade = CascadeType.ALL)
   @LazyCollection(LazyCollectionOption.FALSE)
   private List<Resource> resources;
-  @OneToMany(mappedBy = "kingdom")
+  @OneToMany(mappedBy = "kingdom", cascade = CascadeType.ALL)
   @LazyCollection(LazyCollectionOption.FALSE)
   private List<Troop> troops;
   @OneToOne()
