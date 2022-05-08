@@ -46,7 +46,6 @@ public class BuildingServiceImpl implements BuildingService {
   @Autowired
   public void setKingdomService(KingdomService kingdomService) {
     this.kingdomService = kingdomService;
-
   }
 
   @Autowired
