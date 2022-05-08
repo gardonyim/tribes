@@ -3,10 +3,13 @@ package com.greenfoxacademy.springwebapp.building.services;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
+import com.greenfoxacademy.springwebapp.building.models.BuildingsDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import java.util.List;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenRequestException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
@@ -15,6 +18,8 @@ import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -51,6 +56,28 @@ public class BuildingServiceImpl implements BuildingService {
     Building building = constructBuilding(type, 1, kingdom);
     resourceService.pay(kingdom, gameObjectRuleHolder.getBuildingCostMultiplier(type, 1));
     return convertToDTO(buildingRepository.save(building));
+  }
+
+  @Override
+  public BuildingsDTO getBuildingDtoList(Kingdom kingdom) {
+    return new BuildingsDTO(buildingRepository.findAllByKingdom(kingdom)
+        .stream()
+        .map(this::convertToDTO)
+        .collect(Collectors.toList()));
+  }
+
+  @Override
+  public BuildingDTO getBuildingDTO(Integer id, Kingdom kingdom) {
+    Optional<Building> building = buildingRepository.findById(id);
+    if (building.isPresent()) {
+      if (building.get().getKingdom() == kingdom) {
+        return convertToDTO(building.get());
+      } else {
+        throw new ForbiddenRequestException("Forbidden action");
+      }
+    } else {
+      throw new RequestedResourceNotFoundException("Id not found");
+    }
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {

@@ -14,6 +14,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
+  @ExceptionHandler(ForbiddenRequestException.class)
+  public ResponseEntity handleForbiddenRequest(ForbiddenRequestException e) {
+    return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
+  }
+
   @ExceptionHandler(RequestedResourceNotFoundException.class)
   public ResponseEntity<ErrorDTO> handleResourceNotFound(RequestedResourceNotFoundException e) {
     return ResponseEntity.status(404).body(new ErrorDTO(e.getMessage()));
