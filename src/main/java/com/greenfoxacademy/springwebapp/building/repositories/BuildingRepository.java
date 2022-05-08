@@ -10,6 +10,4 @@ public interface BuildingRepository extends CrudRepository<Building, Integer> {
 
   Optional<Building> findFirstByBuildingTypeAndKingdom(BuildingType type, Kingdom kingdom);
 
-  Optional<Building> findFirstByIdAndAndKingdom(Integer id, Kingdom kingdom);
-
 }
