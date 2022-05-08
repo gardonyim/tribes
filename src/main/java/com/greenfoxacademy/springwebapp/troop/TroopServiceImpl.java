@@ -11,14 +11,8 @@ import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
-<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
-=======
-import com.greenfoxacademy.springwebapp.troop.models.TroopDTO;
-import com.greenfoxacademy.springwebapp.utilities.TimeService;
-import org.springframework.beans.factory.annotation.Autowired;
->>>>>>> 91dfa9e60c954dea91aadbe4c8d9857e02414d94
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -76,7 +70,6 @@ public class TroopServiceImpl implements TroopService {
   }
 
   @Override
-<<<<<<< HEAD
   public TroopDTO saveTroop(Kingdom kingdom, TroopPostDTO troopPostDTO) {
     checkInputParameters(troopPostDTO);
     Building building = buildingService.getBuildingById(troopPostDTO.getBuildingId());
@@ -97,19 +90,5 @@ public class TroopServiceImpl implements TroopService {
       throw new RequestParameterMissingException("buildingId must be present");
     }
   }
-=======
-  public TroopDTO convertToTroopDTO(Troop troop) {
-    return new TroopDTO(
-        troop.getId(),
-        troop.getLevel(),
-        troop.getHp(),
-        troop.getAttack(),
-        troop.getDefence(),
-        TimeService.toEpochSecond(troop.getStartedAt()),
-        TimeService.toEpochSecond(troop.getFinishedAt())
-    );
-  }
-
->>>>>>> 91dfa9e60c954dea91aadbe4c8d9857e02414d94
 
 }
