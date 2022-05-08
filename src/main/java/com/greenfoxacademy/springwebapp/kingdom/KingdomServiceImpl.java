@@ -2,6 +2,8 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
+import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
+
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;

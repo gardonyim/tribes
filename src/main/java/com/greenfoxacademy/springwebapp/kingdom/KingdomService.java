@@ -26,4 +26,5 @@ public interface KingdomService {
   KingdomResFullDTO renameKingdom(Kingdom kingdom, KingdomPutDTO kingdomPutDTO, Authentication auth);
 
   Kingdom update(Kingdom kingdom);
+
 }
