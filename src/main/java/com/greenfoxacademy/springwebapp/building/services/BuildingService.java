@@ -18,7 +18,6 @@ public interface BuildingService {
   void checkOwner(Building building, Integer kingdomId) throws ForbiddenActionException;
 
   BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom);
-
   BuildingDTO convertToDTO(Building building);
 
   List<BuildingDTO> convertToDTOs(List<Building> buildings);
