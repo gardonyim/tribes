@@ -1,5 +1,7 @@
 package com.greenfoxacademy.springwebapp.troop.models.dtos;
 
+import java.util.Objects;
+
 public class TroopDTO {
   private Integer id;
   private Integer level;
@@ -8,6 +10,20 @@ public class TroopDTO {
   private Integer defence;
   private Long startedAt;
   private Long finishedAt;
+
+  public TroopDTO() {
+  }
+
+  public TroopDTO(
+      Integer id, Integer level, Integer hp, Integer attack, Integer defence, Long startedAt, Long finishedAt) {
+    this.id = id;
+    this.level = level;
+    this.hp = hp;
+    this.attack = attack;
+    this.defence = defence;
+    this.startedAt = startedAt;
+    this.finishedAt = finishedAt;
+  }
 
   public Integer getId() {
     return id;
@@ -63,5 +79,28 @@ public class TroopDTO {
 
   public void setFinishedAt(Long finishedAt) {
     this.finishedAt = finishedAt;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TroopDTO troopDTO = (TroopDTO) o;
+    return Objects.equals(id, troopDTO.id)
+        && Objects.equals(level, troopDTO.level)
+        && Objects.equals(hp, troopDTO.hp)
+        && Objects.equals(attack, troopDTO.attack)
+        && Objects.equals(defence, troopDTO.defence)
+        && Objects.equals(startedAt, troopDTO.startedAt)
+        && Objects.equals(finishedAt, troopDTO.finishedAt);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, level, hp, attack, defence, startedAt, finishedAt);
   }
 }
