@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.building;
 
-import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingsDTO;
@@ -35,13 +34,13 @@ public class BuildingController {
   }
 
   @GetMapping("/kingdom/buildings/{id}")
-  public ResponseEntity<BuildingDTO> getBuildingDTO (UsernamePasswordAuthenticationToken user,
-    @RequestParam (required = false) Integer id) {
+  public ResponseEntity<BuildingDTO> getBuildingDTO(UsernamePasswordAuthenticationToken user,
+      @RequestParam(required = false) Integer id) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(200).body(buildingService.getBuildingDTO(id, kingdom));
-    }
+  }
 
-    @PostMapping
+  @PostMapping
   public ResponseEntity addBuilding(UsernamePasswordAuthenticationToken user,
                                     @RequestBody BuildingTypeDTO typeDTO) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
