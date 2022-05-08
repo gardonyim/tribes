@@ -9,7 +9,6 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,11 +56,8 @@ public class ResourceServiceImpl implements ResourceService {
 
   @Override
   public Resource getResourceByKingdomAndType(Kingdom kingdom, ResourceType type) {
-    Optional<Resource> optionalResource = resourceRepository.findFirstByKingdomAndResourceType(kingdom, type);
-    if (optionalResource.isPresent()) {
-      return optionalResource.get();
-    }
-    throw new RequestedResourceNotFoundException("Kingdom or resource is not in database.");
+    return resourceRepository.findFirstByKingdomAndResourceType(kingdom, type)
+        .orElseThrow(() -> new RequestedResourceNotFoundException("Kingdom or resource is not in database."));
   }
 
   @Override

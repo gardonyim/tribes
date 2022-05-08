@@ -13,6 +13,8 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedForbiddenResourceException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,6 +91,20 @@ public class TroopServiceImpl implements TroopService {
     if (troopPostDTO == null || troopPostDTO.getBuildingId() == null) {
       throw new RequestParameterMissingException("buildingId must be present");
     }
+  }
+
+  public TroopDTO fetchTroop(Kingdom kingdom, int id) {
+    return convert(getTroopById(kingdom, id));
+  }
+
+  @Override
+  public Troop getTroopById(Kingdom kingdom, int id) {
+    Troop troop = troopRepository.findById(id)
+        .orElseThrow(() -> new RequestedResourceNotFoundException("Id not found"));
+    if (troop.getKingdom().getId() != kingdom.getId()) {
+      throw new RequestedForbiddenResourceException("Forbidden action");
+    }
+    return troop;
   }
 
 }

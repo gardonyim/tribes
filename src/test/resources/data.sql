@@ -37,4 +37,4 @@ INSERT INTO buildings (id, building_type, level, hp, kingdom_id, started_at, fin
     (7, 'academy', 1, 1, 2, '2022-05-02 18:40:45', '2022-05-02 18:43:49');
 
 INSERT INTO troops (id, level, hp, attack, defence, started_at, finished_at, kingdom_id) VALUES
-    (1, 1, 1, 1, 1, '2022-05-01 22:23:49', '2022-05-01 22:23:44', 1);
+    (1, 1, 1, 1, 1, '2022-05-01 22:23:49', '2022-05-01 22:23:54', 1);

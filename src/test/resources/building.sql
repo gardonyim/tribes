@@ -1,1 +1,0 @@
-INSERT INTO buildings (id, building_type, level, hp, kingdom_id, started_at, finished_at) VALUES(1, 'academy', 1, 1, 1, '2022-05-02 18:40:45', '2022-05-02 18:43:49');
