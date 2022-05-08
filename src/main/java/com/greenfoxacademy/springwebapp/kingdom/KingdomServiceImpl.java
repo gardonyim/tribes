@@ -2,7 +2,6 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
-import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.LocationService;
@@ -37,9 +36,6 @@ public class KingdomServiceImpl implements KingdomService {
     this.locationService = locationService;
   }
 
-  @Autowired
-  private GameObjectRuleHolder gameObjectRuleHolder;
-
   @Override
   public Kingdom save(String kingdomName, Player player) {
     if (kingdomName == null || kingdomName.isEmpty()) {
@@ -48,6 +44,11 @@ public class KingdomServiceImpl implements KingdomService {
     Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player,
         locationService.createLocation()));
     return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
+  }
+
+  @Override
+  public Kingdom update(Kingdom kingdom) {
+    return kingdomRepository.save(kingdom);
   }
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {

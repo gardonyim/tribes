@@ -7,4 +7,6 @@ public interface KingdomService {
 
   Kingdom save(String kingdomName, Player player);
 
+  Kingdom update(Kingdom kingdom);
+
 }
