@@ -40,7 +40,7 @@ public class GameObjectRuleHolder implements
     if (level == 1) {
       return rule.getBuildingCostMultiplier1();
     } else {
-      return rule.getBuildingTimeMultiplierNInSec();
+      return rule.getBuildingCostMultiplierN();
     }
   }
 
