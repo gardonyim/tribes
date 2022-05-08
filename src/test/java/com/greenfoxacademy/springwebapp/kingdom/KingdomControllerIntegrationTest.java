@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import javax.transaction.Transactional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -51,6 +52,7 @@ public class KingdomControllerIntegrationTest {
     KingdomResFullDTO dto = kingdomService.convertToKingdomResFullDTO(kingdomService.findById(1));
     String expectedResponse = mapper.writeValueAsString(dto);
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/").principal(auth))
+        .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
   }
 
@@ -65,6 +67,7 @@ public class KingdomControllerIntegrationTest {
     KingdomResFullDTO dto = kingdomService.convertToKingdomResFullDTO(kingdomService.findById(1));
     String expectedResponse = mapper.writeValueAsString(dto);
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + kingdomId).principal(auth))
+        .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
   }
 
@@ -80,6 +83,7 @@ public class KingdomControllerIntegrationTest {
     KingdomResWrappedDTO dto = kingdomService.convertToKingdomResWrappedDTO(kingdomService.findById(reqKingdomId));
     String expectedResponse = mapper.writeValueAsString(dto);
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + reqKingdomId).principal(auth))
+        .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
   }
 
@@ -95,6 +99,7 @@ public class KingdomControllerIntegrationTest {
     ErrorDTO dto = new ErrorDTO("The requested kingdom is not exist!");
     String expectedResponse = mapper.writeValueAsString(dto);
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + reqKingdomId).principal(auth))
+        .andExpect(status().is(404))
         .andExpect(content().json(expectedResponse));
   }
 
@@ -110,6 +115,7 @@ public class KingdomControllerIntegrationTest {
     ErrorDTO dto = new ErrorDTO("Forbidden action");
     String expectedResponse = mapper.writeValueAsString(dto);
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + reqKingdomId).principal(auth))
+        .andExpect(status().is(403))
         .andExpect(content().json(expectedResponse));
   }
 
