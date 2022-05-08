@@ -7,8 +7,10 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface KingdomRepository extends CrudRepository<Kingdom, Integer> {
 
-  public List<Kingdom> findAll();
+  List<Kingdom> findAll();
 
-  public Optional<Kingdom> findFirstByName(String name);
+  Optional<Kingdom> findFirstByName(String name);
+
+  Optional<Kingdom> findById(Integer kingdomId);
 
 }

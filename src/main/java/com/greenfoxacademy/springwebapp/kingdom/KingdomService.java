@@ -9,6 +9,8 @@ public interface KingdomService {
 
   Kingdom save(String kingdomName, Player player);
 
+  Kingdom findById(Integer kingdomId);
+
   KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom);
 
   KingdomResWrappedDTO convertToKingdomResWrappedDTO(Kingdom kingdom);
