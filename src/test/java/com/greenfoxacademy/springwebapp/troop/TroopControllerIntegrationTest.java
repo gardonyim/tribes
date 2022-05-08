@@ -9,6 +9,7 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
+
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import javax.transaction.Transactional;
@@ -31,7 +32,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.greenfoxacademy.TestUtils.defaultPlayer;
 import static com.greenfoxacademy.TestUtils.kingdomBuilder;
 import static com.greenfoxacademy.TestUtils.playerBuilder;
+import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
@@ -212,12 +216,16 @@ public class TroopControllerIntegrationTest {
     kingdom.setId(1);
     Player player = new Player(null, null, kingdom, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
-    String expectedResponse = "{ \"id\" :  1, \"level\" : 1, \"hp\" :  1, "
-        + "\"attack\" : 1, \"defence\" :  1, \"startedAt\" : 1651451029, \"finishedAt\" :  1651451024 }";
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/troops/1").principal(auth))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.level", is(1)))
+        .andExpect(jsonPath("$.hp", is(1)))
+        .andExpect(jsonPath("$.attack", is(1)))
+        .andExpect(jsonPath("$.defence", is(1)))
+        .andExpect(jsonPath("$.startedAt", is(both(greaterThan(0)).and(lessThan(Integer.MAX_VALUE)))))
+        .andExpect(jsonPath("$.finishedAt", is(both(greaterThan(0)).and(lessThan(Integer.MAX_VALUE)))));
   }
 
 }
