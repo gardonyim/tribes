@@ -20,12 +20,14 @@ import org.springframework.stereotype.Service;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 
+import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
+
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
-import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import org.springframework.util.ObjectUtils;
 
@@ -34,14 +36,26 @@ public class BuildingServiceImpl implements BuildingService {
 
   private BuildingRepository buildingRepository;
   private ResourceService resourceService;
+  private KingdomService kingdomService;
   private GameObjectRuleHolder gameObjectRuleHolder;
 
   @Autowired
-  public BuildingServiceImpl(BuildingRepository buildingRepository,
-                             ResourceServiceImpl resourceService,
-                             GameObjectRuleHolder gameObjectRuleHolder) {
+  public void setBuildingRepository(BuildingRepository buildingRepository) {
     this.buildingRepository = buildingRepository;
+  }
+
+  @Autowired
+  public void setResourceService(ResourceService resourceService) {
     this.resourceService = resourceService;
+  }
+
+  @Autowired
+  public void setKingdomService(KingdomService kingdomService) {
+    this.kingdomService = kingdomService;
+  }
+
+  @Autowired
+  public void setGameObjectRuleHolder(GameObjectRuleHolder gameObjectRuleHolder) {
     this.gameObjectRuleHolder = gameObjectRuleHolder;
   }
 
@@ -78,28 +92,55 @@ public class BuildingServiceImpl implements BuildingService {
 
   @Override
   public BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
+    int requiredGoldAmount;
     Building modifiableBuilding = validateModifyBuildingLevelRequest(buildingDTO, kingdom, buildingId);
+    if (!(modifiableBuilding.getLevel() >= buildingDTO.getLevel())) {
+      requiredGoldAmount = 0;
+    } else {
+      requiredGoldAmount = buildingDTO.getLevel() * gameObjectRuleHolder.getBuildingCostMultiplier(
+          modifiableBuilding.getBuildingType().getName().toLowerCase(), buildingDTO.getLevel());
+    }
     modifiableBuilding.setLevel(buildingDTO.getLevel());
-    return convertToDTO(saveBuilding(modifiableBuilding));
+    modifiableBuilding.setStartedAt(TimeService.actualTime());
+    modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsLater(gameObjectRuleHolder.getBuildingTimeMultiplier(
+        modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel())
+        * modifiableBuilding.getLevel()));
+    Resource modifiableResource = kingdom.getResources().stream()
+        .filter(r -> r.getResourceType().getDescription().equals("gold")).findFirst().get();
+    modifiableResource.setAmount(modifiableResource.getAmount() - requiredGoldAmount);
+    kingdomService.update(kingdom);
+    return convertToDTO(modifiableBuilding);
   }
 
   @Override
   public Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
-    if (buildingDTO == null) {
-      throw new RequestParameterMissingException("Missing parameter(s): level!");
+    Building modifiableBuilding;
+    if (buildingId == null) {
+      throw new RequestParameterMissingException("Missing parameter(s): buildingId!");
     }
-    Building modifiableBuilding = buildingRepository.findFirstByIdAndAndKingdom(buildingId, kingdom)
-        .orElseThrow(() -> new RequestNotAcceptableException("Id not found"));
-    if (buildingRepository.findFirstByBuildingTypeAndKingdom(BuildingType.TOWNHALL, kingdom)
-        .get().getLevel() < (modifiableBuilding.getLevel() + 1)) {
+    modifiableBuilding = kingdom.getBuildings().stream()
+        .filter(b -> b.getId() == buildingId).collect(Collectors.toList()).get(0);
+    if (modifiableBuilding == null) {
+      throw new ForbiddenActionException();
+    }
+    int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
+    if (!modifiableBuilding.getBuildingType().getName().equalsIgnoreCase("townhall") && kingdom.getBuildings().stream()
+        .filter(b -> b.getBuildingType().getName().equalsIgnoreCase("townhall")).collect(Collectors.toList()).get(0)
+            .getLevel() < (modifiableBuilding.getLevel() + 1)) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
-    int requiredGoldAmount = buildingDTO.getLevel() * gameObjectRuleHolder.getBuildingCostMultiplier(modifiableBuilding.getBuildingType().getName().toLowerCase(), buildingDTO.getLevel());
-    int availableGoldAmount = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
-    if (availableGoldAmount < requiredGoldAmount) {
+    validateReqResourceAmount(modifiableBuilding, reqBuildingLevel);
+    return modifiableBuilding;
+  }
+
+  private void validateReqResourceAmount(Building building, int reqBuildingLevel) {
+    int requiredGoldAmount = reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
+        building.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
+    int availableGoldAmount = building.getKingdom().getResources().stream()
+        .filter(r -> r.getResourceType().getDescription().equals("gold")).map(r -> r.getAmount()).findFirst().get();
+    if (!(building.getLevel() >= reqBuildingLevel) && availableGoldAmount < requiredGoldAmount) {
       throw new RequestCauseConflictException("Not enough resources");
     }
-    return modifiableBuilding;
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
