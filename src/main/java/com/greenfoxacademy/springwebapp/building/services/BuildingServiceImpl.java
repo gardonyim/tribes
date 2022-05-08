@@ -98,35 +98,34 @@ public class BuildingServiceImpl implements BuildingService {
   }
 
   @Override
-  public BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
-    int requiredGoldAmount;
+  public BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, String buildingId) {
     Building modifiableBuilding = validateModifyBuildingLevelRequest(buildingDTO, kingdom, buildingId);
-    if (!(modifiableBuilding.getLevel() >= buildingDTO.getLevel())) {
-      requiredGoldAmount = 0;
-    } else {
-      requiredGoldAmount = buildingDTO.getLevel() * gameObjectRuleHolder.getBuildingCostMultiplier(
-          modifiableBuilding.getBuildingType().getName().toLowerCase(), buildingDTO.getLevel());
-    }
+    int requiredGoldAmount = calcRequiredGoldAmount(modifiableBuilding, buildingDTO.getLevel());
     modifiableBuilding.setLevel(buildingDTO.getLevel());
+    modifiableBuilding.setHp(buildingDTO.getLevel() * gameObjectRuleHolder.getHpMultiplier(
+        modifiableBuilding.getBuildingType().getName().toLowerCase(), buildingDTO.getLevel()));
     modifiableBuilding.setStartedAt(TimeService.actualTime());
-    modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsLater(gameObjectRuleHolder.getBuildingTimeMultiplier(
+    modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsAfterTimeStamp(
+        gameObjectRuleHolder.getBuildingTimeMultiplier(
         modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel())
-        * modifiableBuilding.getLevel()));
+            * modifiableBuilding.getLevel(), modifiableBuilding.getStartedAt()));
     Resource modifiableResource = kingdom.getResources().stream()
         .filter(r -> r.getResourceType().getDescription().equals("gold")).findFirst().get();
     modifiableResource.setAmount(modifiableResource.getAmount() - requiredGoldAmount);
+    modifiableResource.setUpdatedAt(modifiableBuilding.getStartedAt());
     kingdomService.update(kingdom);
     return convertToDTO(modifiableBuilding);
   }
 
   @Override
-  public Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
+  public Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, String buildingId) {
     Building modifiableBuilding;
-    if (buildingId == null) {
+    if (buildingId == null || !buildingId.trim().matches("\\d+")) {
       throw new RequestParameterMissingException("Missing parameter(s): buildingId!");
     }
+    int bId = Integer.valueOf(buildingId);
     modifiableBuilding = kingdom.getBuildings().stream()
-        .filter(b -> b.getId() == buildingId).collect(Collectors.toList()).get(0);
+        .filter(b -> b.getId() == bId).collect(Collectors.toList()).get(0);
     if (modifiableBuilding == null) {
       throw new ForbiddenActionException();
     }
@@ -140,14 +139,19 @@ public class BuildingServiceImpl implements BuildingService {
     return modifiableBuilding;
   }
 
-  private void validateReqResourceAmount(Building building, int reqBuildingLevel) {
-    int requiredGoldAmount = reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
-        building.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
-    int availableGoldAmount = building.getKingdom().getResources().stream()
+  private void validateReqResourceAmount(Building modifiableBuilding, int reqBuildingLevel) {
+    int requiredGoldAmount = calcRequiredGoldAmount(modifiableBuilding, reqBuildingLevel);
+    int availableGoldAmount = modifiableBuilding.getKingdom().getResources().stream()
         .filter(r -> r.getResourceType().getDescription().equals("gold")).map(r -> r.getAmount()).findFirst().get();
-    if (!(building.getLevel() >= reqBuildingLevel) && availableGoldAmount < requiredGoldAmount) {
+    if (availableGoldAmount < requiredGoldAmount) {
       throw new RequestCauseConflictException("Not enough resources");
     }
+  }
+
+  private int calcRequiredGoldAmount(Building modifiableBuilding, int reqBuildingLevel) {
+    return (modifiableBuilding.getLevel() >= reqBuildingLevel) ? 0
+        : reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
+        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
