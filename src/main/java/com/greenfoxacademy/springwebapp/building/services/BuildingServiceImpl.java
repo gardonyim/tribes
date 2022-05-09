@@ -5,7 +5,12 @@ import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
+<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
+=======
+import com.greenfoxacademy.springwebapp.building.models.Building;
+
+>>>>>>> 6ed0b4e (refactor(Put buildings): refactor methodes in buildingservice which are responsible for buildinglevel modification)
 import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
@@ -20,6 +25,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+<<<<<<< HEAD
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
+
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+
+import com.greenfoxacademy.springwebapp.exceptions.*;
+
+>>>>>>> 6ed0b4e (refactor(Put buildings): refactor methodes in buildingservice which are responsible for buildinglevel modification)
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
@@ -119,7 +139,6 @@ public class BuildingServiceImpl implements BuildingService {
     if (modifiableBuilding.getKingdom().getId() != kingdom.getId()) {
       throw new ForbiddenActionException();
     }
-    Building modifiableBuilding = modifiableBuildings.get(0);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     if (modifiableBuilding.getBuildingType() != BuildingType.TOWNHALL
         && kingdom.getBuildings().stream().filter(b -> b.getBuildingType() == BuildingType.TOWNHALL)
@@ -136,12 +155,7 @@ public class BuildingServiceImpl implements BuildingService {
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
       throw new NotEnoughResourceException();
     }
-  }
-
-  private int calcRequiredGoldAmount(Building modifiableBuilding, int reqBuildingLevel) {
-    return (modifiableBuilding.getLevel() >= reqBuildingLevel) ? 0
-        : reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
+    return modifiableBuilding;
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
