@@ -34,7 +34,7 @@ public class BuildingController {
     return ResponseEntity.status(201).body(buildingService.addBuilding(typeDTO, kingdom));
   }
 
-  @PutMapping({"/","/{id}"})
+  @PutMapping({"/{id}"})
   public ResponseEntity modifyBuildingLevel(UsernamePasswordAuthenticationToken user,
                                             @PathVariable(name = "id") Integer buildingId,
                                             @RequestBody BuildingDTO buildingDTO) {
