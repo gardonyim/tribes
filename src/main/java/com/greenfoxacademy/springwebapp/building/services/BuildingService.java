@@ -20,6 +20,7 @@ public interface BuildingService {
 
   BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom);
 
+<<<<<<< HEAD
   BuildingDTO convertToDTO(Building building);
 
   List<BuildingDTO> convertToDTOs(List<Building> buildings);
@@ -27,7 +28,10 @@ public interface BuildingService {
   BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
 
   BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, String buildingId);
+=======
+  BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+>>>>>>> 5d666ca (refactor(Put buildings): refactor methodes in buildingservice which are responsible for buildinglevel modification)
 
-  Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, String buildingId);
+  Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
 
 }
