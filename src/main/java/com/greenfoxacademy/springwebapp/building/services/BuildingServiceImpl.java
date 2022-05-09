@@ -110,11 +110,12 @@ public class BuildingServiceImpl implements BuildingService {
       throw new RequestParameterMissingException("Missing parameter(s): buildingId!");
     }
     int reqBuildingId = Integer.valueOf(buildingId);
-    Building modifiableBuilding = kingdom.getBuildings().stream()
-        .filter(b -> b.getId() == reqBuildingId).collect(Collectors.toList()).get(0);
-    if (modifiableBuilding == null) {
+    List<Building> modifiableBuildings = kingdom.getBuildings().stream()
+        .filter(b -> b.getId() == reqBuildingId).collect(Collectors.toList());
+    if (modifiableBuildings.size() == 0) {
       throw new ForbiddenActionException();
     }
+    Building modifiableBuilding = modifiableBuildings.get(0);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     if (!modifiableBuilding.getBuildingType().getName().equalsIgnoreCase("townhall")
         && kingdom.getBuildings().stream().filter(b -> b.getBuildingType().getName()
