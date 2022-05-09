@@ -116,7 +116,6 @@ public class BuildingServiceImpl implements BuildingService {
     if (modifiableBuilding.getKingdom().getId() != kingdom.getId()) {
       throw new ForbiddenActionException();
     }
-    Building modifiableBuilding = modifiableBuildings.get(0);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     if (modifiableBuilding.getBuildingType() != BuildingType.TOWNHALL
         && kingdom.getBuildings().stream().filter(b -> b.getBuildingType() == BuildingType.TOWNHALL)
@@ -133,12 +132,6 @@ public class BuildingServiceImpl implements BuildingService {
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
       throw new NotEnoughResourceException();
     }
-  }
-
-  private int calcRequiredGoldAmount(Building modifiableBuilding, int reqBuildingLevel) {
-    return (modifiableBuilding.getLevel() >= reqBuildingLevel) ? 0
-        : reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
