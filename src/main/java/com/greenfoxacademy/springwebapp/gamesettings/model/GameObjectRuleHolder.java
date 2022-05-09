@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.gamesettings.model;
 
-import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.gamesettings.GameObjectRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -33,7 +32,7 @@ public class GameObjectRuleHolder implements
       return totalTime;
     }
     int nextLevel = currentLevel++;
-    while(nextLevel <= reqLevel) {
+    while (nextLevel <= reqLevel) {
       totalTime += nextLevel * getBuildingTimeMultiplier(gameObjectType, nextLevel);
     }
     return totalTime;
@@ -45,13 +44,13 @@ public class GameObjectRuleHolder implements
       return totalCost;
     }
     int nextLevel = currentLevel++;
-    while(nextLevel <= reqLevel) {
+    while (nextLevel <= reqLevel) {
       totalCost += nextLevel * getBuildingCostMultiplier(gameObjectType, nextLevel);
     }
     return totalCost;
   }
 
-  public int calcNewHP (String gameObjectType, int reqLevel) {
+  public int calcNewHP(String gameObjectType, int reqLevel) {
     return reqLevel * getHpMultiplier(gameObjectType, reqLevel);
   }
 
