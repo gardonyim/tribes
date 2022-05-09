@@ -190,8 +190,12 @@ public class BuildingControllerIntegrationTest {
       throws Exception {
 =======
   public void when_putKingdomBuildingsWithoutBuildingId_should_respondStatus400AndProperErrorDtoInJson()
+<<<<<<< HEAD
   throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "";
@@ -209,10 +213,14 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithNonIntegerBuildingId_should_respondStatus400AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
 =======
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "one";
@@ -244,6 +252,7 @@ public class BuildingControllerIntegrationTest {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     Player existingtestuser =
@@ -261,6 +270,9 @@ public class BuildingControllerIntegrationTest {
 >>>>>>> f9cfae6 (test(Put Buildings): add integration tests)
 =======
       throws Exception{
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "10";
@@ -281,6 +293,7 @@ public class BuildingControllerIntegrationTest {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     existingkingdom.setBuildings(Arrays.asList(buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
@@ -295,6 +308,9 @@ public class BuildingControllerIntegrationTest {
 >>>>>>> f9cfae6 (test(Put Buildings): add integration tests)
 =======
       throws Exception{
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
@@ -315,6 +331,7 @@ public class BuildingControllerIntegrationTest {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     existingkingdom.setBuildings(Arrays.asList(buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
@@ -332,6 +349,9 @@ public class BuildingControllerIntegrationTest {
 =======
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "1";
@@ -382,9 +402,14 @@ public class BuildingControllerIntegrationTest {
 =======
 
   @Test
+<<<<<<< HEAD
   public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDTOInJson()
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+  public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDtoInJson()
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "1";
