@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.gamesettings.model;
 
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.gamesettings.GameObjectRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -24,6 +25,34 @@ public class GameObjectRuleHolder implements
   @Override
   public void onApplicationEvent(ContextRefreshedEvent event) {
     gameObjectRules = gameObjectRuleService.findAll();
+  }
+
+  public int calcCreationTime(String gameObjectType, int currentLevel, int reqLevel) {
+    int totalTime = 0;
+    if (reqLevel <= currentLevel) {
+      return totalTime;
+    }
+    int nextLevel = currentLevel++;
+    while(nextLevel <= reqLevel) {
+      totalTime += nextLevel * getBuildingTimeMultiplier(gameObjectType, nextLevel);
+    }
+    return totalTime;
+  }
+
+  public int calcCreationCost(String gameObjectType, int currentLevel, int reqLevel) {
+    int totalCost = 0;
+    if (reqLevel <= currentLevel) {
+      return totalCost;
+    }
+    int nextLevel = currentLevel++;
+    while(nextLevel <= reqLevel) {
+      totalCost += nextLevel * getBuildingCostMultiplier(gameObjectType, nextLevel);
+    }
+    return totalCost;
+  }
+
+  public int calcNewHP (String gameObjectType, int reqLevel) {
+    return reqLevel * getHpMultiplier(gameObjectType, reqLevel);
   }
 
   public int getBuildingTimeMultiplier(String gameObjectType, int level) {
