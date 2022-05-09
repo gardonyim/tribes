@@ -4,9 +4,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
+import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
+import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import javax.transaction.Transactional;
@@ -35,6 +39,12 @@ public class BuildingControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
+
+  @Autowired
+  private PlayerService playerService;
+
+  @Autowired
+  ObjectMapper mapper;
 
   @Test
   public void when_postKingdomBuildingsWithoutType_should_respondBadRequestAndProperJson()
@@ -147,4 +157,112 @@ public class BuildingControllerIntegrationTest {
         .andExpect(jsonPath("$.startedAt").value(TimeService.toEpochSecond(TimeService.actualTime())))
         .andExpect(jsonPath("$.finishedAt").value(TimeService.toEpochSecond(TimeService.timeAtNSecondsLater(90))));
   }
+
+  @Test
+  public void when_putKingdomBuildingsWithoutBuildingId_should_respondStatus400AndProperErrorDtoInJson()
+  throws Exception{
+    Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String buildingId = "";
+    String jsonRequest = "{ \"level\" : \"2\" }";
+    ErrorDTO dto = new ErrorDTO("Missing parameter(s): buildingId!");
+    String expectedResponse = mapper.writeValueAsString(dto);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
+        .contentType("application/json")
+        .content(jsonRequest))
+        .andExpect(status().is(400))
+        .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  public void when_putKingdomBuildingsWithNonIntegerBuildingId_should_respondStatus400AndProperErrorDtoInJson()
+      throws Exception{
+    Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String buildingId = "one";
+    String jsonRequest = "{ \"level\" : \"2\" }";
+    ErrorDTO dto = new ErrorDTO("Missing parameter(s): buildingId!");
+    String expectedResponse = mapper.writeValueAsString(dto);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
+            .contentType("application/json")
+            .content(jsonRequest))
+        .andExpect(status().is(400))
+        .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  public void when_putKingdomBuildingsWithNotOwnBuildingId_should_respondStatus403AndProperErrorDtoInJson()
+      throws Exception{
+    Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String buildingId = "10";
+    String jsonRequest = "{ \"level\" : \"2\" }";
+    ErrorDTO dto = new ErrorDTO("Forbidden action");
+    String expectedResponse = mapper.writeValueAsString(dto);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
+            .contentType("application/json")
+            .content(jsonRequest))
+        .andExpect(status().is(403))
+        .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  public void when_putKingdomBuildingsWithOwnBuildingIdAndToHighLevel_should_respondStatus406AndProperErrorDtoInJson()
+      throws Exception{
+    Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String buildingId = "5";
+    String jsonRequest = "{ \"level\" : \"3\" }";
+    ErrorDTO dto = new ErrorDTO("Cannot build buildings with higher level than the Townhall");
+    String expectedResponse = mapper.writeValueAsString(dto);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
+            .contentType("application/json")
+            .content(jsonRequest))
+        .andExpect(status().is(406))
+        .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  public void when_putKingdomBuildingsWithOwnBuildingIdAndToExpensLevel_should_respondStatus409AndProperErrorDtoInJson()
+      throws Exception{
+    Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String buildingId = "1";
+    String jsonRequest = "{ \"level\" : \"20\" }";
+    ErrorDTO dto = new ErrorDTO("Not enough resources");
+    String expectedResponse = mapper.writeValueAsString(dto);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
+            .contentType("application/json")
+            .content(jsonRequest))
+        .andExpect(status().is(409))
+        .andExpect(content().json(expectedResponse));
+  }
+
+
+  @Test
+  public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDTOInJson()
+      throws Exception{
+    Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    String buildingId = "1";
+    String jsonRequest = "{ \"level\" : \"2\" }";
+    BuildingDTO dto = new BuildingDTO();
+    String expectedResponse = mapper.writeValueAsString(dto);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
+            .contentType("application/json")
+            .content(jsonRequest))
+        .andExpect(status().is(200))
+        .andExpect(content().json(expectedResponse));
+  }
+
+
+
+
+
 }
