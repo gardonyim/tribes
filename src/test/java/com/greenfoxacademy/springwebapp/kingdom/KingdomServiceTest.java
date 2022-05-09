@@ -3,21 +3,27 @@ package com.greenfoxacademy.springwebapp.kingdom;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingServiceImpl;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
 import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,6 +42,9 @@ public class KingdomServiceTest {
   LocationService locationService;
   @InjectMocks
   KingdomServiceImpl kingdomService;
+
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
   public void when_saveKingdomWithName_should_returnKingdomWithGivenName() {
@@ -113,6 +122,60 @@ public class KingdomServiceTest {
     resourceList.add(new Resource(ResourceType.FOOD, 1000, 0, null, null));
     resourceList.add(new Resource(ResourceType.GOLD, 1000, 0, null, null));
     return resourceList;
+  }
+
+  @Test
+  public void renameKingdomTest() {
+    when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+
+    Player player = new Player("testuser", "testpassword", null, "", 0);
+    player.setId(1);
+
+    Kingdom initialKingdom = new Kingdom();
+    initialKingdom.setName("my initial name");
+    initialKingdom.setPlayer(player);
+    initialKingdom = kingdomRepository.save(initialKingdom);
+
+    String modifyToThisName = "my modified name";
+
+    KingdomDTO modifiedKingdomAsDTO = kingdomService.renameKingdom(initialKingdom, modifyToThisName);
+
+    Assert.assertEquals(modifiedKingdomAsDTO.getName(), modifyToThisName);
+  }
+
+  @Test
+  public void convertTest() {
+    Player player = new Player("testuser", "testpassword", null, "", 0);
+    player.setId(1);
+
+    Kingdom initialKingdom = new Kingdom();
+    initialKingdom.setName("my initial name");
+    initialKingdom.setPlayer(player);
+    initialKingdom.setId(1);
+
+    KingdomDTO kingdomDTO = new KingdomDTO();
+    kingdomDTO.setId(initialKingdom.getId());
+    kingdomDTO.setUserId(player.getId());
+    kingdomDTO.setName(initialKingdom.getName());
+
+    KingdomDTO convertedKingdomDTO = kingdomService.convert(initialKingdom);
+
+    Assert.assertEquals(kingdomDTO, convertedKingdomDTO);
+
+  }
+
+  @Test
+  public void checkKingdomPutDtoTest_ThrowsException() {
+    exceptionRule.expect(RequestParameterMissingException.class);
+    exceptionRule.expectMessage("name is required");
+    kingdomService.checkKingdomPutDto(new KingdomPutDTO());
+  }
+
+  @Test
+  public void checkKingdomPutDto_DoesntThrowException() {
+    KingdomPutDTO kingdomPutDTO = new KingdomPutDTO();
+    kingdomPutDTO.setName("this is a not empty name");
+    kingdomService.checkKingdomPutDto(kingdomPutDTO);
   }
 
 }
