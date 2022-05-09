@@ -182,7 +182,7 @@ public class BuildingControllerIntegrationTest {
     ErrorDTO dto = new ErrorDTO("Required building is not exist!");
 =======
   public void when_putKingdomBuildingsWithoutBuildingId_should_respondStatus400AndProperErrorDtoInJson()
-  throws Exception{
+      throws Exception {
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "";
@@ -199,7 +199,7 @@ public class BuildingControllerIntegrationTest {
 
   @Test
   public void when_putKingdomBuildingsWithNonIntegerBuildingId_should_respondStatus400AndProperErrorDtoInJson()
-      throws Exception{
+      throws Exception {
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "one";
@@ -222,6 +222,7 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithNotOwnBuildingId_should_respondStatus403AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     Player existingtestuser =
@@ -230,6 +231,9 @@ public class BuildingControllerIntegrationTest {
     Integer buildingId = 3;
 =======
       throws Exception{
+=======
+      throws Exception {
+>>>>>>> 4632bd0 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "10";
@@ -248,6 +252,7 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithOwnBuildingIdAndToHighLevel_should_respondStatus406AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     existingkingdom.setBuildings(Arrays.asList(buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
@@ -255,6 +260,9 @@ public class BuildingControllerIntegrationTest {
         new Player(1, "existingtestuser", null, existingkingdom, null, 0);
 =======
       throws Exception{
+=======
+      throws Exception {
+>>>>>>> 4632bd0 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
 >>>>>>> f9cfae6 (test(Put Buildings): add integration tests)
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
@@ -273,6 +281,7 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithOwnBuildingIdAndToExpensLevel_should_respondStatus409AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     existingkingdom.setBuildings(Arrays.asList(buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
@@ -284,6 +293,9 @@ public class BuildingControllerIntegrationTest {
     ErrorDTO dto = new ErrorDTO("Not enough resource");
 =======
       throws Exception{
+=======
+      throws Exception {
+>>>>>>> 4632bd0 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "1";
@@ -325,8 +337,8 @@ public class BuildingControllerIntegrationTest {
 =======
 
   @Test
-  public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDTOInJson()
-      throws Exception{
+  public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDtoInJson()
+      throws Exception {
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "1";
