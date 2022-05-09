@@ -95,7 +95,7 @@ public class KingdomServiceImpl implements KingdomService {
 
   @Override
   public void checkKingdomPutDto(KingdomPutDTO kingdomPutDTO) {
-    if (!StringUtils.hasText(kingdomPutDTO.getName())) {
+    if (kingdomPutDTO == null || !StringUtils.hasText(kingdomPutDTO.getName())) {
       throw new RequestParameterMissingException("name is required.");
     }
   }

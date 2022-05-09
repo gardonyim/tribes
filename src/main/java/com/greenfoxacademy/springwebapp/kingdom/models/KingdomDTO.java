@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
+import com.google.common.base.Objects;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
@@ -7,7 +8,6 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class KingdomDTO {
 
@@ -83,39 +83,18 @@ public class KingdomDTO {
     if (!(o instanceof KingdomDTO)) {
       return false;
     }
-
     KingdomDTO that = (KingdomDTO) o;
-
-    if (id != that.id) {
-      return false;
-    }
-    if (userId != that.userId) {
-      return false;
-    }
-    if (!Objects.equals(name, that.name)) {
-      return false;
-    }
-    if (!buildings.equals(that.buildings)) {
-      return false;
-    }
-    if (!resources.equals(that.resources)) {
-      return false;
-    }
-    if (!troops.equals(that.troops)) {
-      return false;
-    }
-    return Objects.equals(location, that.location);
+    return id == that.id
+            && userId == that.userId
+            && Objects.equal(name, that.name)
+            && Objects.equal(buildings, that.buildings)
+            && Objects.equal(resources, that.resources)
+            && Objects.equal(troops, that.troops)
+            && Objects.equal(location, that.location);
   }
 
   @Override
   public int hashCode() {
-    int result = id;
-    result = 31 * result + (name != null ? name.hashCode() : 0);
-    result = 31 * result + userId;
-    result = 31 * result + buildings.hashCode();
-    result = 31 * result + resources.hashCode();
-    result = 31 * result + troops.hashCode();
-    result = 31 * result + (location != null ? location.hashCode() : 0);
-    return result;
+    return Objects.hashCode(id, name, userId, buildings, resources, troops, location);
   }
 }
