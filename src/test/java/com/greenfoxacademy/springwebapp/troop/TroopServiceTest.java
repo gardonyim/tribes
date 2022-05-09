@@ -86,7 +86,7 @@ public class TroopServiceTest {
     LocalDateTime time = LocalDateTime.now(ZoneOffset.UTC);
     Troop troop = new Troop(1, 20, 10, 5, time, time, kingdom);
     troop.setId(999);
-    when(troopRepository.findById(anyInt())).thenReturn(Optional.of(troop));
+    when(troopRepository.findById(999)).thenReturn(Optional.of(troop));
 
     Troop actual = troopService.getTroopById(kingdom, 999);
 

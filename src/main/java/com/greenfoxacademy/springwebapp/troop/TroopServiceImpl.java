@@ -119,12 +119,23 @@ public class TroopServiceImpl implements TroopService {
 
     int currentLevel = troop.getLevel();
     int desiredLevel = building.getLevel();
-    int investment = gameObjectRuleHolder.getBuildingCostMultiplier("troop", currentLevel);
-    int price = gameObjectRuleHolder.getBuildingCostMultiplier("troop", desiredLevel);
+    int investment = currentLevel * gameObjectRuleHolder.getBuildingCostMultiplier("troop", currentLevel);
+    int price = desiredLevel * gameObjectRuleHolder.getBuildingCostMultiplier("troop", desiredLevel);
     resourceService.hasEnoughGold(kingdom, price - investment);
     resourceService.pay(kingdom, price - investment);
+    return convert(troopRepository.save(setValues(troop, currentLevel, desiredLevel)));
+  }
+
+  private Troop setValues(Troop troop, int currentLevel, int desiredLevel) {
     troop.setLevel(desiredLevel);
-    return convert(troopRepository.save(troop));
+    troop.setHp(desiredLevel * gameObjectRuleHolder.getHpMultiplier("troop", desiredLevel));
+    troop.setAttack(desiredLevel * 10);
+    troop.setDefence(desiredLevel * 5);
+    troop.setStartedAt(TimeService.actualTime());
+    int buildingTime = gameObjectRuleHolder.getBuildingTimeMultiplier("troop", desiredLevel)
+        - gameObjectRuleHolder.getBuildingTimeMultiplier("troop", currentLevel);
+    troop.setFinishedAt(TimeService.timeAtNSecondsLater(buildingTime));
+    return troop;
   }
 
   public void checkInputParameters(TroopPostDTO troopPostDTO) {
