@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.gamesettings.model;
 
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.gamesettings.GameObjectRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -33,6 +34,7 @@ public class GameObjectRuleHolder implements
     if (reqLevel <= currentLevel) {
       return totalTime;
     }
+
     int nextLevel = ++currentLevel;
     while (nextLevel <= reqLevel) {
       totalTime += getBuildingTimeMultiplier(gameObjectType, nextLevel);
