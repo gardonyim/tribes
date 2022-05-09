@@ -184,6 +184,7 @@ public class BuildingControllerIntegrationTest {
         .andExpect(content().json(expectedResponse));
   }
 
+
   @Test
   public void when_putKingdomBuildingsWithNotOwnBuildingId_should_respondStatus403AndProperErrorDtoInJson()
       throws Exception {
