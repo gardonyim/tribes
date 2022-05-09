@@ -9,7 +9,6 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
-
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
@@ -106,15 +105,8 @@ public class BuildingServiceImpl implements BuildingService {
         modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel);
     resourceService.pay(kingdom, requiredGoldAmount);
     modifiableBuilding.setStartedAt(kingdom.getResources().stream()
-<<<<<<< HEAD
         .filter(r -> r.getResourceType() == ResourceType.GOLD).collect(Collectors.toList()).get(0).getUpdatedAt());
     modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsAfterTimeStamp(gameObjectRuleHolder.calcCreationTime(
-=======
-        .filter(r -> r.getResourceType() == ResourceType.GOLD).collect(Collectors.toList()).get(0)
-        .getUpdatedAt());
-    modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsAfterTimeStamp(
-        gameObjectRuleHolder.calcCreationTime(
->>>>>>> 463dcfd (refactor(Put buildings): refactor methodes in buildingservice which are responsible for buildinglevel modification)
         modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel),
         modifiableBuilding.getStartedAt()));
     kingdomService.update(kingdom);
@@ -137,20 +129,16 @@ public class BuildingServiceImpl implements BuildingService {
         .collect(Collectors.toList()).get(0).getLevel() < reqBuildingLevel) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
-<<<<<<< HEAD
     validateHasEnoughGold(modifiableBuilding, reqBuildingLevel);
     return modifiableBuilding;
   }
 
   private void validateHasEnoughGold(Building modifiableBuilding, int reqBuildingLevel) {
-=======
->>>>>>> 463dcfd (refactor(Put buildings): refactor methodes in buildingservice which are responsible for buildinglevel modification)
     if (resourceService.hasEnoughGold(modifiableBuilding.getKingdom(),
         gameObjectRuleHolder.calcCreationCost(modifiableBuilding.getBuildingType().getName().toLowerCase(),
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
       throw new NotEnoughResourceException();
     }
-    return modifiableBuilding;
   }
 
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
