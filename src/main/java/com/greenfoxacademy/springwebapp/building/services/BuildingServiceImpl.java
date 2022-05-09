@@ -116,6 +116,7 @@ public class BuildingServiceImpl implements BuildingService {
     if (modifiableBuilding.getKingdom().getId() != kingdom.getId()) {
       throw new ForbiddenActionException();
     }
+    Building modifiableBuilding = modifiableBuildings.get(0);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     if (modifiableBuilding.getBuildingType() != BuildingType.TOWNHALL
         && kingdom.getBuildings().stream().filter(b -> b.getBuildingType() == BuildingType.TOWNHALL)
