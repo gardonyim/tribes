@@ -1,6 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
-import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
+import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +20,15 @@ public class KingdomController {
   }
 
   @GetMapping({"/kingdom","/kingdom/{id}"})
-  public ResponseEntity getKingdom(@PathVariable(required = false, value = "id") String kingdomId,
+  public ResponseEntity getKingdom(@PathVariable(required = false, value = "id") Integer kingdomId,
                                    UsernamePasswordAuthenticationToken user) {
-    Player player = (Player)user.getPrincipal();
-    int myKingdomId = player.getKingdom().getId();
-    if (kingdomId == null || (kingdomId.matches("\\d+") && (Integer.valueOf(kingdomId) == myKingdomId))) {
-      return ResponseEntity
-          .status(200)
-          .body(kingdomService.convertToKingdomResFullDTO(player.getKingdom()));
-    } else if (kingdomId.matches("\\d+")) {
-      return ResponseEntity
-          .status(200)
-          .body(kingdomService.convertToKingdomResWrappedDTO(kingdomService.findById(Integer.valueOf(kingdomId))));
+    Kingdom kingdom = ((Player)user.getPrincipal()).getKingdom();
+    if (kingdomId == null || kingdomId == kingdom.getId()) {
+      return ResponseEntity.status(200).body(kingdomService.fetchKingdomData(kingdom));
     } else {
-      throw new ForbiddenActionException();
+      return ResponseEntity.status(200).body(kingdomService.fetchKingdomData(kingdomId));
     }
-
   }
+
 }
+

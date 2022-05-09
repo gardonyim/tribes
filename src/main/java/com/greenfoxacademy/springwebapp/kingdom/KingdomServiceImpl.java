@@ -67,6 +67,16 @@ public class KingdomServiceImpl implements KingdomService {
   }
 
   @Override
+  public KingdomResFullDTO fetchKingdomData(Kingdom kingdom) {
+    return convertToKingdomResFullDTO(kingdom);
+  }
+
+  @Override
+  public KingdomResWrappedDTO fetchKingdomData(Integer kingdomId) {
+    return convertToKingdomResWrappedDTO(findById(kingdomId));
+  }
+
+  @Override
   public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
     return new KingdomResFullDTO(
         kingdom.getId(),

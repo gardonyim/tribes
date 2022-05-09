@@ -15,4 +15,8 @@ public interface KingdomService {
 
   KingdomResWrappedDTO convertToKingdomResWrappedDTO(Kingdom kingdom);
 
+  KingdomResFullDTO fetchKingdomData(Kingdom kingdom);
+
+  KingdomResWrappedDTO fetchKingdomData(Integer kingdomId);
+
 }
