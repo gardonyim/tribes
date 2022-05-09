@@ -161,10 +161,14 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithoutBuildingId_should_respondStatus400AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
 =======
   throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "";
@@ -182,10 +186,14 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithNonIntegerBuildingId_should_respondStatus400AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
 =======
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "one";
@@ -203,10 +211,14 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithNotOwnBuildingId_should_respondStatus403AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
 =======
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "10";
@@ -224,10 +236,14 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithOwnBuildingIdAndToHighLevel_should_respondStatus406AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
 =======
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "5";
@@ -245,10 +261,14 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_putKingdomBuildingsWithOwnBuildingIdAndToExpensLevel_should_respondStatus409AndProperErrorDtoInJson()
 <<<<<<< HEAD
+<<<<<<< HEAD
       throws Exception {
 =======
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "1";
@@ -266,12 +286,17 @@ public class BuildingControllerIntegrationTest {
 
   @Test
 <<<<<<< HEAD
+<<<<<<< HEAD
   public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDtoInJson()
       throws Exception {
 =======
   public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDTOInJson()
       throws Exception{
 >>>>>>> ca31801 (test(Put Buildings): add integration tests)
+=======
+  public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDtoInJson()
+      throws Exception {
+>>>>>>> 0a09136 (fix(Put Buildings): fix checkstyile problems)
     Player existingtestuser = playerService.findFirstByUsername("existingtestuser").get();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "1";
