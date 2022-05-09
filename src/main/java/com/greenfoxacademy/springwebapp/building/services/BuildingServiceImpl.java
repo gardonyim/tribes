@@ -112,16 +112,17 @@ public class BuildingServiceImpl implements BuildingService {
 
   @Override
   public Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, String buildingId) {
-    Building modifiableBuilding;
     if (buildingId == null || !buildingId.trim().matches("\\d+")) {
       throw new RequestParameterMissingException("Missing parameter(s): buildingId!");
     }
-    int bId = Integer.valueOf(buildingId);
-    modifiableBuilding = kingdom.getBuildings().stream()
-        .filter(b -> b.getId() == bId).collect(Collectors.toList()).get(0);
-    if (modifiableBuilding == null) {
+
+    int reqBuildingId = Integer.valueOf(buildingId);
+    List<Building> modifiableBuildings = kingdom.getBuildings().stream()
+        .filter(b -> b.getId() == reqBuildingId).collect(Collectors.toList());
+    if (modifiableBuildings.size() == 0) {
       throw new ForbiddenActionException();
     }
+    Building modifiableBuilding = modifiableBuildings.get(0);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     if (!modifiableBuilding.getBuildingType().getName().equalsIgnoreCase("townhall") && kingdom.getBuildings().stream()
         .filter(b -> b.getBuildingType().getName().equalsIgnoreCase("townhall")).collect(Collectors.toList()).get(0)
