@@ -140,12 +140,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
   }
 
-  private int calcRequiredGoldAmount(Building modifiableBuilding, int reqBuildingLevel) {
-    return (modifiableBuilding.getLevel() >= reqBuildingLevel) ? 0
-        : reqBuildingLevel * gameObjectRuleHolder.getBuildingCostMultiplier(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel);
-  }
-
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
     if (typeDTO.getType() == null || typeDTO.getType().trim().isEmpty()) {
       throw new RequestParameterMissingException("Missing parameter(s): type!");
