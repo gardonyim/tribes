@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
+import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
 
+import static com.greenfoxacademy.TestUtils.*;
+import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,12 +50,15 @@ public class KingdomControllerIntegrationTest {
   @Test
   public void when_getKingdomWithoutKingdomId_should_respondDetailedOwnKingdomJson()
       throws Exception {
-    Kingdom existingkingdom = kingdomService.findById(1);
+    Kingdom existingkingdom = defaultKingdom();
+    existingkingdom.setLocation(defaultLocation());
     Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+        playerBuilder().withId(1).withUsername("existingtestuser").withKingdom(existingkingdom).build();
+    existingkingdom.setPlayer(existingtestuser);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    KingdomResFullDTO dto = kingdomService.convertToKingdomResFullDTO(kingdomService.findById(1));
+    KingdomResFullDTO dto = kingdomResFullDtoBuilder(existingkingdom).build();
     String expectedResponse = mapper.writeValueAsString(dto);
+
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/").principal(auth))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
@@ -74,15 +82,19 @@ public class KingdomControllerIntegrationTest {
   @Test
   public void when_getKingdomWithForeignKingdomId_should_respondASortenedKingdomJson()
       throws Exception {
-    int myKingdomId = 1;
-    int reqKingdomId = 2;
-    Kingdom existingkingdom = kingdomService.findById(myKingdomId);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    KingdomResWrappedDTO dto = kingdomService.convertToKingdomResWrappedDTO(kingdomService.findById(reqKingdomId));
+    Kingdom existingkingdom1 = defaultKingdom();
+    existingkingdom1.setLocation(defaultLocation());
+    Player existingtestuser1 =
+        playerBuilder().withId(1).withUsername("existingtestuser1").withKingdom(existingkingdom1).build();
+    existingkingdom1.setPlayer(existingtestuser1);
+
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser1, null);
+    KingdomResWrappedDTO dto = new KingdomResWrappedDTO(new KingdomBaseDTO(
+        2, "testkingdom2", 2, new LocationDTO(5, -5)
+    ));
     String expectedResponse = mapper.writeValueAsString(dto);
-    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + reqKingdomId).principal(auth))
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + 2).principal(auth))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
   }
