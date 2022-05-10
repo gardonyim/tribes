@@ -1,18 +1,25 @@
 package com.greenfoxacademy;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.location.models.Location;
+import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
+import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TestUtils {
 
@@ -104,6 +111,76 @@ public class TestUtils {
             .withAvatar("")
             .withPoints(0)
             .withKingdom(defaultKingdom());
+  }
+
+  public static LocationDtoBuilder locationDtoBuilder(Location location) {
+    return new LocationDtoBuilder()
+        .withX(location.getxcoordinate())
+        .withY(location.getycoordinate());
+  }
+
+  public static TroopDtoBuilder troopDtoBuilder(Troop troop) {
+    return new TroopDtoBuilder()
+        .withId(troop.getId())
+        .withLevel(troop.getLevel())
+        .withHp(troop.getHp())
+        .withAttack(troop.getAttack())
+        .withDefence(troop.getDefence())
+        .withStartedAt(troop.getStartedAt().toEpochSecond(ZoneOffset.UTC))
+        .withFinishedAt(troop.getFinishedAt().toEpochSecond(ZoneOffset.UTC));
+  }
+
+  public static BuildingDtoBuilder buildingDtoBuilder(Building building) {
+    return new BuildingDtoBuilder()
+        .withId(building.getId())
+        .withBuildingType(building.getBuildingType().getName().toLowerCase())
+        .withLevel(building.getLevel())
+        .withHp(building.getHp())
+        .withStartedAt(building.getStartedAt().toEpochSecond(ZoneOffset.UTC))
+        .withFinishedAt(building.getFinishedAt().toEpochSecond(ZoneOffset.UTC));
+
+  }
+
+  public static ResourceDtoBuilder resourceDtoBuilder(Resource resource) {
+    return new ResourceDtoBuilder()
+        .withType(resource.getResourceType().getDescription().toLowerCase())
+        .withAmount(resource.getAmount())
+        .withGeneration(resource.getGeneration())
+        .withUpdatedAt(resource.getUpdatedAt().toEpochSecond(ZoneOffset.UTC));
+  }
+
+  public static KingdomBaseDtoBuilder kingdomBaseDtoBuilder(Kingdom kingdom) {
+    return new KingdomBaseDtoBuilder()
+        .withKingdomId(kingdom.getId())
+        .withName(kingdom.getName())
+        .withUserId(kingdom.getPlayer().getId())
+        .withLocationDTO(locationDtoBuilder(kingdom.getLocation()).build());
+  }
+
+  public static KingdomResFullDtoBuilder kingdomResFullDtoBuilder(Kingdom kingdom) {
+    return new KingdomResFullDtoBuilder()
+        .withKingdomId(kingdom.getId())
+        .withName(kingdom.getName())
+        .withUserId(kingdom.getPlayer().getId())
+        .withLocationDTO(locationDtoBuilder(kingdom.getLocation()).build())
+        .withBuildingDTOs(
+            kingdom.getBuildings().stream()
+                .map(TestUtils::buildingDtoBuilder)
+                .map(TestUtils.BuildingDtoBuilder::build)
+                .collect(Collectors.toList())
+        )
+        .withResourceDTOs(
+    kingdom.getResources().stream()
+                .map(TestUtils::resourceDtoBuilder)
+                .map(TestUtils.ResourceDtoBuilder::build)
+                .collect(Collectors.toList())
+        )
+        .withTroopDTOs(
+            kingdom.getTroops().stream()
+                .map(TestUtils::troopDtoBuilder)
+                .map(TestUtils.TroopDtoBuilder::build)
+                .collect(Collectors.toList())
+        );
   }
 
   public static class PlayerBuilder {
@@ -230,7 +307,7 @@ public class TestUtils {
     }
 
     public BuildingBuilder finishedAt(String finishedAt) {
-      building.setStartedAt(LocalDateTime.parse(finishedAt));
+      building.setFinishedAt(LocalDateTime.parse(finishedAt));
       return this;
     }
 
@@ -329,10 +406,217 @@ public class TestUtils {
     public Troop build() {
       return troop;
     }
+
+  }
+
+  public static class LocationDtoBuilder {
+    private LocationDTO locationDTO;
+
+    LocationDtoBuilder() { locationDTO = new LocationDTO(); }
+
+    public LocationDtoBuilder withX(int x) {
+      locationDTO.setX(x);
+      return this;
+    }
+
+    public LocationDtoBuilder withY(int y) {
+      locationDTO.setY(y);
+      return this;
+    }
+
+    public LocationDTO build() { return locationDTO; }
+
+  }
+
+  private static class TroopDtoBuilder {
+    private TroopDTO troopDTO;
+
+    TroopDtoBuilder() { troopDTO = new TroopDTO(); }
+
+    public TroopDtoBuilder withId(Integer id) {
+      troopDTO.setId(id);
+      return this;
+    }
+
+    public TroopDtoBuilder withLevel(Integer level) {
+      troopDTO.setLevel(level);
+      return this;
+    }
+
+    public TroopDtoBuilder withHp(Integer hp) {
+      troopDTO.setHp(hp);
+      return this;
+    }
+
+    public TroopDtoBuilder withAttack(Integer attack) {
+      troopDTO.setAttack(attack);
+      return this;
+    }
+
+    public TroopDtoBuilder withDefence(Integer defence) {
+      troopDTO.setDefence(defence);
+      return this;
+    }
+
+    public TroopDtoBuilder withStartedAt(Long startedAt) {
+      troopDTO.setStartedAt(startedAt);
+      return this;
+    }
+
+    public TroopDtoBuilder withFinishedAt(Long finishedAt) {
+      troopDTO.setFinishedAt(finishedAt);
+      return this;
+    }
+
+    public TroopDTO build() { return troopDTO; }
+  }
+
+  public static class BuildingDtoBuilder {
+    private BuildingDTO buildingDTO;
+
+    BuildingDtoBuilder() { buildingDTO = new BuildingDTO(); }
+
+    public BuildingDtoBuilder withId(int id) {
+      buildingDTO.setId(id);
+      return this;
+    }
+
+    public BuildingDtoBuilder withBuildingType(String buildingType) {
+      buildingDTO.setBuildingType(buildingType);
+      return this;
+    }
+
+    public BuildingDtoBuilder withLevel(int level) {
+      buildingDTO.setLevel(level);
+      return this;
+    }
+
+    public BuildingDtoBuilder withHp(int hp) {
+      buildingDTO.setHp(hp);
+      return this;
+    }
+
+    public BuildingDtoBuilder withStartedAt(long startedAt) {
+      buildingDTO.setStartedAt(startedAt);
+      return this;
+    }
+
+    public BuildingDtoBuilder withFinishedAt(long finishedAt) {
+      buildingDTO.setFinishedAt(finishedAt);
+      return this;
+    }
+
+    public BuildingDTO build() { return buildingDTO; }
+  }
+
+  public static class ResourceDtoBuilder {
+    private ResourceDTO resourceDTO;
+
+    ResourceDtoBuilder() { resourceDTO = new ResourceDTO(); }
+
+    public ResourceDtoBuilder withType(String type) {
+      resourceDTO.setType(type);
+      return this;
+    }
+
+    public ResourceDtoBuilder withAmount(int amount) {
+      resourceDTO.setAmount(amount);
+      return this;
+    }
+
+    public ResourceDtoBuilder withGeneration(int generation) {
+      resourceDTO.setGeneration(generation);
+      return this;
+    }
+
+    public ResourceDtoBuilder withUpdatedAt(long updatedAt) {
+      resourceDTO.setUpdatedAt(updatedAt);
+      return this;
+    }
+
+    public ResourceDTO build() { return resourceDTO; }
+  }
+
+  public static class KingdomBaseDtoBuilder {
+    private KingdomBaseDTO kingdomBaseDTO;
+
+    KingdomBaseDtoBuilder() {
+      kingdomBaseDTO = new KingdomBaseDTO();
+    }
+
+    public KingdomBaseDtoBuilder withKingdomId(int id) {
+      kingdomBaseDTO.setKingdomId(id);
+      return this;
+    }
+
+    public KingdomBaseDtoBuilder withName(String name) {
+      kingdomBaseDTO.setName(name);
+      return this;
+    }
+
+    public KingdomBaseDtoBuilder withUserId(int userId) {
+      kingdomBaseDTO.setUserId(userId);
+      return this;
+    }
+
+    public KingdomBaseDtoBuilder withLocationDTO(LocationDTO locationDTO) {
+      kingdomBaseDTO.setLocation(locationDTO);
+      return this;
+    }
+
+    public KingdomBaseDTO build() {
+      return kingdomBaseDTO;
+    }
+  }
+
+  public static class KingdomResFullDtoBuilder {
+    private KingdomResFullDTO kingdomResFullDTO;
+
+    KingdomResFullDtoBuilder() {
+      kingdomResFullDTO = new KingdomResFullDTO();
+    }
+
+    public KingdomResFullDtoBuilder withKingdomId(int id) {
+      kingdomResFullDTO.setKingdomId(id);
+      return this;
+    }
+
+    public KingdomResFullDtoBuilder withName(String name) {
+      kingdomResFullDTO.setName(name);
+      return this;
+    }
+
+    public KingdomResFullDtoBuilder withUserId(int userId) {
+      kingdomResFullDTO.setUserId(userId);
+      return this;
+    }
+
+    public KingdomResFullDtoBuilder withLocationDTO(LocationDTO locationDTO) {
+      kingdomResFullDTO.setLocation(locationDTO);
+      return this;
+    }
+
+    public KingdomResFullDtoBuilder withBuildingDTOs(List<BuildingDTO> buildingDTOs) {
+      kingdomResFullDTO.setBuildings(buildingDTOs);
+      return this;
+    }
+
+    public KingdomResFullDtoBuilder withResourceDTOs(List<ResourceDTO> resourceDTOs) {
+      kingdomResFullDTO.setResources(resourceDTOs);
+      return this;
+    }
+
+    public KingdomResFullDtoBuilder withTroopDTOs(List<TroopDTO> troopDTOs) {
+      kingdomResFullDTO.setTroops(troopDTOs);
+      return this;
+    }
+
+    public KingdomResFullDTO build() {
+      return kingdomResFullDTO;
+    }
   }
 
   public static LocalDateTime timeOf(String time) {
     return LocalDateTime.parse(time).atZone(ZoneOffset.UTC).toLocalDateTime();
   }
-
 }
