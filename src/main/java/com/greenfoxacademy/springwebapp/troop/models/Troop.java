@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.troop.models;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -109,4 +110,37 @@ public class Troop {
     this.kingdom = kingdom;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Troop troop = (Troop) o;
+
+    return Objects.equals(id, troop.id)
+        && Objects.equals(level, troop.level)
+        && Objects.equals(hp, troop.hp)
+        && Objects.equals(attack, troop.attack)
+        && Objects.equals(defence, troop.defence)
+        && Objects.equals(startedAt, troop.startedAt)
+        && Objects.equals(finishedAt, troop.finishedAt)
+        && Objects.equals(kingdom, troop.kingdom);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (level != null ? level.hashCode() : 0);
+    result = 31 * result + (hp != null ? hp.hashCode() : 0);
+    result = 31 * result + (attack != null ? attack.hashCode() : 0);
+    result = 31 * result + (defence != null ? defence.hashCode() : 0);
+    result = 31 * result + (startedAt != null ? startedAt.hashCode() : 0);
+    result = 31 * result + (finishedAt != null ? finishedAt.hashCode() : 0);
+    result = 31 * result + (kingdom != null ? kingdom.hashCode() : 0);
+    return result;
+  }
 }

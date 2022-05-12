@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.troop;
 
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
@@ -25,5 +26,11 @@ public interface TroopService {
   Troop getTroopById(Kingdom kingdom, int id);
 
   TroopDTO upgradeTroop(Kingdom kingdom, int troopId, TroopPostDTO dto);
+
+  void checkInputParameters(TroopPostDTO troopPostDTO);
+
+  Building getAcademy(Kingdom kingdom, TroopPostDTO troopPostDTO);
+
+  Troop setValues(Troop troop, int currentLevel, int desiredLevel);
 
 }

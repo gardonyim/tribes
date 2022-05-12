@@ -26,6 +26,44 @@ public class GameObjectRuleHolder implements
     gameObjectRules = gameObjectRuleService.findAll();
   }
 
+  public int calcCreationTime(String gameObjectType, int currentLevel, int reqLevel) {
+    int totalTime = 0;
+    if (reqLevel <= currentLevel) {
+      return totalTime;
+    }
+    int nextLevel = ++currentLevel;
+    while (nextLevel <= reqLevel) {
+      totalTime += getBuildingTimeMultiplier(gameObjectType, nextLevel);
+      nextLevel++;
+    }
+    return totalTime;
+  }
+
+  public int calcCreationCost(String gameObjectType, int currentLevel, int reqLevel) {
+    int totalCost = 0;
+    if (reqLevel <= currentLevel) {
+      return totalCost;
+    }
+    int nextLevel = ++currentLevel;
+    while (nextLevel <= reqLevel) {
+      totalCost += getBuildingCostMultiplier(gameObjectType, nextLevel);
+      nextLevel++;
+    }
+    return totalCost;
+  }
+
+  public int calcNewHP(String gameObjectType, int reqLevel) {
+    return reqLevel * getHpMultiplier(gameObjectType, reqLevel);
+  }
+
+  public int calcNewAttack(String gameObjectType, int reqLevel) {
+    return reqLevel * 10;
+  }
+
+  public int calcNewDefence(String gameObjectType, int reqLevel) {
+    return reqLevel * 5;
+  }
+
   public int getBuildingTimeMultiplier(String gameObjectType, int level) {
     GameObjectRule rule = findByType(gameObjectType).orElseThrow(IllegalArgumentException::new);
     if (level == 1) {

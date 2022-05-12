@@ -15,6 +15,7 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
+import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -169,13 +170,18 @@ public class TestUtils {
                 .map(TestUtils.BuildingDtoBuilder::build).collect(Collectors.toList())
         )
         .withResourceDTOs(kingdom.getResources().stream()
-                .map(TestUtils::resourceDtoBuilder)
-                .map(TestUtils.ResourceDtoBuilder::build).collect(Collectors.toList())
+            .map(TestUtils::resourceDtoBuilder)
+            .map(TestUtils.ResourceDtoBuilder::build).collect(Collectors.toList())
         )
         .withTroopDTOs(kingdom.getTroops().stream()
-                .map(TestUtils::troopDtoBuilder)
-                .map(TestUtils.TroopDtoBuilder::build).collect(Collectors.toList())
+            .map(TestUtils::troopDtoBuilder)
+            .map(TestUtils.TroopDtoBuilder::build).collect(Collectors.toList())
         );
+  }
+
+  public static TroopPostDtoBuilder troopPostDtoBuilder() {
+    return new TroopPostDtoBuilder()
+        .withBuildingId(random(1, 10000));
   }
 
   public static class PlayerBuilder {
@@ -627,6 +633,27 @@ public class TestUtils {
 
     public KingdomResFullDTO build() {
       return kingdomResFullDTO;
+    }
+  }
+  
+  public static class TroopPostDtoBuilder {
+    private TroopPostDTO troopPostDTO;
+
+    public TroopPostDtoBuilder(TroopPostDTO troopPostDTO) {
+      this.troopPostDTO = troopPostDTO;
+    }
+
+    public TroopPostDtoBuilder() {
+      this.troopPostDTO = new TroopPostDTO();
+    }
+
+    public TroopPostDtoBuilder withBuildingId(Integer buildingId) {
+      troopPostDTO.setBuildingId(buildingId);
+      return this;
+    }
+
+    public TroopPostDTO build() {
+      return troopPostDTO;
     }
   }
 
