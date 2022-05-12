@@ -1,10 +1,14 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import static com.greenfoxacademy.TestUtils.defaultPlayer;
+import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
@@ -140,7 +144,7 @@ public class BuildingControllerIntegrationTest {
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id").isNumber())
-        .andExpect(jsonPath("$.buildingType").value("academy"))
+        .andExpect(jsonPath("$.type").value("academy"))
         .andExpect(jsonPath("$.level").value(1))
         .andExpect(jsonPath("$.hp").value(150))
         .andExpect(jsonPath("$.startedAt").value(TimeService.toEpochSecond(TimeService.actualTime())))
@@ -149,11 +153,7 @@ public class BuildingControllerIntegrationTest {
 
   @Test
   public void when_requestBuildingWithoutId_should_returnListOfBuildingsDTO() throws Exception {
-    Location location = new Location(1, 0, 0);
-    Kingdom existingkingdom = new Kingdom(1, location);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    Authentication auth = new UsernamePasswordAuthenticationToken(defaultPlayer(), null);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings")
             .principal(auth))
@@ -169,13 +169,14 @@ public class BuildingControllerIntegrationTest {
 
   @Test
   public void when_requestBuildingWithId_should_returnValidBuildingDTO() throws Exception {
-    Location location = new Location(1, 0,0);
-    Kingdom existingkingdom = new Kingdom(1, location);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    Kingdom kingdom = kingdomBuilder().withId(1).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Building building = kingdom.getBuildings().get(0);
+    building.setId(1);
+    building.setKingdom(player.getKingdom());
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
     String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
-        + "\"startedAt\": 1231232312, \"finishedAt\": 7652146122 }";
+        + "\"startedAt\": 1651438122, \"finishedAt\": 1651438122 }";
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
             .principal(auth))
@@ -186,30 +187,30 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_requestBuildingInOtherKingdom_should_returnForbiddenRequestException()
       throws Exception {
-    Location location = new Location(1, 0,0);
-    Kingdom existingkingdom = new Kingdom(1, location);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
-        + "\"Forbidden action\" }";
+    Kingdom kingdom = kingdomBuilder().withId(2).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Building building = kingdom.getBuildings().get(0);
+    building.setId(1);
+    building.setKingdom(player.getKingdom());
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    String expectedResponse = "{ \"status\": \"error\", \"message\": \"Forbidden action\" }";
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/2")
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
             .principal(auth))
-        .andExpect(status().isForbidden())
-        .andExpect(content().json(expectedResponse));
+            .andExpect(status().is(403))
+            .andExpect(content().json(expectedResponse));
   }
 
   @Test
   public void when_requestBuildingWithNonExistingId_should_returnRequestedResourceNotFoundException()
       throws Exception {
-    Location location = new Location(1, 0,0);
-    Kingdom existingkingdom = new Kingdom(1, location);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
-        + "\"Id not found\" }";
+    Kingdom kingdom = kingdomBuilder().withId(1).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Building building = kingdom.getBuildings().get(0);
+    building.setId(999);
+    building.setKingdom(player.getKingdom());
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : \"Id not found\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/999")
             .principal(auth))

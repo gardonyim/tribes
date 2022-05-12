@@ -14,8 +14,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(ForbiddenRequestException.class)
-  public ResponseEntity handleForbiddenRequest(ForbiddenRequestException e) {
+  @ExceptionHandler(ForbiddenActionException.class)
+  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(ForbiddenActionException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
   }
 
@@ -29,8 +29,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(406).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(RequestCauseConflictException.class)
-  public ResponseEntity handleConflictCausedByRequest(RequestCauseConflictException e) {
+  @ExceptionHandler({RequestCauseConflictException.class, NotEnoughResourceException.class})
+  public ResponseEntity handleConflictCausedByRequest(RuntimeException e) {
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
   }
 

@@ -12,10 +12,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/kingdom/buildings")
@@ -35,15 +35,13 @@ public class BuildingController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<BuildingDTO> getBuildingDTO(Authentication user,
-      @RequestParam(required = false) Integer id) {
+  public ResponseEntity<BuildingDTO> getBuildingDTO(Authentication user, @PathVariable Integer id) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(200).body(buildingService.getBuildingDTO(id, kingdom));
   }
 
   @PostMapping
-  public ResponseEntity addBuilding(UsernamePasswordAuthenticationToken user,
-                                    @RequestBody BuildingTypeDTO typeDTO) {
+  public ResponseEntity addBuilding(UsernamePasswordAuthenticationToken user, @RequestBody BuildingTypeDTO typeDTO) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(201).body(buildingService.addBuilding(typeDTO, kingdom));
   }

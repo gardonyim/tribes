@@ -21,4 +21,12 @@ public interface ResourceService {
 
   Resource pay(Kingdom kingdom, int amount);
 
+  boolean hasEnoughGold(Kingdom kingdom, int amount);
+
+  Kingdom updateResources(Kingdom kingdom);
+
+  Resource updateResource(Resource resource);
+
+  int calculateAvailableResource(Resource resource);
+
 }

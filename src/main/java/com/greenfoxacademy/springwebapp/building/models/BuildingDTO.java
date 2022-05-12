@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.building.models;
 public class BuildingDTO {
 
   private int id;
-  private String buildingType;
+  private String type;
   private int level;
   private int hp;
   private long startedAt;
@@ -12,11 +12,9 @@ public class BuildingDTO {
   public BuildingDTO() {
   }
 
-  public BuildingDTO(int id,
-                     BuildingType buildingType, int level, int hp, long startedAt,
-                     long finishedAt) {
+  public BuildingDTO(int id, BuildingType type, int level, int hp, long startedAt, long finishedAt) {
     this.id = id;
-    this.buildingType = buildingType.name().toLowerCase();
+    this.type = type.name().toLowerCase();
     this.level = level;
     this.hp = hp;
     this.startedAt = startedAt;
@@ -31,12 +29,12 @@ public class BuildingDTO {
     this.id = id;
   }
 
-  public String getBuildingType() {
-    return buildingType;
+  public String getType() {
+    return type;
   }
 
-  public void setBuildingType(String buildingType) {
-    this.buildingType = buildingType;
+  public void setType(String type) {
+    this.type = type;
   }
 
   public int getLevel() {
@@ -84,13 +82,13 @@ public class BuildingDTO {
         || finishedAt != that.finishedAt) {
       return false;
     }
-    return buildingType.equals(that.buildingType);
+    return type.equals(that.type);
   }
 
   @Override
   public int hashCode() {
     int result = id;
-    result = 31 * result + (buildingType != null ? buildingType.hashCode() : 0);
+    result = 31 * result + (type != null ? type.hashCode() : 0);
     result = 31 * result + level;
     result = 31 * result + hp;
     result = 31 * result + (int) (startedAt ^ (startedAt >>> 32));

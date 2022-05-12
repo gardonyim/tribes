@@ -9,8 +9,10 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import java.util.List;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
-import com.greenfoxacademy.springwebapp.exceptions.ForbiddenRequestException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -18,10 +20,10 @@ import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -46,8 +48,21 @@ public class BuildingServiceImpl implements BuildingService {
   }
 
   @Override
+  public Building getBuildingById(Integer buildingId) {
+    return buildingRepository.findById(buildingId)
+            .orElseThrow(() -> new RequestedResourceNotFoundException("No such building."));
+  }
+
+  @Override
   public Iterable<Building> saveAll(List<Building> buildings) {
     return buildingRepository.saveAll(buildings);
+  }
+
+  @Override
+  public void checkOwner(Building building, Integer kingdomId) throws ForbiddenActionException {
+    if (building.getKingdom().getId() != kingdomId) {
+      throw new ForbiddenActionException();
+    }
   }
 
   public BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom) {
@@ -70,10 +85,10 @@ public class BuildingServiceImpl implements BuildingService {
   public BuildingDTO getBuildingDTO(Integer id, Kingdom kingdom) {
     Optional<Building> building = buildingRepository.findById(id);
     if (building.isPresent()) {
-      if (building.get().getKingdom() == kingdom) {
+      if (building.get().getKingdom().getId() == kingdom.getId()) {
         return convertToDTO(building.get());
       } else {
-        throw new ForbiddenRequestException("Forbidden action");
+        throw new ForbiddenActionException();
       }
     } else {
       throw new RequestedResourceNotFoundException("Id not found");
@@ -94,9 +109,9 @@ public class BuildingServiceImpl implements BuildingService {
         .get().getLevel() < 1) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
-    int required = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
-    int available = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
-    if (available < required) {
+    int requiredGoldAmount = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
+    int availableGoldAmount = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
+    if (availableGoldAmount < requiredGoldAmount) {
       throw new RequestCauseConflictException("Not enough resources");
     }
   }
@@ -116,7 +131,7 @@ public class BuildingServiceImpl implements BuildingService {
   public BuildingDTO convertToDTO(Building building) {
     BuildingDTO dto = new BuildingDTO();
     dto.setId(building.getId());
-    dto.setBuildingType(building.getBuildingType().name().toLowerCase());
+    dto.setType(building.getBuildingType().name().toLowerCase());
     dto.setLevel(building.getLevel());
     dto.setHp(building.getHp());
     dto.setStartedAt(TimeService.toEpochSecond(building.getStartedAt()));
