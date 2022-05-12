@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
-import com.greenfoxacademy.springwebapp.kingdom.models.KingdomDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 
 public interface KingdomService {
@@ -11,7 +11,7 @@ public interface KingdomService {
 
   void checkKingdomPutDto(KingdomPutDTO kingdomPutDTO);
 
-  KingdomDTO renameKingdom(Kingdom kingdom, String newKingdomName);
+  KingdomResFullDTO renameKingdom(Kingdom kingdom, String newKingdomName);
 
-  KingdomDTO convert(Kingdom kingdom);
+  KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom);
 }

@@ -65,8 +65,8 @@ public class KingdomControllerIntegrationTests {
     KingdomPutDTO kingdomPutDTO = new KingdomPutDTO();
     kingdomPutDTO.setName("this is some name");
 
-    String expectedResponse = "{\"id\":1, \"name\":\"this is some name\",\"userId\":1,\"buildings\":[],"
-            + "\"resources\":[], \"troops\":[], \"location\": {\"xcoordinate\":0,\"ycoordinate\":0}}";
+    String expectedResponse = "{\"kingdomId\":1, \"name\":\"this is some name\",\"userId\":1,\"buildings\":[],"
+            + "\"resources\":[], \"troops\":[], \"location\": {\"x\":0,\"y\":0}}";
 
     mockMvc.perform(MockMvcRequestBuilders.request(HttpMethod.PUT, "/kingdom")
                     .principal(auth)

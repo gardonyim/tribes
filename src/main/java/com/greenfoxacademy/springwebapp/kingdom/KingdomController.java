@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
-import com.greenfoxacademy.springwebapp.kingdom.models.KingdomDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,10 @@ public class KingdomController {
   KingdomService kingdomService;
 
   @PutMapping("/kingdom")
-  public ResponseEntity<KingdomDTO> modifyKingdomName(@RequestBody KingdomPutDTO kingdomPutDTO, Authentication auth) {
+  public ResponseEntity<KingdomResFullDTO> modifyKingdomName(
+          @RequestBody KingdomPutDTO kingdomPutDTO, Authentication auth) {
     kingdomService.checkKingdomPutDto(kingdomPutDTO);
     Player player = (Player) auth.getPrincipal();
     return ResponseEntity.ok(kingdomService.renameKingdom(player.getKingdom(), kingdomPutDTO.getName()));
   }
-
 }
-

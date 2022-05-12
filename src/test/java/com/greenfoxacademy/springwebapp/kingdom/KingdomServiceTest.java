@@ -5,14 +5,16 @@ import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingServiceImpl;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
-import com.greenfoxacademy.springwebapp.kingdom.models.KingdomDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
-import com.greenfoxacademy.springwebapp.location.LocationService;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
+import com.greenfoxacademy.springwebapp.location.LocationServiceImpl;
 import com.greenfoxacademy.springwebapp.location.models.Location;
+import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
+import com.greenfoxacademy.springwebapp.troop.TroopServiceImpl;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +41,9 @@ public class KingdomServiceTest {
   @Mock
   ResourceServiceImpl resourceService;
   @Mock
-  LocationService locationService;
+  LocationServiceImpl locationService;
+  @Mock
+  TroopServiceImpl troopService;
   @InjectMocks
   KingdomServiceImpl kingdomService;
 
@@ -110,10 +114,10 @@ public class KingdomServiceTest {
 
   private List<Building> buildingListCreator() {
     List<Building> buildingList = new ArrayList<>();
-    buildingList.add(new Building(BuildingType.TOWNHALL, 1, null,  null, null));
-    buildingList.add(new Building(BuildingType.FARM, 1, null,  null, null));
-    buildingList.add(new Building(BuildingType.MINE, 1, null,  null, null));
-    buildingList.add(new Building(BuildingType.ACADEMY, 1, null,  null, null));
+    buildingList.add(new Building(BuildingType.TOWNHALL, 1, null, null, null));
+    buildingList.add(new Building(BuildingType.FARM, 1, null, null, null));
+    buildingList.add(new Building(BuildingType.MINE, 1, null, null, null));
+    buildingList.add(new Building(BuildingType.ACADEMY, 1, null, null, null));
     return buildingList;
   }
 
@@ -138,30 +142,30 @@ public class KingdomServiceTest {
 
     String modifyToThisName = "my modified name";
 
-    KingdomDTO modifiedKingdomAsDTO = kingdomService.renameKingdom(initialKingdom, modifyToThisName);
+    KingdomResFullDTO modifiedKingdomAsDTO = kingdomService.renameKingdom(initialKingdom, modifyToThisName);
 
     Assert.assertEquals(modifiedKingdomAsDTO.getName(), modifyToThisName);
   }
 
   @Test
   public void convertTest() {
+    when(locationService.convertToLocationDTO(any())).thenReturn(new LocationDTO(1, 1));
     Player player = new Player("testuser", "testpassword", null, "", 0);
     player.setId(1);
-
     Kingdom initialKingdom = new Kingdom();
     initialKingdom.setName("my initial name");
     initialKingdom.setPlayer(player);
     initialKingdom.setId(1);
-
-    KingdomDTO kingdomDTO = new KingdomDTO();
-    kingdomDTO.setId(initialKingdom.getId());
+    Location location = new Location(1, 1);
+    initialKingdom.setLocation(location);
+    KingdomResFullDTO kingdomDTO = new KingdomResFullDTO();
+    kingdomDTO.setKingdomId(initialKingdom.getId());
     kingdomDTO.setUserId(player.getId());
     kingdomDTO.setName(initialKingdom.getName());
-
-    KingdomDTO convertedKingdomDTO = kingdomService.convert(initialKingdom);
+    kingdomDTO.setLocation(new LocationDTO(1, 1));
+    KingdomResFullDTO convertedKingdomDTO = kingdomService.convertToKingdomResFullDTO(initialKingdom);
 
     Assert.assertEquals(kingdomDTO, convertedKingdomDTO);
-
   }
 
   @Test
