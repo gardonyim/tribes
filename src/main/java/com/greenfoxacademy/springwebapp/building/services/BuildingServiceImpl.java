@@ -60,7 +60,7 @@ public class BuildingServiceImpl implements BuildingService {
 
   @Override
   public BuildingsDTO getBuildingDtoList(Kingdom kingdom) {
-    return new BuildingsDTO(buildingRepository.findAllByKingdom(kingdom)
+    return new BuildingsDTO(kingdom.getBuildings()
         .stream()
         .map(this::convertToDTO)
         .collect(Collectors.toList()));

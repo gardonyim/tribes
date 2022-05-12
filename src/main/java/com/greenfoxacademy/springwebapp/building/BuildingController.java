@@ -9,6 +9,7 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,14 +28,14 @@ public class BuildingController {
     this.buildingService = buildingService;
   }
 
-  @GetMapping("/kingdom/buildings")
-  public ResponseEntity<BuildingsDTO> getBuildingsDTO(UsernamePasswordAuthenticationToken user) {
+  @GetMapping
+  public ResponseEntity<BuildingsDTO> getBuildingsDTO(Authentication user) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(200).body(buildingService.getBuildingDtoList(kingdom));
   }
 
-  @GetMapping("/kingdom/buildings/{id}")
-  public ResponseEntity<BuildingDTO> getBuildingDTO(UsernamePasswordAuthenticationToken user,
+  @GetMapping("/{id}")
+  public ResponseEntity<BuildingDTO> getBuildingDTO(Authentication user,
       @RequestParam(required = false) Integer id) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.status(200).body(buildingService.getBuildingDTO(id, kingdom));
