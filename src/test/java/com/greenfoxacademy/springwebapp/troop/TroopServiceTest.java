@@ -60,7 +60,11 @@ public class TroopServiceTest {
     resourceService = mock(ResourceService.class);
     gameObjectRuleHolder = mock(GameObjectRuleHolder.class);
     troopRepository = mock(TroopRepository.class);
-    troopService = Mockito.spy(new TroopServiceImpl(buildingService, resourceService, gameObjectRuleHolder, troopRepository));
+    troopService = Mockito.spy(new TroopServiceImpl(
+        buildingService,
+        resourceService,
+        gameObjectRuleHolder,
+        troopRepository));
   }
 
   @Test
@@ -120,12 +124,12 @@ public class TroopServiceTest {
 
   @Test
   public void when_getAcademyWithInvalidId_should_throwException() {
-    Kingdom kingdom = TestUtils.defaultKingdom();
-    TroopPostDTO dto = TestUtils.troopPostDtoBuilder().withBuildingId(99).build();
-    Building building = buildingBuilder(BuildingType.TOWNHALL).withId(99).build();
     Mockito.doNothing().when(troopService).checkInputParameters(any(TroopPostDTO.class));
+    Building building = buildingBuilder(BuildingType.TOWNHALL).withId(99).build();
     when(buildingService.getBuildingById(anyInt())).thenReturn(building);
     Mockito.doNothing().when(buildingService).checkOwner(any(), anyInt());
+    Kingdom kingdom = TestUtils.defaultKingdom();
+    TroopPostDTO dto = TestUtils.troopPostDtoBuilder().withBuildingId(99).build();
 
     exceptionRule.expect(RequestNotAcceptableException.class);
     exceptionRule.expectMessage("Not a valid academy id");

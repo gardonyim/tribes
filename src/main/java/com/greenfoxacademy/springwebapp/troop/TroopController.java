@@ -52,7 +52,7 @@ public class TroopController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity upgradeTroop(UsernamePasswordAuthenticationToken user, @PathVariable int id,
+  public ResponseEntity<TroopDTO> upgradeTroop(Authentication user, @PathVariable int id,
                                      @RequestBody TroopPostDTO dto) {
     Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
     return ResponseEntity.ok(troopService.upgradeTroop(kingdom, id, dto));
