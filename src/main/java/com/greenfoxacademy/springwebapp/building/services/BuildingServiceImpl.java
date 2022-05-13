@@ -71,6 +71,7 @@ public class BuildingServiceImpl implements BuildingService {
     String type = typeDTO.getType();
     Building building = constructBuilding(type, 1, kingdom);
     resourceService.pay(kingdom, gameObjectRuleHolder.getBuildingCostMultiplier(type, 1));
+    resourceService.updateResourceGeneration(kingdom, type, 0, 1);
     return convertToDTO(buildingRepository.save(building));
   }
 

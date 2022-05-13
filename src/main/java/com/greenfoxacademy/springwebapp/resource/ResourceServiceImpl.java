@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.resource;
 
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
+import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import java.util.List;
@@ -9,6 +10,9 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +22,12 @@ import java.util.stream.Collectors;
 public class ResourceServiceImpl implements ResourceService {
 
   private final ResourceRepository resourceRepository;
+  private final GameObjectRuleHolder gameObjectRuleHolder;
 
   @Autowired
-  public ResourceServiceImpl(ResourceRepository resourceRepository) {
+  public ResourceServiceImpl(ResourceRepository resourceRepository, GameObjectRuleHolder gameObjectRuleHolder) {
     this.resourceRepository = resourceRepository;
+    this.gameObjectRuleHolder = gameObjectRuleHolder;
   }
 
   @Override
@@ -87,7 +93,7 @@ public class ResourceServiceImpl implements ResourceService {
 
   @Override
   public int calculateAvailableResource(Resource resource) {
-    return resource.getAmount() + resource.getGeneration()
+    return resource.getAmount() + resource.getGeneration() / 60
         * (int) TimeService.secondsElapsed(resource.getUpdatedAt(), TimeService.actualTime());
   }
 
@@ -99,6 +105,26 @@ public class ResourceServiceImpl implements ResourceService {
             .findFirst()
             .orElseThrow(NotEnoughResourceException::new);
     return gold.getAmount() >= amount;
+  }
+
+  public void updateResourceGeneration(Kingdom kingdom, String type, int currentLevel,
+                                        int reqLevel) {
+    List<Resource> resources = kingdom.getResources();
+    Resource gold = resources.stream().filter(r -> r.getResourceType() == ResourceType.GOLD).findFirst().orElse(null);
+    int generationChange = 0;
+    long delay = 0;
+    if (type.equals("mine")) {
+      generationChange = currentLevel == 0 ? 5 : 0;
+      generationChange += (reqLevel - currentLevel) * 5;
+      delay = gameObjectRuleHolder.calcCreationTime(type, currentLevel, reqLevel);
+    }
+    delayUpdate(delay, gold, generationChange);
+  }
+
+  public void delayUpdate(long delay, Resource resource, int generationChange) {
+    UpdateResourceGeneration updateResourceGeneration = new UpdateResourceGeneration(this, resource, generationChange);
+    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    executorService.schedule(updateResourceGeneration::updateResourceGeneration, delay, TimeUnit.SECONDS);
   }
 
 }
