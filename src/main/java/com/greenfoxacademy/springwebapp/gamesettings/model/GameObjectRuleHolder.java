@@ -39,7 +39,6 @@ public class GameObjectRuleHolder implements
         : (reqLevel - currentLevel) * BUILDING_NTH_GENERATION_CONST;
   }
 
-
   public int calcCreationTime(String gameObjectType, int currentLevel, int reqLevel) {
     int totalTime = 0;
     if (reqLevel <= currentLevel) {
@@ -52,7 +51,7 @@ public class GameObjectRuleHolder implements
     }
     return totalTime;
   }
-  
+
   public int calcCreationCost(String gameObjectType, int currentLevel, int reqLevel) {
     int totalCost = 0;
     if (reqLevel <= currentLevel) {
