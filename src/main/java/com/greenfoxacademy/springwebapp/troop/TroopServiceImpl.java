@@ -39,8 +39,13 @@ public class TroopServiceImpl implements TroopService {
 
   @Override
   public Troop createTroopOfLevel(int level, Kingdom kingdom) {
+<<<<<<< HEAD
     int hp = gameObjectRuleHolder.calcNewHP("troop", level);
     long finishedAtSec = gameObjectRuleHolder.calcCreationTime("troop", 0, level);
+=======
+    int hp = level * gameObjectRuleHolder.getHpMultiplier("troop", level); //TODO: change to gameObjectRuleHandler.calcNewHp()
+    long finishedAtSec = level * gameObjectRuleHolder.getBuildingTimeMultiplier("troop", level); //TODO: change to .calcBuildingTime()
+>>>>>>> 5916a40 (feat(update resource generation): connect update resource and update resource generation to post /kingdom/troops flow)
     Troop troop = new Troop();
     troop.setLevel(level);
     troop.setHp(hp);
