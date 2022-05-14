@@ -5,14 +5,12 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundExce
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.utilities.SchedulingService;
 import java.util.List;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,8 +72,8 @@ public class ResourceServiceImpl implements ResourceService {
   @Override
   public Resource pay(Kingdom kingdom, int price) {
     Resource gold = getResourceByKingdomAndType(kingdom, ResourceType.GOLD);
-    gold.setAmount(gold.getAmount() - price);
-    return updateResource(gold);
+    gold.setAmount(updateResource(gold).getAmount() - price);
+    return gold;
   }
 
   @Override
@@ -93,8 +91,8 @@ public class ResourceServiceImpl implements ResourceService {
 
   @Override
   public int calculateAvailableResource(Resource resource) {
-    return resource.getAmount() + resource.getGeneration() / 60
-        * (int) TimeService.secondsElapsed(resource.getUpdatedAt(), TimeService.actualTime());
+    return resource.getAmount() + (int) (resource.getGeneration() / 60.0
+        * TimeService.secondsElapsed(resource.getUpdatedAt(), TimeService.actualTime()));
   }
 
   @Override
@@ -107,24 +105,33 @@ public class ResourceServiceImpl implements ResourceService {
     return gold.getAmount() >= amount;
   }
 
-  public void updateResourceGeneration(Kingdom kingdom, String type, int currentLevel,
-                                        int reqLevel) {
+  public void updateResourceGeneration(Kingdom kingdom, String type, int currentLevel, int reqLevel) {
     List<Resource> resources = kingdom.getResources();
-    Resource gold = resources.stream().filter(r -> r.getResourceType() == ResourceType.GOLD).findFirst().orElse(null);
-    int generationChange = 0;
-    long delay = 0;
-    if (type.equals("mine")) {
-      generationChange = currentLevel == 0 ? 5 : 0;
-      generationChange += (reqLevel - currentLevel) * 5;
-      delay = gameObjectRuleHolder.calcCreationTime(type, currentLevel, reqLevel);
+    Resource resource = null;
+    int generationChange = currentLevel == 0 ? 5 + (reqLevel - currentLevel) * 5 : (reqLevel - currentLevel) * 5;
+    switch (type) {
+      case "farm":
+        resource = resources.stream().filter(r -> r.getResourceType() == ResourceType.FOOD).findFirst().orElse(null);
+        break;
+      case "mine":
+        resource = resources.stream().filter(r -> r.getResourceType() == ResourceType.GOLD).findFirst().orElse(null);
+        break;
+      case "troop":
+        generationChange = (reqLevel - currentLevel) * -5;
+        resource = resources.stream().filter(r -> r.getResourceType() == ResourceType.FOOD).findFirst().orElse(null);
+        break;
+      default: return;
     }
-    delayUpdate(delay, gold, generationChange);
+    delayUpdate(gameObjectRuleHolder.calcCreationTime(type, currentLevel, reqLevel), resource, generationChange);
   }
 
   public void delayUpdate(long delay, Resource resource, int generationChange) {
-    UpdateResourceGeneration updateResourceGeneration = new UpdateResourceGeneration(this, resource, generationChange);
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    executorService.schedule(updateResourceGeneration::updateResourceGeneration, delay, TimeUnit.SECONDS);
+    Runnable updateResGen = () -> {
+      Resource updatedResource = updateResource(resource);
+      updatedResource.setGeneration(updatedResource.getGeneration() + generationChange);
+      save(updatedResource);
+    };
+    SchedulingService.scheduler(updateResGen, delay);
   }
 
 }
