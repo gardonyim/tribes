@@ -167,12 +167,19 @@ public class ResourceServiceTest {
   @Test
   public void when_updateResourceGenerationForFarm_should_callDelayUpdateWithValidParameters() {
     Kingdom kingdom = defaultKingdom();
+<<<<<<< HEAD
     when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
     when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(5);
+=======
+>>>>>>> 3ac2024 (test(update resource generation): add unit tests)
     Resource food = kingdom.getResources().stream()
         .filter(r -> r.getResourceType() == ResourceType.FOOD)
         .findFirst()
         .orElse(null);
+<<<<<<< HEAD
+=======
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+>>>>>>> 3ac2024 (test(update resource generation): add unit tests)
 
     resourceService.updateResourceGeneration(kingdom, "farm", 1, 2);
 
@@ -182,12 +189,19 @@ public class ResourceServiceTest {
   @Test
   public void when_updateResourceGenerationForMine_should_callDelayUpdateWithValidParameters() {
     Kingdom kingdom = defaultKingdom();
+<<<<<<< HEAD
     when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
     when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(10);
+=======
+>>>>>>> 3ac2024 (test(update resource generation): add unit tests)
     Resource gold = kingdom.getResources().stream()
         .filter(r -> r.getResourceType() == ResourceType.GOLD)
         .findFirst()
         .orElse(null);
+<<<<<<< HEAD
+=======
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+>>>>>>> 3ac2024 (test(update resource generation): add unit tests)
 
     resourceService.updateResourceGeneration(kingdom, "mine", 0, 1);
 
@@ -197,12 +211,19 @@ public class ResourceServiceTest {
   @Test
   public void when_updateResourceGenerationForTroop_should_callDelayUpdateWithValidParameters() {
     Kingdom kingdom = defaultKingdom();
+<<<<<<< HEAD
     when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
     when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(-10);
+=======
+>>>>>>> 3ac2024 (test(update resource generation): add unit tests)
     Resource food = kingdom.getResources().stream()
         .filter(r -> r.getResourceType() == ResourceType.FOOD)
         .findFirst()
         .orElse(null);
+<<<<<<< HEAD
+=======
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+>>>>>>> 3ac2024 (test(update resource generation): add unit tests)
 
     resourceService.updateResourceGeneration(kingdom, "troop", 0, 2);
 
