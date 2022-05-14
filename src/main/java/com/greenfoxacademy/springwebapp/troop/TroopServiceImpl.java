@@ -39,8 +39,8 @@ public class TroopServiceImpl implements TroopService {
 
   @Override
   public Troop createTroopOfLevel(int level, Kingdom kingdom) {
-    int hp = level * gameObjectRuleHolder.getHpMultiplier("troop", level);
-    long finishedAtSec = level * gameObjectRuleHolder.getBuildingTimeMultiplier("troop", level);
+    int hp = level * gameObjectRuleHolder.getHpMultiplier("troop", level); //TODO: change to gameObjectRuleHandler.calcNewHp()
+    long finishedAtSec = level * gameObjectRuleHolder.getBuildingTimeMultiplier("troop", level); //TODO: change to .calcBuildingTime()
     Troop troop = new Troop();
     troop.setLevel(level);
     troop.setHp(hp);
@@ -88,6 +88,8 @@ public class TroopServiceImpl implements TroopService {
     int level = building.getLevel();
     int price = gameObjectRuleHolder.getBuildingCostMultiplier("troop", level);
     resourceService.hasEnoughGold(kingdom, price);
+    resourceService.pay(kingdom, price);
+    resourceService.updateResourceGeneration(kingdom, "troop", 0, level);
     Troop troop = createTroopOfLevel(level, kingdom);
     Troop savedTroop = troopRepository.save(troop);
     return convert(savedTroop);
