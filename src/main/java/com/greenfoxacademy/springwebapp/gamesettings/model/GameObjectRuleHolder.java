@@ -59,12 +59,17 @@ public class GameObjectRuleHolder implements
     }
     int nextLevel = ++currentLevel;
     while (nextLevel <= reqLevel) {
+<<<<<<< HEAD
       totalCost += getBuildingCostMultiplier(gameObjectType, nextLevel);
+=======
+      totalCost += nextLevel * getBuildingCostMultiplier(gameObjectType, nextLevel);
+>>>>>>> 3a2af28 (refactor(update resource generation): refactor addBuildings and corresponding tests)
       nextLevel++;
     }
     return totalCost;
   }
 
+<<<<<<< HEAD
   public int calcNewHP(String gameObjectType, int reqLevel) {
     return reqLevel * getHpMultiplier(gameObjectType, reqLevel);
   }
@@ -77,6 +82,8 @@ public class GameObjectRuleHolder implements
     return reqLevel * DEFENCE_MULTIPLIER;
   }
 
+=======
+>>>>>>> 3a2af28 (refactor(update resource generation): refactor addBuildings and corresponding tests)
   public int getBuildingTimeMultiplier(String gameObjectType, int level) {
     GameObjectRule rule = findByType(gameObjectType).orElseThrow(IllegalArgumentException::new);
     if (level == 1) {
