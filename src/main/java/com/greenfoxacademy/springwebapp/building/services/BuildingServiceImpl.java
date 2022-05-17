@@ -20,8 +20,11 @@ import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
+<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import java.util.Optional;
+=======
+>>>>>>> 3a2af28 (refactor(update resource generation): refactor addBuildings and corresponding tests)
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +73,7 @@ public class BuildingServiceImpl implements BuildingService {
     validateAddBuildingRequest(typeDTO, kingdom);
     String type = typeDTO.getType();
     Building building = constructBuilding(type, 1, kingdom);
-    resourceService.pay(kingdom, gameObjectRuleHolder.getBuildingCostMultiplier(type, 1));
+    resourceService.pay(kingdom, gameObjectRuleHolder.calcCreationCost(type, 0, 1));
     resourceService.updateResourceGeneration(kingdom, type, 0, 1);
     return convertToDTO(buildingRepository.save(building));
   }
@@ -111,9 +114,7 @@ public class BuildingServiceImpl implements BuildingService {
             .get().getLevel() < 1) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
-    int requiredGoldAmount = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
-    int availableGoldAmount = resourceService.getResourceByKingdomAndType(kingdom, ResourceType.GOLD).getAmount();
-    if (availableGoldAmount < requiredGoldAmount) {
+    if (!resourceService.hasEnoughGold(kingdom, gameObjectRuleHolder.calcCreationCost(typeDTO.getType(), 0, 1))) {
       throw new RequestCauseConflictException("Not enough resources");
     }
   }

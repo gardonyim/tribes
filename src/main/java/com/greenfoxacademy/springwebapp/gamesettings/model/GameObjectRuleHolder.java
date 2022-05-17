@@ -66,6 +66,19 @@ public class GameObjectRuleHolder implements
     return reqLevel * DEFENCE_MULTIPLIER;
   }
 
+  public int calcCreationCost(String gameObjectType, int currentLevel, int reqLevel) {
+    int totalCost = 0;
+    if (reqLevel <= currentLevel) {
+      return totalCost;
+    }
+    int nextLevel = ++currentLevel;
+    while (nextLevel <= reqLevel) {
+      totalCost += nextLevel * getBuildingCostMultiplier(gameObjectType, nextLevel);
+      nextLevel++;
+    }
+    return totalCost;
+  }
+
   public int getBuildingTimeMultiplier(String gameObjectType, int level) {
     GameObjectRule rule = findByType(gameObjectType).orElseThrow(IllegalArgumentException::new);
     if (level == 1) {

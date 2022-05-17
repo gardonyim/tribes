@@ -1,9 +1,15 @@
 package com.greenfoxacademy.springwebapp.building;
 
+<<<<<<< HEAD
 import static com.greenfoxacademy.TestUtils.defaultPlayer;
 import static com.greenfoxacademy.TestUtils.kingdomBuilder;
 import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static com.greenfoxacademy.springwebapp.utilities.TimeService.toEpochSecond;
+=======
+import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import static com.greenfoxacademy.TestUtils.playerBuilder;
+import static com.greenfoxacademy.TestUtils.resourceBuilder;
+>>>>>>> 3a2af28 (refactor(update resource generation): refactor addBuildings and corresponding tests)
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,9 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
-import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import java.util.Collections;
 import javax.transaction.Transactional;
 
 import org.junit.Test;
@@ -44,9 +52,7 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_postKingdomBuildingsWithoutType_should_respondBadRequestAndProperJson()
       throws Exception {
-    Kingdom existingkingdom = new Kingdom(1, new Location());
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Player existingtestuser = playerBuilder().withKingdom(kingdomBuilder().withId(1).build()).build();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String jsonRequest = "{ \"type\" : \" \" }";
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : \"Missing parameter(s): type!\" }";
@@ -61,13 +67,10 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_postKingdomBuildingsWithInvalidType_should_respondNotAcceptableAndProperJson()
       throws Exception {
-    Kingdom existingkingdom = new Kingdom(1, new Location());
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Player existingtestuser = playerBuilder().withKingdom(kingdomBuilder().withId(1).build()).build();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String jsonRequest = "{ \"type\" : \"whatever\" }";
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : \"Invalid building type\" }";
-
 
     mockMvc.perform(MockMvcRequestBuilders.post("/kingdom/buildings").principal(auth)
             .contentType("application/json")
@@ -79,14 +82,11 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_postKingdomBuildingsWithTownhallAsType_should_respondBadRequestAndProperJson()
       throws Exception {
-    Kingdom existingkingdom = new Kingdom(1, new Location());
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    Player existingtestuser = playerBuilder().withKingdom(kingdomBuilder().withId(1).build()).build();
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String jsonRequest = "{ \"type\" : \"townhall\" }";
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
         + "\"There must only be one Townhall in a kingdom\" }";
-
 
     mockMvc.perform(MockMvcRequestBuilders.post("/kingdom/buildings").principal(auth)
             .contentType("application/json")
@@ -98,14 +98,11 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_postKingdomBuildingsAndNoTownhallInKingdom_should_respondNotAcceptableAndProperJson()
       throws Exception {
-    Kingdom testkingdom2 = new Kingdom(2, new Location());
-    Player testuser2 =
-        new Player(2, "testuser2", null, testkingdom2, null, 0);
+    Player testuser2 = playerBuilder().withKingdom(kingdomBuilder().withId(2).build()).build();
     Authentication auth = new UsernamePasswordAuthenticationToken(testuser2, null);
     String jsonRequest = "{ \"type\" : \"mine\" }";
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
         + "\"Cannot build buildings with higher level than the Townhall\" }";
-
 
     mockMvc.perform(MockMvcRequestBuilders.post("/kingdom/buildings").principal(auth)
             .contentType("application/json")
@@ -117,9 +114,9 @@ public class BuildingControllerIntegrationTest {
   @Test
   public void when_postKingdomBuildingsAndNoSufficientResources_should_respondConflictAndProperJson()
       throws Exception {
-    Kingdom testkingdom3 = new Kingdom(3, new Location());
-    Player testuser3 =
-        new Player(3, "testuser3", null, testkingdom3, null, 0);
+    Resource gold = resourceBuilder(ResourceType.GOLD).withAmount(50).withGeneration(0).build();
+    Kingdom kingdom = kingdomBuilder().withId(3).withResources(Collections.singletonList(gold)).build();
+    Player testuser3 = playerBuilder().withKingdom(kingdom).build();
     Authentication auth = new UsernamePasswordAuthenticationToken(testuser3, null);
     String jsonRequest = "{ \"type\" : \"farm\" }";
     String expectedResponse = "{ \"status\" :  \"error\", \"message\" : \"Not enough resources\" }";
@@ -132,12 +129,10 @@ public class BuildingControllerIntegrationTest {
   }
 
   @Test
-  public void when_postKingdomBuildingsValid_should_respondOkStatusAndProperJson()
+  public void when_postKingdomBuildingsValid_should_respondCreatedAndProperJson()
       throws Exception {
-    Kingdom testkingdom4 = new Kingdom(4, new Location());
-    Player testuser4 =
-        new Player(4, "testuser4", null, testkingdom4, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(testuser4, null);
+    Player testuser4 = playerBuilder().withKingdom(kingdomBuilder().withId(4).build()).build();
+    Authentication auth = new UsernamePasswordAuthenticationToken(testuser4, null, null);
     String jsonRequest = "{ \"type\" : \"academy\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/kingdom/buildings").principal(auth)
