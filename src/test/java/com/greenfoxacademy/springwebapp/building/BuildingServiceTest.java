@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import com.greenfoxacademy.TestUtils;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
