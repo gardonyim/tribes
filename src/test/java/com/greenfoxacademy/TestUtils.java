@@ -472,6 +472,7 @@ public class TestUtils {
     public TroopDTO build() {
       return troopDTO;
     }
+
   }
 
   public static class BuildingDtoBuilder {
@@ -514,6 +515,7 @@ public class TestUtils {
     public BuildingDTO build() {
       return buildingDTO;
     }
+
   }
 
   public static class ResourceDtoBuilder {
@@ -546,6 +548,7 @@ public class TestUtils {
     public ResourceDTO build() {
       return resourceDTO;
     }
+
   }
 
   public static class KingdomBaseDtoBuilder {

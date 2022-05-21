@@ -70,7 +70,6 @@ public class KingdomControllerIntegrationTest {
     Player existingtestuser1 =
         playerBuilder().withId(1).withUsername("existingtestuser1").withKingdom(existingkingdom1).build();
     existingkingdom1.setPlayer(existingtestuser1);
-
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser1, null);
     KingdomResWrappedDTO dto = new KingdomResWrappedDTO(new KingdomBaseDTO(
         2, "testkingdom2", 2, new LocationDTO(5, -5)
