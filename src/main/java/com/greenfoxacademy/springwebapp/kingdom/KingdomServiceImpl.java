@@ -104,8 +104,6 @@ public class KingdomServiceImpl implements KingdomService {
     );
   }
 
-
-
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {
     LocalDateTime currentTimestamp = LocalDateTime.now();
 

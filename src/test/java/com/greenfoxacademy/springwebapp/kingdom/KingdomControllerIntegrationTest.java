@@ -24,8 +24,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
 
-import static com.greenfoxacademy.TestUtils.*;
-import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import static com.greenfoxacademy.TestUtils.defaultKingdom;
+import static com.greenfoxacademy.TestUtils.defaultLocation;
+import static com.greenfoxacademy.TestUtils.kingdomResFullDtoBuilder;
 import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,9 +41,6 @@ public class KingdomControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
-
-  @Autowired
-  private KingdomServiceImpl kingdomService;
 
   @Autowired
   ObjectMapper mapper;
@@ -65,22 +63,7 @@ public class KingdomControllerIntegrationTest {
   }
 
   @Test
-  public void when_getKingdomWithOwnKingdomId_should_respondDetailedOwnKingdomJson()
-      throws Exception {
-    int kingdomId = 1;
-    Kingdom existingkingdom = kingdomService.findById(kingdomId);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    KingdomResFullDTO dto = kingdomService.convertToKingdomResFullDTO(kingdomService.findById(1));
-    String expectedResponse = mapper.writeValueAsString(dto);
-    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + kingdomId).principal(auth))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedResponse));
-  }
-
-  @Test
-  public void when_getKingdomWithForeignKingdomId_should_respondASortenedKingdomJson()
+  public void when_getKingdomWithKingdomId_should_respondASortenedKingdomJson()
       throws Exception {
     Kingdom existingkingdom1 = defaultKingdom();
     existingkingdom1.setLocation(defaultLocation());
@@ -102,32 +85,15 @@ public class KingdomControllerIntegrationTest {
   @Test
   public void when_getKingdomWithNotExistingKingdomId_should_respondAnErrorDtoJson()
       throws Exception {
-    int myKingdomId = 1;
     int reqKingdomId = 999;
-    Kingdom existingkingdom = kingdomService.findById(myKingdomId);
     Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+        new Player(1, "existingtestuser", null, null, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     ErrorDTO dto = new ErrorDTO("The requested kingdom is not exist!");
     String expectedResponse = mapper.writeValueAsString(dto);
+
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + reqKingdomId).principal(auth))
         .andExpect(status().is(404))
-        .andExpect(content().json(expectedResponse));
-  }
-
-  @Test
-  public void when_getKingdomWithNotNumericId_should_respondAnErrorDtoJson()
-      throws Exception {
-    int myKingdomId = 1;
-    String reqKingdomId = "one";
-    Kingdom existingkingdom = kingdomService.findById(myKingdomId);
-    Player existingtestuser =
-        new Player(1, "existingtestuser", null, existingkingdom, null, 0);
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    ErrorDTO dto = new ErrorDTO("Forbidden action");
-    String expectedResponse = mapper.writeValueAsString(dto);
-    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/" + reqKingdomId).principal(auth))
-        .andExpect(status().is(403))
         .andExpect(content().json(expectedResponse));
   }
 

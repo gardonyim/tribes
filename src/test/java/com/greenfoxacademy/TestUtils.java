@@ -166,20 +166,15 @@ public class TestUtils {
         .withBuildingDTOs(
             kingdom.getBuildings().stream()
                 .map(TestUtils::buildingDtoBuilder)
-                .map(TestUtils.BuildingDtoBuilder::build)
-                .collect(Collectors.toList())
+                .map(TestUtils.BuildingDtoBuilder::build).collect(Collectors.toList())
         )
-        .withResourceDTOs(
-    kingdom.getResources().stream()
+        .withResourceDTOs(kingdom.getResources().stream()
                 .map(TestUtils::resourceDtoBuilder)
-                .map(TestUtils.ResourceDtoBuilder::build)
-                .collect(Collectors.toList())
+                .map(TestUtils.ResourceDtoBuilder::build).collect(Collectors.toList())
         )
-        .withTroopDTOs(
-            kingdom.getTroops().stream()
+        .withTroopDTOs(kingdom.getTroops().stream()
                 .map(TestUtils::troopDtoBuilder)
-                .map(TestUtils.TroopDtoBuilder::build)
-                .collect(Collectors.toList())
+                .map(TestUtils.TroopDtoBuilder::build).collect(Collectors.toList())
         );
   }
 
@@ -412,7 +407,9 @@ public class TestUtils {
   public static class LocationDtoBuilder {
     private LocationDTO locationDTO;
 
-    LocationDtoBuilder() { locationDTO = new LocationDTO(); }
+    LocationDtoBuilder() {
+      locationDTO = new LocationDTO();
+    }
 
     public LocationDtoBuilder withX(int x) {
       locationDTO.setX(x);
@@ -424,14 +421,18 @@ public class TestUtils {
       return this;
     }
 
-    public LocationDTO build() { return locationDTO; }
+    public LocationDTO build() {
+      return locationDTO;
+    }
 
   }
 
   private static class TroopDtoBuilder {
     private TroopDTO troopDTO;
 
-    TroopDtoBuilder() { troopDTO = new TroopDTO(); }
+    TroopDtoBuilder() {
+      troopDTO = new TroopDTO();
+    }
 
     public TroopDtoBuilder withId(Integer id) {
       troopDTO.setId(id);
@@ -468,13 +469,17 @@ public class TestUtils {
       return this;
     }
 
-    public TroopDTO build() { return troopDTO; }
+    public TroopDTO build() {
+      return troopDTO;
+    }
   }
 
   public static class BuildingDtoBuilder {
     private BuildingDTO buildingDTO;
 
-    BuildingDtoBuilder() { buildingDTO = new BuildingDTO(); }
+    BuildingDtoBuilder() {
+      buildingDTO = new BuildingDTO();
+    }
 
     public BuildingDtoBuilder withId(int id) {
       buildingDTO.setId(id);
@@ -506,13 +511,17 @@ public class TestUtils {
       return this;
     }
 
-    public BuildingDTO build() { return buildingDTO; }
+    public BuildingDTO build() {
+      return buildingDTO;
+    }
   }
 
   public static class ResourceDtoBuilder {
     private ResourceDTO resourceDTO;
 
-    ResourceDtoBuilder() { resourceDTO = new ResourceDTO(); }
+    ResourceDtoBuilder() {
+      resourceDTO = new ResourceDTO();
+    }
 
     public ResourceDtoBuilder withType(String type) {
       resourceDTO.setType(type);
@@ -534,7 +543,9 @@ public class TestUtils {
       return this;
     }
 
-    public ResourceDTO build() { return resourceDTO; }
+    public ResourceDTO build() {
+      return resourceDTO;
+    }
   }
 
   public static class KingdomBaseDtoBuilder {
