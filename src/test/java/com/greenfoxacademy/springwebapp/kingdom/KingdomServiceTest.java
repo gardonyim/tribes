@@ -36,6 +36,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static com.greenfoxacademy.TestUtils.kingdomBuilder;
@@ -62,6 +64,7 @@ public class KingdomServiceTest {
   LocationService locationService;
   @Mock
   TroopServiceImpl troopService;
+  @Spy
   @InjectMocks
   KingdomServiceImpl kingdomService;
   @Rule
@@ -190,7 +193,7 @@ public class KingdomServiceTest {
         playerBuilder().withId(1).withUsername("existingtestuser").withKingdom(existingkingdom).build();
     existingkingdom.setPlayer(existingtestuser);
     KingdomResFullDTO expectedDto = kingdomResFullDtoBuilder(existingkingdom).build();
-    when(kingdomService.convertToKingdomResFullDTO(any(Kingdom.class))).thenReturn(expectedDto);
+    Mockito.doReturn(expectedDto).when(kingdomService).convertToKingdomResFullDTO(any(Kingdom.class));
 
     KingdomResFullDTO actualDto = kingdomService.fetchKingdomData(existingkingdom);
 
@@ -206,8 +209,8 @@ public class KingdomServiceTest {
     existingkingdom.setPlayer(existingtestuser);
     KingdomResWrappedDTO expectedDto = new KingdomResWrappedDTO(new KingdomBaseDTO(
         2, "testkingdom2", 2, new LocationDTO(5, -5)));
-    when(kingdomService.findById(anyInt())).thenReturn(new Kingdom());
-    when(kingdomService.convertToKingdomResWrappedDTO(any(Kingdom.class))).thenReturn(expectedDto);
+    Mockito.doReturn(new Kingdom()).when(kingdomService).findById(anyInt());
+    Mockito.doReturn(expectedDto).when(kingdomService).convertToKingdomResWrappedDTO(any(Kingdom.class));
 
     KingdomResWrappedDTO actualDto = kingdomService.fetchKingdomData(2);
 
