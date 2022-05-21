@@ -90,7 +90,12 @@ public class BuildingServiceImpl implements BuildingService {
   }
 
   @Override
-  public BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
+  public BuildingDTO provideDtoAboutBuildingDevResoult(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
+    return convertToDTO(modifyBuildingLevel(buildingDTO, kingdom, buildingId));
+  }
+
+  @Override
+  public Building modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
     Building modifiableBuilding = validateModifyBuildingLevelRequest(buildingDTO, kingdom, buildingId);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     modifiableBuilding.setLevel(reqBuildingLevel);
@@ -105,7 +110,7 @@ public class BuildingServiceImpl implements BuildingService {
         modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel),
         modifiableBuilding.getStartedAt()));
     kingdomService.update(kingdom);
-    return convertToDTO(modifiableBuilding);
+    return modifiableBuilding;
   }
 
   @Override
@@ -128,7 +133,7 @@ public class BuildingServiceImpl implements BuildingService {
     return modifiableBuilding;
   }
 
-  private void validateHasEnoughGold(Building modifiableBuilding, int reqBuildingLevel) {
+  public void validateHasEnoughGold(Building modifiableBuilding, int reqBuildingLevel) {
     if (resourceService.hasEnoughGold(modifiableBuilding.getKingdom(),
         gameObjectRuleHolder.calcCreationCost(modifiableBuilding.getBuildingType().getName().toLowerCase(),
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
