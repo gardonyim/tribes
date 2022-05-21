@@ -8,6 +8,7 @@ import com.greenfoxacademy.springwebapp.player.models.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,11 +36,10 @@ public class BuildingController {
   }
 
   @PutMapping({"/{id}"})
-  public ResponseEntity modifyBuildingLevel(UsernamePasswordAuthenticationToken user,
-                                            @PathVariable(name = "id") Integer buildingId,
+  public ResponseEntity modifyBuildingLevel(Authentication user, @PathVariable(name = "id") Integer buildingId,
                                             @RequestBody BuildingDTO buildingDTO) {
-    Kingdom kingdom = ((Player) user.getPrincipal()).getKingdom();
-    return ResponseEntity.status(200).body(buildingService.modifyBuildingLevel(buildingDTO, kingdom, buildingId));
+    return ResponseEntity.status(200).body(buildingService.modifyBuildingLevel(
+            buildingDTO, ((Player) user.getPrincipal()).getKingdom(), buildingId));
   }
 
 }
