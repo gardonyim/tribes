@@ -1,15 +1,15 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import com.greenfoxacademy.TestUtils;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.building.services.BuildingServiceImpl;
-import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.*;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
+import com.greenfoxacademy.springwebapp.kingdom.KingdomServiceImpl;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
@@ -18,6 +18,8 @@ import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -46,6 +48,8 @@ public class BuildingServiceTest {
   private BuildingRepository buildingRepository;
   @Mock
   private ResourceServiceImpl resourceService;
+  @Mock
+  private KingdomServiceImpl kingdomService;
   @Mock
   private GameObjectRuleHolder gameObjectRuleHolder;
 
@@ -182,5 +186,101 @@ public class BuildingServiceTest {
     Mockito.verify(buildingRepository, times(1)).save(building);
     Mockito.verify(buildingService, times(1)).convertToDTO(building);
   }
+
+  @Test
+  public void when_validateModBuildingLevReqWithoutBuildingId_should_throwException() {
+    exceptionRule.expect(RequestParameterMissingException.class);
+    exceptionRule.expectMessage("Missing parameter(s): buildingId!");
+
+    buildingService.validateModifyBuildingLevelRequest(new BuildingDTO(), new Kingdom(), null);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithNotExistBuildingId_should_throwException() {
+    exceptionRule.expect(RequestedResourceNotFoundException.class);
+    exceptionRule.expectMessage("Required building is not exist!");
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+    buildingService.validateModifyBuildingLevelRequest(new BuildingDTO(), new Kingdom(), 1);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithForeignBuildingId_should_throwException() {
+    exceptionRule.expect(ForbiddenActionException.class);
+    exceptionRule.expectMessage("Forbidden action");
+    Building reqBuilding = new Building();
+    reqBuilding.setKingdom(TestUtils.kingdomBuilder().withId(1).build());
+    Kingdom myKingdom = TestUtils.kingdomBuilder().withId(2).build();
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.of(reqBuilding));
+
+    buildingService.validateModifyBuildingLevelRequest(new BuildingDTO(), myKingdom, 1);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithHigherLevelThanTownhall_should_throwException() {
+    exceptionRule.expect(RequestNotAcceptableException.class);
+    exceptionRule.expectMessage("Cannot build buildings with higher level than the Townhall");
+    Kingdom myKingdom = TestUtils.kingdomBuilder().withId(1).build();
+    List<Building> buildings = new ArrayList<>();
+    Building reqBuilding = TestUtils.buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
+    reqBuilding.setKingdom(myKingdom);
+    buildings.add(reqBuilding);
+    buildings.add(TestUtils.buildingBuilder(BuildingType.TOWNHALL).withId(1).withLevel(1).build());
+    myKingdom.setBuildings(buildings);
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.of(reqBuilding));
+    BuildingDTO buildingDTO = new BuildingDTO();
+    buildingDTO.setLevel(2);
+
+    buildingService.validateModifyBuildingLevelRequest(buildingDTO, myKingdom, 2);
+  }
+
+  @Test
+  public void when_validateHasEnoughGoldWithToExpensiveDevelpoment_should_returnException() {
+    exceptionRule.expect(NotEnoughResourceException.class);
+    exceptionRule.expectMessage("Not enough resource");
+    Kingdom myKingdom = TestUtils.kingdomBuilder().withId(1).build();
+    List<Building> buildings = new ArrayList<>();
+    Building reqBuilding = TestUtils.buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
+    reqBuilding.setKingdom(myKingdom);
+    buildings.add(reqBuilding);
+    buildings.add(TestUtils.buildingBuilder(BuildingType.TOWNHALL).withId(1).withLevel(2).build());
+    myKingdom.setBuildings(buildings);
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.of(reqBuilding));
+    Mockito.doThrow(new NotEnoughResourceException())
+        .when(buildingService).validateHasEnoughGold(any(Building.class), anyInt());
+    BuildingDTO buildingDTO = new BuildingDTO();
+    buildingDTO.setLevel(2);
+
+    buildingService.validateModifyBuildingLevelRequest(buildingDTO, myKingdom, 2);
+  }
+
+  @Test
+  public void when_modifyBuildingLevelWithAppropriateInput_should_returnDelvelopedBuilding() {
+    //LEVEL KELL BELE, tYPE,
+    // KELL KINGDOM
+    // kingdomban Gold updat-tel
+    Building modifiableBuilding = TestUtils.buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
+    Mockito.doReturn(modifiableBuilding).when(buildingService).validateModifyBuildingLevelRequest(any(), any(), any());
+    when(gameObjectRuleHolder.calcNewHP(any(), any())).thenReturn(100);
+    when(gameObjectRuleHolder.calcCreationTime(any(),anyInt(),anyInt())).thenReturn(100);
+    Mockito.doNothing().when(resourceService).pay(any(),anyInt());
+    Mockito.doNothing().when(kingdomService).update(any(Kingdom.class));
+    Building expectedBuilding = modifiableBuilding;
+    expectedBuilding.setStartedAt(LocalDateTime.parse("2022-01-01T00:00:00"));
+    expectedBuilding.setFinishedAt(expectedBuilding.getStartedAt().plusSeconds(100));
+    expectedBuilding.setHp(expectedBuilding.getHp() + 100);
+    BuildingDTO buildingDTO = new BuildingDTO();
+    buildingDTO.setLevel(2);
+    expectedBuilding.setLevel(buildingDTO.getLevel());
+    //Kingdom myKingdom = TestUtils.defaultKingdom();
+
+    Building actualBuilding = buildingService.modifyBuildingLevel(buildingDTO, TestUtils.defaultKingdom(), modifiableBuilding.getId());
+
+    Assert.assertEquals(expectedBuilding.getLevel(), actualBuilding.getLevel());
+    Assert.assertEquals(expectedBuilding.getHp(), actualBuilding.getHp());
+    Assert.assertEquals(expectedBuilding.getStartedAt(), actualBuilding.getStartedAt());
+    Assert.assertEquals(expectedBuilding.getFinishedAt(), actualBuilding.getFinishedAt());
+  }
+
 
 }
