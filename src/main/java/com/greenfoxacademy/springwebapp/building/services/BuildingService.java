@@ -19,7 +19,9 @@ public interface BuildingService {
 
   BuildingDTO addBuilding(BuildingTypeDTO typeDTO, Kingdom kingdom);
 
-  BuildingDTO modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+  BuildingDTO provideDtoAboutBuildingDevResoult(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+
+  Building modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
 
   Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
 
