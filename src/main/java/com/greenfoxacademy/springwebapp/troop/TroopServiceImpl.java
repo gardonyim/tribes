@@ -13,11 +13,8 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
-<<<<<<< HEAD
 import com.greenfoxacademy.springwebapp.exceptions.RequestedForbiddenResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
-=======
->>>>>>> e0612e2 (test(Get Kingdom): create unit test for converter methodes of KingdomService)
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -95,7 +92,6 @@ public class TroopServiceImpl implements TroopService {
       throw new RequestParameterMissingException("buildingId must be present");
     }
   }
-<<<<<<< HEAD
 
   public TroopDTO fetchTroop(Kingdom kingdom, int id) {
     return convert(getTroopById(kingdom, id));
@@ -110,7 +106,5 @@ public class TroopServiceImpl implements TroopService {
     }
     return troop;
   }
-=======
->>>>>>> e0612e2 (test(Get Kingdom): create unit test for converter methodes of KingdomService)
 
 }
