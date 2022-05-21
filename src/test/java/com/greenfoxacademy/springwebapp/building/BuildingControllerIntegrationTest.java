@@ -178,12 +178,11 @@ public class BuildingControllerIntegrationTest {
     String expectedResponse = mapper.writeValueAsString(dto);
 
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
-        .contentType("application/json")
-        .content(jsonRequest))
+            .contentType("application/json")
+            .content(jsonRequest))
         .andExpect(status().is(404))
         .andExpect(content().json(expectedResponse));
   }
-
 
   @Test
   public void when_putKingdomBuildingsWithNotOwnBuildingId_should_respondStatus403AndProperErrorDtoInJson()
