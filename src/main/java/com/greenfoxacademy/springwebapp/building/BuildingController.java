@@ -38,7 +38,7 @@ public class BuildingController {
   @PutMapping({"/{id}"})
   public ResponseEntity modifyBuildingLevel(Authentication user, @PathVariable(name = "id") Integer buildingId,
                                             @RequestBody BuildingDTO buildingDTO) {
-    return ResponseEntity.status(200).body(buildingService.modifyBuildingLevel(
+    return ResponseEntity.status(200).body(buildingService.provideDtoAboutBuildingDevResoult(
             buildingDTO, ((Player) user.getPrincipal()).getKingdom(), buildingId));
   }
 
