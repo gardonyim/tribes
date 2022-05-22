@@ -230,7 +230,7 @@ public class TestUtils {
     }
 
     public BuildingBuilder finishedAt(String finishedAt) {
-      building.setStartedAt(LocalDateTime.parse(finishedAt));
+      building.setFinishedAt(LocalDateTime.parse(finishedAt));
       return this;
     }
 

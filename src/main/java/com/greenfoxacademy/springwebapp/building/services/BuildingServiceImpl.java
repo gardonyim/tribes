@@ -128,7 +128,7 @@ public class BuildingServiceImpl implements BuildingService {
   }
 
   public void validateHasEnoughGold(Building modifiableBuilding, int reqBuildingLevel) {
-    if (resourceService.hasEnoughGold(modifiableBuilding.getKingdom(),
+    if (!resourceService.hasEnoughGold(modifiableBuilding.getKingdom(),
         gameObjectRuleHolder.calcCreationCost(modifiableBuilding.getBuildingType().getName().toLowerCase(),
             modifiableBuilding.getLevel(), reqBuildingLevel))) {
       throw new NotEnoughResourceException();

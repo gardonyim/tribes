@@ -1,23 +1,25 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import static com.greenfoxacademy.TestUtils.resourceBuilder;
+import static com.greenfoxacademy.TestUtils.buildingBuilder;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.greenfoxacademy.TestUtils;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
-import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.PlayerService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import javax.transaction.Transactional;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -164,27 +165,9 @@ public class BuildingControllerIntegrationTest {
         .andExpect(jsonPath("$.finishedAt").value(TimeService.toEpochSecond(TimeService.timeAtNSecondsLater(90))));
   }
 
-  @Ignore
-  @Test
-  public void when_putKingdomBuildingsWithoutBuildingId_should_respondStatus400AndProperErrorDtoInJson()
-      throws Exception {
-    Player existingtestuser = TestUtils.defaultPlayer();
-    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    String buildingId = "";
-    String jsonRequest = "{ \"level\" : \"2\" }";
-    ErrorDTO dto = new ErrorDTO("Missing parameter(s): buildingId!");
-    String expectedResponse = mapper.writeValueAsString(dto);
-
-    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
-        .contentType("application/json")
-        .content(jsonRequest))
-        .andExpect(status().is(400))
-        .andExpect(content().json(expectedResponse));
-  }
-
   @Test
   public void when_putKingdomBuildingsWithNotExistBuildingId_should_respondStatus404AndProperErrorDtoInJson()
-  throws Exception {
+      throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
     Player existingtestuser =
         new Player(1, "existingtestuser", null, existingkingdom, null, 0);
@@ -224,7 +207,7 @@ public class BuildingControllerIntegrationTest {
   public void when_putKingdomBuildingsWithOwnBuildingIdAndToHighLevel_should_respondStatus406AndProperErrorDtoInJson()
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
-    existingkingdom.setBuildings(Arrays.asList(TestUtils.buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
+    existingkingdom.setBuildings(Arrays.asList(buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
     Player existingtestuser =
         new Player(1, "existingtestuser", null, existingkingdom, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
@@ -244,7 +227,7 @@ public class BuildingControllerIntegrationTest {
   public void when_putKingdomBuildingsWithOwnBuildingIdAndToExpensLevel_should_respondStatus409AndProperErrorDtoInJson()
       throws Exception {
     Kingdom existingkingdom = new Kingdom(1, new Location());
-    existingkingdom.setBuildings(Arrays.asList(TestUtils.buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
+    existingkingdom.setBuildings(Arrays.asList(buildingBuilder(BuildingType.TOWNHALL).withLevel(1).build()));
     Player existingtestuser =
         new Player(1, "existingtestuser", null, existingkingdom, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
@@ -265,22 +248,22 @@ public class BuildingControllerIntegrationTest {
   public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDtoInJson()
       throws Exception {
     Kingdom existingkingdom = new Kingdom(5, new Location());
-    existingkingdom.setBuildings(Arrays.asList(TestUtils.buildingBuilder(BuildingType.TOWNHALL).withLevel(2).build()));
-    Player existingtestuser =
-        new Player(5, "existingtestuser", null, existingkingdom, null, 0);
+    Resource money = resourceBuilder(ResourceType.GOLD).withAmount(1000).build();
+    money.setKingdom(existingkingdom);
+    existingkingdom.setResources(Arrays.asList(money));
+    Building townhall = buildingBuilder(BuildingType.TOWNHALL).withLevel(2).finishedAt("2022-01-01T00:00:00").build();
+    townhall.setKingdom(existingkingdom);
+    existingkingdom.setBuildings(Arrays.asList(townhall));
+    Player existingtestuser = new Player(5, "existingtestuser", null, existingkingdom, null, 0);
+    existingkingdom.setPlayer(existingtestuser);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
     String buildingId = "9";
     String jsonRequest = "{ \"level\" : \"2\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
-            .contentType("application/json")
-            .content(jsonRequest))
-        .andExpect(status().is(200))
-        .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.buildingType").value("townhall"))
-        .andExpect(jsonPath("$.level").value(2))
-        .andExpect(jsonPath("$.hp").value(400));
-    //Todo: time how???
+            .contentType("application/json").content(jsonRequest)).andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(9)).andExpect(jsonPath("$.buildingType").value("academy"))
+        .andExpect(jsonPath("$.level").value(2)).andExpect(jsonPath("$.hp").value(300));
   }
 
 
