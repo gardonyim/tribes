@@ -141,7 +141,7 @@ public class BuildingControllerIntegrationTest {
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id").isNumber())
-        .andExpect(jsonPath("$.buildingType").value("academy"))
+        .andExpect(jsonPath("$.type").value("academy"))
         .andExpect(jsonPath("$.level").value(1))
         .andExpect(jsonPath("$.hp").value(150))
         .andExpect(jsonPath("$.startedAt").value(TimeService.toEpochSecond(TimeService.actualTime())))
