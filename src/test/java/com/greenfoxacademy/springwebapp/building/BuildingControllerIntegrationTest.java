@@ -243,7 +243,6 @@ public class BuildingControllerIntegrationTest {
         .andExpect(content().json(expectedResponse));
   }
 
-
   @Test
   public void when_putKingdomBuildingsWithOwnBuildingIdAndProperLevel_should_respondStatus200AndPropBuildingDtoInJson()
       throws Exception {
@@ -265,9 +264,5 @@ public class BuildingControllerIntegrationTest {
         .andExpect(jsonPath("$.id").value(11)).andExpect(jsonPath("$.buildingType").value("academy"))
         .andExpect(jsonPath("$.level").value(2)).andExpect(jsonPath("$.hp").value(300));
   }
-
-
-
-
 
 }
