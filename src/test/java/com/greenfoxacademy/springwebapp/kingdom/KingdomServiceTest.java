@@ -138,12 +138,13 @@ public class KingdomServiceTest {
     LocalDateTime ldt = LocalDateTime.now();
     long ldte = ldt.toEpochSecond(ZoneOffset.UTC);
     Kingdom kdm = createTestKingdom(ldt);
-    when(buildingService.convertToDTO(any())).thenReturn(new BuildingDTO(0,
+    when(buildingService.convertToDTOs(any())).thenReturn(Arrays.asList(new BuildingDTO(0,
         kdm.getBuildings().get(0).getBuildingType(), kdm.getBuildings().get(0).getLevel(),
-        kdm.getBuildings().get(0).getHp(), ldte, ldte));
-    when(resourceService.convertToResourceDTO((any())))
-        .thenReturn(new ResourceDTO("gold", 100, 1, ldte));
-    when(troopService.convert((any()))).thenReturn(new TroopDTO(null, 1,1,1,1, ldte, ldte));
+        kdm.getBuildings().get(0).getHp(), ldte, ldte)));
+    when(resourceService.convertToResourceDTOs((any())))
+        .thenReturn(Arrays.asList(new ResourceDTO("gold", 100, 1, ldte)));
+    when(troopService.convert(any(List.class)))
+        .thenReturn(Arrays.asList(new TroopDTO(null, 1,1,1,1, ldte, ldte)));
     when(locationService.convertToLocationDTO((any())))
         .thenReturn(new LocationDTO(kdm.getLocation().getxcoordinate(), kdm.getLocation().getxcoordinate()));
     KingdomResFullDTO expectedKingdomResFullDTO = createExpectedKingdomResFullDTO(kdm);

@@ -22,4 +22,6 @@ public interface BuildingService {
 
   BuildingDTO convertToDTO(Building building);
 
+  List<BuildingDTO> convertToDTOs(List<Building> buildings);
+
 }

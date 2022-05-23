@@ -72,6 +72,11 @@ public class TroopServiceImpl implements TroopService {
   }
 
   @Override
+  public List<TroopDTO> convert(List<Troop> troops) {
+    return troops.stream().map(this::convert).collect(Collectors.toList());
+  }
+
+  @Override
   public TroopDTO saveTroop(Kingdom kingdom, TroopPostDTO troopPostDTO) {
     checkInputParameters(troopPostDTO);
     Building building = buildingService.getBuildingById(troopPostDTO.getBuildingId());

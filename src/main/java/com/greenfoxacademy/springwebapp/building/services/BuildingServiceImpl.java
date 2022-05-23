@@ -10,6 +10,7 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,11 @@ public class BuildingServiceImpl implements BuildingService {
     dto.setStartedAt(TimeService.toEpochSecond(building.getStartedAt()));
     dto.setFinishedAt(TimeService.toEpochSecond(building.getFinishedAt()));
     return dto;
+  }
+
+  @Override
+  public List<BuildingDTO> convertToDTOs(List<Building> buildings) {
+    return buildings.stream().map(this::convertToDTO).collect(Collectors.toList());
   }
 
 }

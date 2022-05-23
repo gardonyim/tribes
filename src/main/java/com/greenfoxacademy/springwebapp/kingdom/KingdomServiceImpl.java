@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.greenfoxacademy.springwebapp.troop.TroopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,12 +82,9 @@ public class KingdomServiceImpl implements KingdomService {
         kingdom.getName(),
         kingdom.getPlayer().getId(),
         locationService.convertToLocationDTO(kingdom.getLocation()),
-        kingdom.getBuildings().stream()
-            .map(buildingService::convertToDTO).collect(Collectors.toList()),
-        kingdom.getResources().stream()
-            .map(resourceService::convertToResourceDTO).collect(Collectors.toList()),
-        kingdom.getTroops().stream()
-            .map(troopService::convert).collect(Collectors.toList())
+        buildingService.convertToDTOs(kingdom.getBuildings()),
+        resourceService.convertToResourceDTOs(kingdom.getResources()),
+        troopService.convert(kingdom.getTroops())
     );
   }
 
