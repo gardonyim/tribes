@@ -16,7 +16,7 @@ public class KingdomBaseDTO {
     this.kingdomId = kingdomId;
     this.name = name;
     this.userId = userId;
-  this.location = location;
+    this.location = location;
   }
 
   public int getKingdomId() {
@@ -53,10 +53,17 @@ public class KingdomBaseDTO {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof KingdomBaseDTO)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof KingdomBaseDTO)) {
+      return false;
+    }
     KingdomBaseDTO that = (KingdomBaseDTO) o;
-    return kingdomId == that.kingdomId && userId == that.userId && Objects.equal(name, that.name) && Objects.equal(location, that.location);
+    return kingdomId == that.kingdomId
+            && userId == that.userId
+            && Objects.equal(name, that.name)
+            && Objects.equal(location, that.location);
   }
 
   @Override

@@ -4,16 +4,19 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
 import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
-import com.greenfoxacademy.springwebapp.troop.TroopServiceImpl;
+import com.greenfoxacademy.springwebapp.troop.TroopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,15 +34,17 @@ public class KingdomServiceImpl implements KingdomService {
   private final BuildingService buildingService;
   private final ResourceService resourceService;
   private final LocationService locationService;
+  private final TroopService troopService;
   private final GameObjectRuleHolder gameObjectRuleHolder;
-  private final TroopServiceImpl troopService;
 
   @Autowired
   public KingdomServiceImpl(
           KingdomRepository kingdomRepository,
           BuildingService buildingService,
           ResourceService resourceService,
-          LocationService locationService, GameObjectRuleHolder gameObjectRuleHolder, TroopServiceImpl troopService) {
+          LocationService locationService,
+          GameObjectRuleHolder gameObjectRuleHolder,
+          TroopService troopService) {
     this.kingdomRepository = kingdomRepository;
     this.buildingService = buildingService;
     this.resourceService = resourceService;
@@ -56,6 +61,57 @@ public class KingdomServiceImpl implements KingdomService {
     Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player,
             locationService.createLocation()));
     return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
+  }
+
+  @Override
+  public Kingdom findById(Integer kingdomId) {
+    return kingdomRepository.findById(kingdomId)
+            .orElseThrow(() -> new RequestedResourceNotFoundException("The requested kingdom is not exist!"));
+  }
+
+  @Override
+  public KingdomResFullDTO fetchKingdomData(Kingdom kingdom) {
+    return convertToKingdomResFullDTO(kingdom);
+  }
+
+  @Override
+  public KingdomResWrappedDTO fetchKingdomData(Integer kingdomId) {
+    return convertToKingdomResWrappedDTO(findById(kingdomId));
+  }
+
+  @Override
+  public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
+    KingdomResFullDTO kingdomResFullDTO = new KingdomResFullDTO();
+
+    kingdomResFullDTO.setKingdomId(kingdom.getId());
+    kingdomResFullDTO.setName(kingdom.getName());
+    kingdomResFullDTO.setUserId(kingdom.getPlayer().getId());
+    kingdomResFullDTO.setLocation(locationService.convertToLocationDTO(kingdom.getLocation()));
+    kingdomResFullDTO.setBuildings(kingdom.getBuildings()
+            .stream()
+            .map(buildingService::convertToDTO)
+            .collect(Collectors.toList()));
+    kingdomResFullDTO.setResources(kingdom.getResources()
+            .stream()
+            .map(resourceService::convertToResourceDTO)
+            .collect(Collectors.toList()));
+    kingdomResFullDTO.setTroops(kingdom.getTroops()
+            .stream()
+            .map(troopService::convert)
+            .collect(Collectors.toList()));
+    return kingdomResFullDTO;
+  }
+
+  @Override
+  public KingdomResWrappedDTO convertToKingdomResWrappedDTO(Kingdom kingdom) {
+    return new KingdomResWrappedDTO(
+            new KingdomBaseDTO(
+                    kingdom.getId(),
+                    kingdom.getName(),
+                    kingdom.getPlayer().getId(),
+                    locationService.convertToLocationDTO(kingdom.getLocation())
+            )
+    );
   }
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {
@@ -103,19 +159,5 @@ public class KingdomServiceImpl implements KingdomService {
     kingdom.setName(newKingdomName);
     Kingdom k = kingdomRepository.save(kingdom);
     return convertToKingdomResFullDTO(k);
-  }
-
-  @Override
-  public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
-    KingdomResFullDTO kingdomResFullDTO = new KingdomResFullDTO();
-
-    kingdomResFullDTO.setKingdomId(kingdom.getId());
-    kingdomResFullDTO.setName(kingdom.getName());
-    kingdomResFullDTO.setUserId(kingdom.getPlayer().getId());
-    kingdomResFullDTO.setLocation(locationService.convertToLocationDTO(kingdom.getLocation()));
-    kingdomResFullDTO.setBuildings(kingdom.getBuildings().stream().map(buildingService::convertToDTO).collect(Collectors.toList()));
-    kingdomResFullDTO.setResources(kingdom.getResources().stream().map(resourceService::convertToResourceDTO).collect(Collectors.toList()));
-    kingdomResFullDTO.setTroops(kingdom.getTroops().stream().map(troopService::convert).collect(Collectors.toList()));
-    return kingdomResFullDTO;
   }
 }

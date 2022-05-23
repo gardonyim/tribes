@@ -51,11 +51,19 @@ public class KingdomResFullDTO extends KingdomBaseDTO {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof KingdomResFullDTO)) return false;
-    if (!super.equals(o)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof KingdomResFullDTO)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
     KingdomResFullDTO that = (KingdomResFullDTO) o;
-    return Objects.equal(buildings, that.buildings) && Objects.equal(resources, that.resources) && Objects.equal(troops, that.troops);
+    return Objects.equal(buildings, that.buildings)
+            && Objects.equal(resources, that.resources)
+            && Objects.equal(troops, that.troops);
   }
 
   @Override

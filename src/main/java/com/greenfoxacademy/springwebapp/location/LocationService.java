@@ -10,4 +10,5 @@ public interface LocationService {
   Location createLocation(int boardSize, int offset);
 
   LocationDTO convertToLocationDTO(Location location);
+
 }

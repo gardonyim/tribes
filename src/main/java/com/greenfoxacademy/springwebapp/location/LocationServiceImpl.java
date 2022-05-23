@@ -56,5 +56,4 @@ public class LocationServiceImpl implements LocationService {
     );
   }
 
-
 }
