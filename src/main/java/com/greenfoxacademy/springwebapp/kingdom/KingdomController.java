@@ -38,7 +38,7 @@ public class KingdomController {
     return ResponseEntity.status(200).body(kingdomService.fetchKingdomData(kingdomId));
   }
 
-  @PutMapping("/kingdom")
+  @PutMapping
   public ResponseEntity<KingdomResFullDTO> modifyKingdomName(
           @RequestBody KingdomPutDTO kingdomPutDTO, Authentication auth) {
     kingdomService.checkKingdomPutDto(kingdomPutDTO);

@@ -45,6 +45,6 @@ public class LocationDTO implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(x, y);
+    return Objects.hash(getX(), getY());
   }
 }

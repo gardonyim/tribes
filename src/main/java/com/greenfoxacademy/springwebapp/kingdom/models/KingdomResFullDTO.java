@@ -6,13 +6,14 @@ import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KingdomResFullDTO extends KingdomBaseDTO {
 
-  List<BuildingDTO> buildings;
-  List<ResourceDTO> resources;
-  List<TroopDTO> troops;
+  List<BuildingDTO> buildings = new ArrayList<>();
+  List<ResourceDTO> resources = new ArrayList<>();
+  List<TroopDTO> troops = new ArrayList<>();
 
   public KingdomResFullDTO() {
   }
@@ -68,6 +69,6 @@ public class KingdomResFullDTO extends KingdomBaseDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), buildings, resources, troops);
+    return Objects.hashCode(super.hashCode(), getBuildings(), getResources(), getTroops());
   }
 }
