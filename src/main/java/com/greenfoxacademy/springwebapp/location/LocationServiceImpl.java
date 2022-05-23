@@ -4,6 +4,8 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import java.util.List;
 import java.util.Random;
+
+import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,14 @@ public class LocationServiceImpl implements LocationService {
       }
     }
     throw new RequestCauseConflictException("Too many items on the board, unable to place new kingdom");
+  }
+
+  @Override
+  public LocationDTO convertToLocationDTO(Location location) {
+    return new LocationDTO(
+        location.getxcoordinate(),
+        location.getycoordinate()
+    );
   }
 
 }

@@ -6,6 +6,8 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 
+import java.util.List;
+
 public interface TroopService {
 
   Troop createTroopOfLevel(int level, Kingdom kingdom);
@@ -13,6 +15,8 @@ public interface TroopService {
   TroopsDTO getTroopsOfKingdom(Kingdom kingdom);
 
   TroopDTO convert(Troop troop);
+
+  List<TroopDTO> convert(List<Troop> troops);
 
   TroopDTO saveTroop(Kingdom kingdom, TroopPostDTO troopPostDTO);
 

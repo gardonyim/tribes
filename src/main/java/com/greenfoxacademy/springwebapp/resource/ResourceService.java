@@ -15,6 +15,8 @@ public interface ResourceService {
 
   ResourceDTO convertToResourceDTO(Resource resource);
 
+  List<ResourceDTO> convertToResourceDTOs(List<Resource> resources);
+
   ResourcesResDTO convertToResourcesResDto(List<Resource> resourceList);
 
   Resource getResourceByKingdomAndType(Kingdom kingdom, ResourceType type);
