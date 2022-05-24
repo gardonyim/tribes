@@ -4,7 +4,6 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
-import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;

@@ -261,7 +261,7 @@ public class BuildingControllerIntegrationTest {
 
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
             .contentType("application/json").content(jsonRequest)).andExpect(status().is(200))
-        .andExpect(jsonPath("$.id").value(11)).andExpect(jsonPath("$.buildingType").value("academy"))
+        .andExpect(jsonPath("$.id").value(11)).andExpect(jsonPath("$.type").value("academy"))
         .andExpect(jsonPath("$.level").value(2)).andExpect(jsonPath("$.hp").value(300));
   }
 
