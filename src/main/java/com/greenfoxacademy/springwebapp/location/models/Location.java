@@ -43,4 +43,34 @@ public class Location {
   public int getycoordinate() {
     return ycoordinate;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Location location = (Location) o;
+    if (id != location.id) {
+      return false;
+    }
+    if (xcoordinate != location.xcoordinate) {
+      return false;
+    }
+    if (ycoordinate != location.ycoordinate) {
+      return false;
+    }
+    return kingdom != null ? kingdom.equals(location.kingdom) : location.kingdom == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id;
+    result = 31 * result + xcoordinate;
+    result = 31 * result + ycoordinate;
+    result = 31 * result + (kingdom != null ? kingdom.hashCode() : 0);
+    return result;
+  }
 }
