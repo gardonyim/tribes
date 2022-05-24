@@ -172,7 +172,7 @@ public class BuildingControllerIntegrationTest {
     Player existingtestuser =
         new Player(1, "existingtestuser", null, existingkingdom, null, 0);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    Integer buildingId = 10;
+    Integer buildingId = 100;
     String jsonRequest = "{ \"level\" : \"2\" }";
     ErrorDTO dto = new ErrorDTO("Required building is not exist!");
     String expectedResponse = mapper.writeValueAsString(dto);
@@ -257,12 +257,12 @@ public class BuildingControllerIntegrationTest {
     Player existingtestuser = new Player(5, "existingtestuser", null, existingkingdom, null, 0);
     existingkingdom.setPlayer(existingtestuser);
     Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
-    String buildingId = "9";
+    String buildingId = "11";
     String jsonRequest = "{ \"level\" : \"2\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/buildings/" + buildingId).principal(auth)
             .contentType("application/json").content(jsonRequest)).andExpect(status().is(200))
-        .andExpect(jsonPath("$.id").value(9)).andExpect(jsonPath("$.buildingType").value("academy"))
+        .andExpect(jsonPath("$.id").value(11)).andExpect(jsonPath("$.buildingType").value("academy"))
         .andExpect(jsonPath("$.level").value(2)).andExpect(jsonPath("$.hp").value(300));
   }
 
