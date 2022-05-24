@@ -5,34 +5,23 @@ import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.building.models.Building;
-
-import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
-
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.greenfoxacademy.springwebapp.utilities.TimeService;
-
-import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
-import com.greenfoxacademy.springwebapp.resource.models.Resource;
-import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
-
-import com.greenfoxacademy.springwebapp.exceptions.*;
 
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
+import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.util.ObjectUtils;
 
 @Service
