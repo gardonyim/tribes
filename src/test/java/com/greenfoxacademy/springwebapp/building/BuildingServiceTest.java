@@ -265,10 +265,10 @@ public class BuildingServiceTest {
   public void when_modifyBuildingLevelWithAppropriateInput_should_returnDevelopedBuilding() {
     Building modBuildung = buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
     Mockito.doReturn(modBuildung).when(buildingService).validateModifyBuildingLevelRequest(any(), any(), any());
-    when(gameObjectRuleHolder.calcNewHP(any(), any())).thenReturn(100);
-    when(gameObjectRuleHolder.calcCreationTime(any(),anyInt(),anyInt())).thenReturn(100);
-    Mockito.doNothing().when(resourceService).pay(any(),anyInt());
-    Mockito.doNothing().when(kingdomService).update(any(Kingdom.class));
+    when(gameObjectRuleHolder.calcNewHP(anyString(), anyInt())).thenReturn(100);
+    when(gameObjectRuleHolder.calcCreationTime(anyString(),anyInt(),anyInt())).thenReturn(100);
+    when(resourceService.pay(any(), anyInt())).thenReturn(null);
+    when(kingdomService.update(any(Kingdom.class))).thenReturn(null);
     Building expectedBuilding = modBuildung;
     expectedBuilding.setStartedAt(LocalDateTime.parse("2022-01-01T00:00:00"));
     expectedBuilding.setFinishedAt(expectedBuilding.getStartedAt().plusSeconds(100));
@@ -282,6 +282,5 @@ public class BuildingServiceTest {
     Assert.assertEquals(expectedBuilding.getStartedAt(), actualBuilding.getStartedAt());
     Assert.assertEquals(expectedBuilding.getFinishedAt(), actualBuilding.getFinishedAt());
   }
-
 
 }
