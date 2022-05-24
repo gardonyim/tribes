@@ -12,12 +12,9 @@ import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundExce
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 
-import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
