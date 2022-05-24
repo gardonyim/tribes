@@ -97,7 +97,7 @@ public class KingdomServiceImpl implements KingdomService {
         )
     );
   }
-
+  
   public Kingdom update(Kingdom kingdom) {
     return kingdomRepository.save(kingdom);
   }
