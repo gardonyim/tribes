@@ -99,8 +99,7 @@ public class BuildingServiceImpl implements BuildingService {
     int requiredGoldAmount = gameObjectRuleHolder.calcCreationCost(
         modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel);
     resourceService.pay(kingdom, requiredGoldAmount);
-    modifiableBuilding.setStartedAt(kingdom.getResources().stream()
-        .filter(r -> r.getResourceType() == ResourceType.GOLD).collect(Collectors.toList()).get(0).getUpdatedAt());
+    modifiableBuilding.setStartedAt(TimeService.actualTime());
     modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsAfterTimeStamp(gameObjectRuleHolder.calcCreationTime(
         modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel),
         modifiableBuilding.getStartedAt()));
