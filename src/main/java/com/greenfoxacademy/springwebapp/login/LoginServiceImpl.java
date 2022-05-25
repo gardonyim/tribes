@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.login;
 
+import com.greenfoxacademy.springwebapp.exceptions.RequestedForbiddenResourceException;
 import com.greenfoxacademy.springwebapp.login.dtos.LoginDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.StatusResponseDTO;
 import com.greenfoxacademy.springwebapp.login.exceptions.InputWrongException;
@@ -45,7 +46,11 @@ public class LoginServiceImpl implements LoginService {
     Optional<Player> player = findPlayerByName(username);
     if (player.isPresent()) {
       if (passwordEncoder.matches(password, player.get().getPassword())) {
-        return new StatusResponseDTO("ok", jwtUtils.generateJwtString(player.get()));
+        if (player.get().getEnabled()) {
+          return new StatusResponseDTO("ok", jwtUtils.generateJwtString(player.get()));
+        } else {
+          throw new RequestedForbiddenResourceException("Unactivated account");
+        }
       }
     }
     throw new InputWrongException("Username or password is incorrect.");
