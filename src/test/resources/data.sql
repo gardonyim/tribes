@@ -5,11 +5,11 @@ DELETE FROM kingdoms;
 DELETE FROM locations;
 DELETE FROM players;
 
-INSERT INTO players (id, username, password) VALUES
-    (1, 'existingtestuser', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK'),
-    (2, 'testuser2', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK'),
-    (3, 'testuser3', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK'),
-    (4, 'testuser4', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK');
+INSERT INTO players (id, username, password, enabled) VALUES
+    (1, 'existingtestuser', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK', 1),
+    (2, 'testuser2', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK', 1),
+    (3, 'testuser3', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK', 1),
+    (4, 'testuser4', '$2a$10$b7wnqdlcepRbdn.PFKww8e11aZaLdZtOGl8RVNkd1mKFuWRzA/IpK', 1);
 
 INSERT INTO locations (id, x_coordinate, y_coordinate) VALUES
     (1, 0, 0),
