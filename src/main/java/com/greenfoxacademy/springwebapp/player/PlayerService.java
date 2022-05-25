@@ -15,4 +15,6 @@ public interface PlayerService {
 
   PlayerListDTO findNearbyPlayers(Player authPlayer, Integer distance);
 
+  String userActivation(String code);
+
 }
