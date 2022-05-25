@@ -5,11 +5,12 @@ import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 public class PlayerController {
@@ -31,6 +32,11 @@ public class PlayerController {
                                    @RequestParam(required = false) Integer distance) {
     return ResponseEntity.ok(
         playerService.findNearbyPlayers((Player) user.getPrincipal(), distance));
+  }
+
+  @GetMapping("/activation/{code}")
+  public ResponseEntity activation(@PathVariable(required = false, name = "code") String code) {
+    return ResponseEntity.ok(playerService.userActivation(code));
   }
 
 }
