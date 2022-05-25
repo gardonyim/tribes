@@ -5,14 +5,10 @@ import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomRepository;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
-import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
-import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
 import com.greenfoxacademy.springwebapp.location.models.Location;
-import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import javax.transaction.Transactional;
 
-import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,8 +52,8 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"\",  "
             + "\"kingdomname\" : \"\" }";
-    //password: Password is required.; password: Password must be at least 8 characters
-    ErrorDTO errorDTO = new ErrorDTO("password: Password is required.; password: Password must be at least 8 characters.");
+    ErrorDTO errorDTO = new ErrorDTO("password: Password is required.; "
+        + "password: Password must be at least 8 characters.");
     String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -87,7 +83,8 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"\",  \"password\" : \"\",  "
             + "\"kingdomname\" : \"\" }";
-    ErrorDTO errorDTO = new ErrorDTO("password: Password is required.; password: Password must be at least 8 characters.; username: Username is required.");
+    ErrorDTO errorDTO = new ErrorDTO("password: Password is required.; "
+        + "password: Password must be at least 8 characters.; username: Username is required.");
     String expectedResponse = mapper.writeValueAsString(errorDTO);
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
