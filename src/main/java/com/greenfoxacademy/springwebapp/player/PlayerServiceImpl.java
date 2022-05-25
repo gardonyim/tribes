@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.player;
 
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
@@ -9,7 +10,10 @@ import com.greenfoxacademy.springwebapp.player.models.PlayerListDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
+
+import com.greenfoxacademy.springwebapp.utilities.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,7 @@ public class PlayerServiceImpl implements PlayerService {
   private PlayerRepository playerRepository;
   private KingdomService kingdomService;
   private PasswordEncoder pwEnc;
+  private EmailService emailService;
 
   public static final int DEFAULT_DISTANCE = 10;
 
@@ -40,12 +45,40 @@ public class PlayerServiceImpl implements PlayerService {
     this.pwEnc = pwEnc;
   }
 
+  @Autowired
+  public void setEmailService(EmailService emailService) {
+    this.emailService = emailService;
+  }
+
   @Override
   public RegistrationResDTO savePlayer(RegistrationReqDTO reqDTO) {
     validateRegistration(reqDTO);
-    Player player = playerRepository.save(convert(reqDTO));
+    Player player = convert(reqDTO);
+    player.setEnabled(false);
+    player.setActivation(generateKey());
+    player = playerRepository.save(player);
+    emailService.sendMessage(player.getEmail(), player.getActivation());
     player.setKingdom(kingdomService.save(reqDTO.getKingdomname(), player));
     return new RegistrationResDTO(player);
+  }
+
+  @Override
+  public String userActivation(String code) {
+    Player player = playerRepository.findFirstByActivation(code).orElseThrow(ForbiddenActionException::new);
+    player.setActivation("");
+    player.setEnabled(true);
+    playerRepository.save(player);
+    return "successful activation";
+  }
+
+  public String generateKey() {
+    String key = "";
+    Random random = new Random();
+    char[] word = new char[16];
+    for (int j = 0; j < word.length; j++) {
+      word[j] = (char) ('a' + random.nextInt(26));
+    }
+    return new String(word);
   }
 
   private void validateRegistration(RegistrationReqDTO reqDTO) {
