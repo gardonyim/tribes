@@ -15,6 +15,8 @@ public class GameObjectRuleHolder implements
 
   private final GameObjectRuleService gameObjectRuleService;
   private List<GameObjectRule> gameObjectRules;
+  public static final int ATTACK_MULTIPLIER = 10;
+  public static final int DEFENCE_MULTIPLIER = 5;
 
   @Autowired
   public GameObjectRuleHolder(GameObjectRuleService gameObjectRuleService) {
@@ -57,11 +59,11 @@ public class GameObjectRuleHolder implements
   }
 
   public int calcNewAttack(String gameObjectType, int reqLevel) {
-    return reqLevel * 10;
+    return reqLevel * ATTACK_MULTIPLIER;
   }
 
   public int calcNewDefence(String gameObjectType, int reqLevel) {
-    return reqLevel * 5;
+    return reqLevel * DEFENCE_MULTIPLIER;
   }
 
   public int getBuildingTimeMultiplier(String gameObjectType, int level) {
