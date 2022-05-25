@@ -34,7 +34,7 @@ public class LoginControllerIntegrationTests {
   @Test
   public void when_postLoginWithoutUsername_should_respondBadRequestStatusAndProperJson() throws Exception {
     String jsonRequest = "{ \"password\" : \"burgonya\"}";
-    String expectedResponse = "{  \"status\": \"error\", \"message\": \"Username is required.\" }";
+    String expectedResponse = "{  \"status\": \"error\", \"message\": \"username: Username is required.\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/login")
                     .contentType("application/json")
@@ -46,7 +46,7 @@ public class LoginControllerIntegrationTests {
   @Test
   public void when_postLoginWithoutPassword_should_respondBadRequestStatusAndProperJson() throws Exception {
     String jsonRequest = "{ \"username\" : \"krumpli\"}";
-    String expectedResponse = "{  \"status\": \"error\", \"message\": \"Password is required.\" }";
+    String expectedResponse = "{  \"status\": \"error\", \"message\": \"password: Password is required.\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/login")
                     .contentType("application/json")
@@ -58,7 +58,8 @@ public class LoginControllerIntegrationTests {
   @Test
   public void when_postLoginWithoutUsernameAndPassword_should_respondBadRequestStatusAndProperJson() throws Exception {
     String jsonRequest = "{ }";
-    String expectedResponse = "{  \"status\": \"error\", \"message\": \"All fields are required.\" }";
+    String expectedResponse =
+        "{  \"status\": \"error\", \"message\": \"password: Password is required.; username: Username is required.\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/login")
                     .contentType("application/json")
