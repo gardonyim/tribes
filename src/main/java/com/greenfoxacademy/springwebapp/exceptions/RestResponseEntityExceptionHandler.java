@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.exceptions;
 
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
+import com.greenfoxacademy.springwebapp.login.exceptions.InputWrongException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,11 @@ public class RestResponseEntityExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionService.createInputParamsValidErrorMessage(e));
+  }
+
+  @ExceptionHandler(InputWrongException.class)
+  public ResponseEntity<com.greenfoxacademy.springwebapp.exceptions.ErrorDTO> handleWrongInput(InputWrongException e) {
+    return ResponseEntity.status(401).body(new com.greenfoxacademy.springwebapp.exceptions.ErrorDTO(e.getMessage()));
   }
 
 }
