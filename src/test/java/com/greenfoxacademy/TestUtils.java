@@ -433,7 +433,7 @@ public class TestUtils {
 
   }
 
-  private static class TroopDtoBuilder {
+  public static class TroopDtoBuilder {
     private TroopDTO troopDTO;
 
     TroopDtoBuilder() {
