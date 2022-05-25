@@ -1,8 +1,14 @@
 package com.greenfoxacademy.springwebapp.player.models;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 public class RegistrationReqDTO {
 
+  @NotBlank(message = "Username is required.")
   private String username;
+  @NotBlank(message = "Password is required.")
+  @Size(min = 8, message = "Password must be at least 8 characters.")
   private String password;
   private String kingdomname;
 
