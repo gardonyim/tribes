@@ -5,6 +5,7 @@ public class RegistrationReqDTO {
   private String username;
   private String password;
   private String kingdomname;
+  private String email;
 
   public String getUsername() {
     return username;
@@ -28,5 +29,13 @@ public class RegistrationReqDTO {
 
   public void setKingdomname(String kingdomname) {
     this.kingdomname = kingdomname;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 }

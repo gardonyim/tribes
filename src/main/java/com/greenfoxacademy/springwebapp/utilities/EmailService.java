@@ -1,24 +1,21 @@
 package com.greenfoxacademy.springwebapp.utilities;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
 
-  @Value("${spring.mail.username}")
-  private String messageFrom;
-  @Value("${app.url}")
-  private String url;
+  //@Value("${app.url}")
+  private String url = "localhost:8080/activation/";
 
-  private final JavaMailSender javaMailSender;
+  private final JavaMailSenderImpl javaMailSenderImpl;
 
   @Autowired
-  public EmailService(JavaMailSender javaMailSender) {
-    this.javaMailSender = javaMailSender;
+  public EmailService(JavaMailSenderImpl javaMailSenderImpl) {
+    this.javaMailSenderImpl = javaMailSenderImpl;
   }
 
   public void sendMessage(String email, String activationCode) {
@@ -26,15 +23,17 @@ public class EmailService {
 
     try {
       message = new SimpleMailMessage();
-      message.setFrom(messageFrom);
+      message.setFrom(javaMailSenderImpl.getUsername());
       message.setTo(email);
       message.setSubject("Sikeres regisztrálás");
       message.setText("Kedves Felhasználó!\n\n"
           + "Az alábbi linken tudod aktiválni profilodat:\n"
           + "link: " + url + activationCode + " \n"
           + "\n\n Üdvözlettel: CH4-Tribes ");
+      javaMailSenderImpl.send(message);
     } catch (Exception e) {
       //TODO
+      System.out.println(e);
     }
   }
 

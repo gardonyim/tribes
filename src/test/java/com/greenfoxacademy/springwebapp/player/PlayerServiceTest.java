@@ -12,6 +12,8 @@ import com.greenfoxacademy.springwebapp.player.models.RegistrationReqDTO;
 import com.greenfoxacademy.springwebapp.player.models.RegistrationResDTO;
 import java.util.Collections;
 import java.util.Optional;
+
+import com.greenfoxacademy.springwebapp.utilities.EmailService;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +42,9 @@ public class PlayerServiceTest {
 
   @Mock
   PasswordEncoder passwordEncoder;
+
+  @Mock
+  EmailService emailService;
 
   @InjectMocks
   PlayerServiceImpl playerService;

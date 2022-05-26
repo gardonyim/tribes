@@ -108,6 +108,7 @@ public class PlayerServiceImpl implements PlayerService {
     player.setKingdom(null);
     player.setAvatar("");
     player.setPoints(0);
+    player.setEmail(reqDTO.getEmail());
     return player;
   }
 
