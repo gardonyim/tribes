@@ -7,11 +7,15 @@ import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
+import com.greenfoxacademy.springwebapp.resource.models.Resource;
+import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
+import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
-
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +36,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.greenfoxacademy.TestUtils.defaultPlayer;
 import static com.greenfoxacademy.TestUtils.kingdomBuilder;
 import static com.greenfoxacademy.TestUtils.playerBuilder;
+import static com.greenfoxacademy.TestUtils.resourceBuilder;
+import static com.greenfoxacademy.TestUtils.troopBuilder;
+import static com.greenfoxacademy.TestUtils.troopDtoBuilder;
+import static com.greenfoxacademy.TestUtils.troopPostDtoBuilder;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -226,6 +234,144 @@ public class TroopControllerIntegrationTest {
         .andExpect(jsonPath("$.defence", is(1)))
         .andExpect(jsonPath("$.startedAt", is(both(greaterThan(0)).and(lessThan(Integer.MAX_VALUE)))))
         .andExpect(jsonPath("$.finishedAt", is(both(greaterThan(0)).and(lessThan(Integer.MAX_VALUE)))));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithoutBuildingId_should_respondBadRequestAndProperJson()
+      throws Exception {
+    Player player = defaultPlayer();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(null).build();
+    ErrorDTO expected = new ErrorDTO("buildingId must be present");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(gson.toJson(troopPostDTO))
+        .principal(auth))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithBuildingIdBelongToAnotherKingdom_should_respondForbiddenAndProperJson()
+      throws Exception {
+    Player player = defaultPlayer();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(5).build();
+    ErrorDTO expected = new ErrorDTO("Forbidden action");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isForbidden())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithTroopBelongToAnotherKingdom_should_respondForbiddenAndProperJson()
+      throws Exception {
+    Kingdom kingdom = kingdomBuilder().withId(2).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(7).build();
+    ErrorDTO expected = new ErrorDTO("Forbidden action");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isForbidden())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithBuildingIdInvalid_should_respondNotFoundAndProperJson()
+      throws Exception {
+    Player player = defaultPlayer();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(99).build();
+    ErrorDTO expected = new ErrorDTO("No such building.");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithIdInvalid_should_respondNotFoundAndProperJson()
+      throws Exception {
+    Kingdom kingdom = kingdomBuilder().withId(2).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(7).build();
+    ErrorDTO expected = new ErrorDTO("Id not found");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/99")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithBuildingIdNotAnAcademy_should_respondNotAcceptableAndProperJson()
+      throws Exception {
+    Kingdom kingdom = kingdomBuilder().withId(1).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(1).build();
+    ErrorDTO expected = new ErrorDTO("Not a valid academy id");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isNotAcceptable())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdWithNotEnoughResources_should_respondConflictAndProperJson()
+      throws Exception {
+    Resource gold = resourceBuilder(ResourceType.GOLD).withId(1).withAmount(50).withGeneration(0).build();
+    Kingdom kingdom = kingdomBuilder().withId(3).withResources(Collections.singletonList(gold)).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(8).build();
+    ErrorDTO expected = new ErrorDTO("Not enough resource");
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isConflict())
+        .andExpect(content().json(gson.toJson(expected)));
+  }
+
+  @Test
+  public void when_putKingdomTroopsIdValid_should_respondOkStatusAndProperJson()
+      throws Exception {
+    Resource gold = resourceBuilder(ResourceType.GOLD).withId(2).withAmount(150).withGeneration(0).build();
+    Kingdom kingdom = kingdomBuilder().withId(4).withResources(Collections.singletonList(gold)).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(9).build();
+    Troop troop = troopBuilder().withId(3).withLevel(2).withHP(40).withAttack(20).withDefence(10).build();
+    TroopDTO expected = troopDtoBuilder(troop)
+        .withStartedAt(LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC))
+        .withFinishedAt(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(30L).toEpochSecond(ZoneOffset.UTC)).build();
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/3")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(gson.toJson(troopPostDTO))
+            .principal(auth))
+        .andExpect(status().isOk())
+        .andExpect(content().json(gson.toJson(expected)));
   }
 
 }
