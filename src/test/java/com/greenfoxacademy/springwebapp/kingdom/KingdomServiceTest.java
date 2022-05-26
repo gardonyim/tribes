@@ -33,6 +33,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -276,19 +278,20 @@ public class KingdomServiceTest {
   public void renameKingdomTest() {
     when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
 
-    Player player = new Player("testuser", "testpassword", null, "", 0);
-    player.setId(1);
+    Kingdom existingkingdom = new Kingdom(1, new Location());
+    existingkingdom.setName("my initial name");
+    Player existingtestuser =
+            new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    existingkingdom.setPlayer(existingtestuser);
 
-    Kingdom initialKingdom = new Kingdom();
-    initialKingdom.setName("my initial name");
-    initialKingdom.setPlayer(player);
-    initialKingdom = kingdomRepository.save(initialKingdom);
+    existingkingdom = kingdomRepository.save(existingkingdom);
 
-    String modifyToThisName = "my modified name";
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    KingdomPutDTO kingdomPutDTO = new KingdomPutDTO();
+    kingdomPutDTO.setName("my modified name");
+    KingdomResFullDTO modifiedKingdomAsDTO = kingdomService.renameKingdom(existingkingdom, kingdomPutDTO, auth);
 
-    KingdomResFullDTO modifiedKingdomAsDTO = kingdomService.renameKingdom(initialKingdom, modifyToThisName);
-
-    Assert.assertEquals(modifiedKingdomAsDTO.getName(), modifyToThisName);
+    Assert.assertEquals(kingdomPutDTO.getName(), modifiedKingdomAsDTO.getName());
   }
 
   @Test
@@ -318,12 +321,4 @@ public class KingdomServiceTest {
     exceptionRule.expectMessage("name is required");
     kingdomService.checkKingdomPutDto(new KingdomPutDTO());
   }
-
-  @Test
-  public void checkKingdomPutDto_DoesntThrowException() {
-    KingdomPutDTO kingdomPutDTO = new KingdomPutDTO();
-    kingdomPutDTO.setName("this is a not empty name");
-    kingdomService.checkKingdomPutDto(kingdomPutDTO);
-  }
-
 }

@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
-import com.google.common.base.Objects;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
@@ -8,6 +7,7 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class KingdomResFullDTO extends KingdomBaseDTO {
 
@@ -55,20 +55,23 @@ public class KingdomResFullDTO extends KingdomBaseDTO {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof KingdomResFullDTO)) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
     if (!super.equals(o)) {
       return false;
     }
     KingdomResFullDTO that = (KingdomResFullDTO) o;
-    return Objects.equal(buildings, that.buildings)
-            && Objects.equal(resources, that.resources)
-            && Objects.equal(troops, that.troops);
+    return that.getKingdomId() == ((KingdomResFullDTO) o).getKingdomId()
+            && that.getName().equals(((KingdomResFullDTO) o).getName())
+            && that.getUserId() == ((KingdomResFullDTO) o).getUserId()
+            && Objects.equals(buildings, that.buildings)
+            && Objects.equals(resources, that.resources)
+            && Objects.equals(troops, that.troops);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), getBuildings(), getResources(), getTroops());
+    return Objects.hash(buildings, resources, troops);
   }
 }

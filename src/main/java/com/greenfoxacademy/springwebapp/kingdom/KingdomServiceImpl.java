@@ -18,6 +18,7 @@ import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.troop.TroopService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class KingdomServiceImpl implements KingdomService {
@@ -81,25 +81,15 @@ public class KingdomServiceImpl implements KingdomService {
 
   @Override
   public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
-    KingdomResFullDTO kingdomResFullDTO = new KingdomResFullDTO();
-
-    kingdomResFullDTO.setKingdomId(kingdom.getId());
-    kingdomResFullDTO.setName(kingdom.getName());
-    kingdomResFullDTO.setUserId(kingdom.getPlayer().getId());
-    kingdomResFullDTO.setLocation(locationService.convertToLocationDTO(kingdom.getLocation()));
-    kingdomResFullDTO.setBuildings(kingdom.getBuildings()
-            .stream()
-            .map(buildingService::convertToDTO)
-            .collect(Collectors.toList()));
-    kingdomResFullDTO.setResources(kingdom.getResources()
-            .stream()
-            .map(resourceService::convertToResourceDTO)
-            .collect(Collectors.toList()));
-    kingdomResFullDTO.setTroops(kingdom.getTroops()
-            .stream()
-            .map(troopService::convert)
-            .collect(Collectors.toList()));
-    return kingdomResFullDTO;
+    return new KingdomResFullDTO(
+            kingdom.getId(),
+            kingdom.getName(),
+            kingdom.getPlayer().getId(),
+            locationService.convertToLocationDTO(kingdom.getLocation()),
+            buildingService.convertToDTOs(kingdom.getBuildings()),
+            resourceService.convertToResourceDTOs(kingdom.getResources()),
+            troopService.convert(kingdom.getTroops())
+    );
   }
 
   @Override
@@ -155,8 +145,9 @@ public class KingdomServiceImpl implements KingdomService {
   }
 
   @Override
-  public KingdomResFullDTO renameKingdom(Kingdom kingdom, String newKingdomName) {
-    kingdom.setName(newKingdomName);
+  public KingdomResFullDTO renameKingdom(Kingdom kingdom, KingdomPutDTO kingdomPutDTO, Authentication auth) {
+    checkKingdomPutDto(kingdomPutDTO);
+    kingdom.setName(kingdomPutDTO.getName());
     Kingdom k = kingdomRepository.save(kingdom);
     return convertToKingdomResFullDTO(k);
   }

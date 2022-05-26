@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
-import com.google.common.base.Objects;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
@@ -8,6 +7,7 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class KingdomDTO {
 
@@ -80,21 +80,21 @@ public class KingdomDTO {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof KingdomDTO)) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
     KingdomDTO that = (KingdomDTO) o;
     return id == that.id
             && userId == that.userId
-            && Objects.equal(name, that.name)
-            && Objects.equal(buildings, that.buildings)
-            && Objects.equal(resources, that.resources)
-            && Objects.equal(troops, that.troops)
-            && Objects.equal(location, that.location);
+            && Objects.equals(name, that.name)
+            && Objects.equals(buildings, that.buildings)
+            && Objects.equals(resources, that.resources)
+            && Objects.equals(troops, that.troops)
+            && Objects.equals(location, that.location);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id, name, userId, buildings, resources, troops, location);
+    return Objects.hash(id, name, userId, buildings, resources, troops, location);
   }
 }

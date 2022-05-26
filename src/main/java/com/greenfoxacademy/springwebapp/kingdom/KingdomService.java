@@ -5,6 +5,7 @@ import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
+import org.springframework.security.core.Authentication;
 
 public interface KingdomService {
 
@@ -14,8 +15,6 @@ public interface KingdomService {
 
   void checkKingdomPutDto(KingdomPutDTO kingdomPutDTO);
 
-  KingdomResFullDTO renameKingdom(Kingdom kingdom, String newKingdomName);
-
   KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom);
 
   KingdomResWrappedDTO convertToKingdomResWrappedDTO(Kingdom kingdom);
@@ -23,4 +22,6 @@ public interface KingdomService {
   KingdomResFullDTO fetchKingdomData(Kingdom kingdom);
 
   KingdomResWrappedDTO fetchKingdomData(Integer kingdomId);
+
+  KingdomResFullDTO renameKingdom(Kingdom kingdom, KingdomPutDTO kingdomPutDTO, Authentication auth);
 }

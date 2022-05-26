@@ -1,7 +1,8 @@
 package com.greenfoxacademy.springwebapp.kingdom.models;
 
-import com.google.common.base.Objects;
 import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
+
+import java.util.Objects;
 
 public class KingdomBaseDTO {
   private int kingdomId;
@@ -56,18 +57,18 @@ public class KingdomBaseDTO {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof KingdomBaseDTO)) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
     KingdomBaseDTO that = (KingdomBaseDTO) o;
     return kingdomId == that.kingdomId
             && userId == that.userId
-            && Objects.equal(name, that.name)
-            && Objects.equal(location, that.location);
+            && Objects.equals(name, that.name)
+            && Objects.equals(location, that.location);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(kingdomId, name, userId, location);
+    return Objects.hash(kingdomId, name, userId, location);
   }
 }

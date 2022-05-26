@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/kingdom")
@@ -28,21 +28,20 @@ public class KingdomController {
   @GetMapping
   public ResponseEntity<KingdomResFullDTO> getKingdom(Authentication user) {
     return ResponseEntity
-        .status(200)
-        .body(kingdomService.fetchKingdomData(((Player)user.getPrincipal()).getKingdom()));
+            .status(200)
+            .body(kingdomService.fetchKingdomData(((Player) user.getPrincipal()).getKingdom()));
   }
 
   @GetMapping({"/{id}"})
   public ResponseEntity<KingdomResWrappedDTO> getKingdom(
-      @PathVariable(required = false, value = "id") Integer kingdomId) {
+          @PathVariable(required = false, value = "id") Integer kingdomId) {
     return ResponseEntity.status(200).body(kingdomService.fetchKingdomData(kingdomId));
   }
 
   @PutMapping
   public ResponseEntity<KingdomResFullDTO> modifyKingdomName(
           @RequestBody KingdomPutDTO kingdomPutDTO, Authentication auth) {
-    kingdomService.checkKingdomPutDto(kingdomPutDTO);
     Player player = (Player) auth.getPrincipal();
-    return ResponseEntity.ok(kingdomService.renameKingdom(player.getKingdom(), kingdomPutDTO.getName()));
+    return ResponseEntity.ok(kingdomService.renameKingdom(player.getKingdom(), kingdomPutDTO, auth));
   }
 }
