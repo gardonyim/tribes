@@ -354,8 +354,7 @@ public class TroopControllerIntegrationTest {
   }
 
   @Test
-  public void when_putKingdomTroopsIdValid_should_respondOkStatusAndProperJson()
-      throws Exception {
+  public void when_putKingdomTroopsIdValid_should_respondOkStatusAndProperJson() throws Exception {
     Resource gold = resourceBuilder(ResourceType.GOLD).withId(2).withAmount(150).withGeneration(0).build();
     Kingdom kingdom = kingdomBuilder().withId(4).withResources(Collections.singletonList(gold)).build();
     Player player = playerBuilder().withKingdom(kingdom).build();
@@ -365,13 +364,15 @@ public class TroopControllerIntegrationTest {
     TroopDTO expected = troopDtoBuilder(troop)
         .withStartedAt(LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC))
         .withFinishedAt(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(30L).toEpochSecond(ZoneOffset.UTC)).build();
-
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/3")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(troopPostDTO))
+            .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(troopPostDTO))
             .principal(auth))
         .andExpect(status().isOk())
-        .andExpect(content().json(gson.toJson(expected)));
+        .andExpect(jsonPath("$.id", is(3)))
+        .andExpect(jsonPath("$.level", is(2)))
+        .andExpect(jsonPath("$.hp", is(40)))
+        .andExpect(jsonPath("$.attack", is(20)))
+        .andExpect(jsonPath("$.defence", is(10)));
   }
 
 }
