@@ -11,6 +11,7 @@ public class RegistrationReqDTO {
   @Size(min = 8, message = "Password must be at least 8 characters.")
   private String password;
   private String kingdomname;
+  private String email;
 
   public String getUsername() {
     return username;
@@ -34,6 +35,14 @@ public class RegistrationReqDTO {
 
   public void setKingdomname(String kingdomname) {
     this.kingdomname = kingdomname;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
 }
