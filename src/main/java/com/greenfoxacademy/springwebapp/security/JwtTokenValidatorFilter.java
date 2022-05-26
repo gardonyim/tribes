@@ -51,7 +51,9 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
     String reqPath = request.getServletPath();
-    return (reqPath.equals("/login") || reqPath.equals("/register"));
+    return (reqPath.equals("/login")
+        || reqPath.equals("/register")
+        || reqPath.startsWith("/activation/"));
   }
 
   private Player convert(String jwt, SecretKey key) {
