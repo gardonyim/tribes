@@ -62,9 +62,9 @@ public class KingdomBaseDTO {
     }
     KingdomBaseDTO that = (KingdomBaseDTO) o;
     return kingdomId == that.kingdomId
-        && userId == that.userId
-        && Objects.equals(name, that.name)
-        && Objects.equals(location, that.location);
+            && userId == that.userId
+            && Objects.equals(name, that.name)
+            && Objects.equals(location, that.location);
   }
 
   @Override

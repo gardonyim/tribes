@@ -1,11 +1,13 @@
 package com.greenfoxacademy.springwebapp.building.services;
 
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingsDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
-import com.greenfoxacademy.springwebapp.building.models.Building;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,8 +15,6 @@ import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
-import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -22,6 +22,9 @@ import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import java.util.Optional;
+import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -104,7 +107,7 @@ public class BuildingServiceImpl implements BuildingService {
       throw new RequestCauseConflictException("There must only be one Townhall in a kingdom");
     }
     if (buildingRepository.findFirstByBuildingTypeAndKingdom(BuildingType.TOWNHALL, kingdom)
-        .get().getLevel() < 1) {
+            .get().getLevel() < 1) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
     int requiredGoldAmount = gameObjectRuleHolder.getBuildingCostMultiplier(typeDTO.getType(), 1);
@@ -122,7 +125,7 @@ public class BuildingServiceImpl implements BuildingService {
     building.setKingdom(kingdom);
     building.setStartedAt(TimeService.actualTime());
     building.setFinishedAt(TimeService.timeAtNSecondsLater(
-        gameObjectRuleHolder.getBuildingTimeMultiplier(type, level)));
+            gameObjectRuleHolder.getBuildingTimeMultiplier(type, level)));
     return building;
   }
 

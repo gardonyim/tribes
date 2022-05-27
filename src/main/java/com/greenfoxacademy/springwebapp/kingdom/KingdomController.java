@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.kingdom;
 
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,15 +28,20 @@ public class KingdomController {
   @GetMapping
   public ResponseEntity<KingdomResFullDTO> getKingdom(Authentication user) {
     return ResponseEntity
-        .status(200)
-        .body(kingdomService.fetchKingdomData(((Player)user.getPrincipal()).getKingdom()));
+            .status(200)
+            .body(kingdomService.fetchKingdomData(((Player) user.getPrincipal()).getKingdom()));
   }
 
   @GetMapping({"/{id}"})
   public ResponseEntity<KingdomResWrappedDTO> getKingdom(
-      @PathVariable(required = false, value = "id") Integer kingdomId) {
+          @PathVariable(required = false, value = "id") Integer kingdomId) {
     return ResponseEntity.status(200).body(kingdomService.fetchKingdomData(kingdomId));
   }
 
+  @PutMapping
+  public ResponseEntity<KingdomResFullDTO> modifyKingdomName(
+          @RequestBody KingdomPutDTO kingdomPutDTO, Authentication auth) {
+    Player player = (Player) auth.getPrincipal();
+    return ResponseEntity.ok(kingdomService.renameKingdom(player.getKingdom(), kingdomPutDTO, auth));
+  }
 }
-

@@ -1,8 +1,9 @@
 package com.greenfoxacademy.springwebapp.location.models;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class LocationDTO {
+public class LocationDTO implements Serializable {
   private int x;
   private int y;
 
@@ -44,6 +45,6 @@ public class LocationDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hash(x, y);
+    return Objects.hash(getX(), getY());
   }
 }

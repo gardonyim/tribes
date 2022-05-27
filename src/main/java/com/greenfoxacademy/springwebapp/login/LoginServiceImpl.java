@@ -17,15 +17,15 @@ import java.util.Optional;
 @Service
 public class LoginServiceImpl implements LoginService {
 
-  @Autowired
-  JwtUtils jwtUtils;
-
   private final PlayerRepository playerRepository;
 
   private final PasswordEncoder passwordEncoder;
 
   @Value("${security.jwt-key}")
   private String jwtKey;
+
+  @Autowired
+  private JwtUtils jwtUtils;
 
   @Autowired
   public LoginServiceImpl(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {

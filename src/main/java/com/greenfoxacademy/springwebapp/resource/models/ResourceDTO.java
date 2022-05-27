@@ -18,6 +18,13 @@ public class ResourceDTO {
     this.updatedAt = updatedAt;
   }
 
+  public ResourceDTO(ResourceType type, int amount, int generation, long updatedAt) {
+    this.type = type.name().toLowerCase();
+    this.amount = amount;
+    this.generation = generation;
+    this.updatedAt = updatedAt;
+  }
+
   public String getType() {
     return type;
   }
