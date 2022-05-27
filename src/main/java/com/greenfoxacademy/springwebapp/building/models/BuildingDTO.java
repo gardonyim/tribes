@@ -1,11 +1,8 @@
 package com.greenfoxacademy.springwebapp.building.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class BuildingDTO {
 
   private int id;
-  @JsonProperty("type")
   private String type;
   private int level;
   private int hp;
