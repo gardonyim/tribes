@@ -73,7 +73,7 @@ public class BuildingServiceTest {
 
     exceptionRule.expect(RequestParameterMissingException.class);
     exceptionRule.expectMessage("Missing parameter(s): type!");
-    buildingService.validateAddBuildingRequest(buildingTypeDTO, kingdom);
+    buildingService.addBuilding(buildingTypeDTO, kingdom);
   }
 
   @Test

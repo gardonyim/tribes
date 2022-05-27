@@ -17,7 +17,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
 
-
   @ExceptionHandler(RequestedForbiddenResourceException.class)
   public ResponseEntity<ErrorDTO> handleForbiddenRequest(RequestedForbiddenResourceException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
