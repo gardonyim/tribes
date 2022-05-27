@@ -12,10 +12,7 @@ public class RegistrationReqDTO {
   @Size(min = 8, message = "Password must be at least 8 characters.")
   private String password;
   private String kingdomname;
-<<<<<<< HEAD
   @Email(message = "Email have to be a valid e-mail address!")
-=======
->>>>>>> 9720c4c (feat(Acticvation with e-mail): add EmailService)
   private String email;
 
   public String getUsername() {
@@ -49,8 +46,5 @@ public class RegistrationReqDTO {
   public void setEmail(String email) {
     this.email = email;
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> 9720c4c (feat(Acticvation with e-mail): add EmailService)
 }
