@@ -1,8 +1,11 @@
 package com.greenfoxacademy.springwebapp.building.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BuildingDTO {
 
   private int id;
+  @JsonProperty("type")
   private String type;
   private int level;
   private int hp;
@@ -12,9 +15,9 @@ public class BuildingDTO {
   public BuildingDTO() {
   }
 
-  public BuildingDTO(int id, BuildingType type, int level, int hp, long startedAt, long finishedAt) {
+  public BuildingDTO(int id, BuildingType buildingType, int level, int hp, long startedAt, long finishedAt) {
     this.id = id;
-    this.type = type.name().toLowerCase();
+    this.type = buildingType.name().toLowerCase();
     this.level = level;
     this.hp = hp;
     this.startedAt = startedAt;

@@ -2,9 +2,13 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
 import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
@@ -14,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.greenfoxacademy.springwebapp.troop.TroopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +30,20 @@ public class KingdomServiceImpl implements KingdomService {
   private final BuildingService buildingService;
   private final ResourceService resourceService;
   private final LocationService locationService;
+  private final TroopService troopService;
 
   @Autowired
   public KingdomServiceImpl(
       KingdomRepository kingdomRepository,
       BuildingService buildingService,
       ResourceService resourceService,
-      LocationService locationService) {
+      LocationService locationService,
+      TroopService troopService) {
     this.kingdomRepository = kingdomRepository;
     this.buildingService = buildingService;
     this.resourceService = resourceService;
     this.locationService = locationService;
+    this.troopService = troopService;
   }
 
   @Autowired
@@ -48,6 +57,47 @@ public class KingdomServiceImpl implements KingdomService {
     Kingdom savedKingdom = kingdomRepository.save(new Kingdom(kingdomName, player,
         locationService.createLocation()));
     return defaultResourceCreator(defaultBuildingCreator(savedKingdom));
+  }
+
+  @Override
+  public Kingdom findById(Integer kingdomId) {
+    return kingdomRepository.findById(kingdomId)
+        .orElseThrow(() -> new RequestedResourceNotFoundException("The requested kingdom is not exist!"));
+  }
+
+  @Override
+  public KingdomResFullDTO fetchKingdomData(Kingdom kingdom) {
+    return convertToKingdomResFullDTO(kingdom);
+  }
+
+  @Override
+  public KingdomResWrappedDTO fetchKingdomData(Integer kingdomId) {
+    return convertToKingdomResWrappedDTO(findById(kingdomId));
+  }
+
+  @Override
+  public KingdomResFullDTO convertToKingdomResFullDTO(Kingdom kingdom) {
+    return new KingdomResFullDTO(
+        kingdom.getId(),
+        kingdom.getName(),
+        kingdom.getPlayer().getId(),
+        locationService.convertToLocationDTO(kingdom.getLocation()),
+        buildingService.convertToDTOs(kingdom.getBuildings()),
+        resourceService.convertToResourceDTOs(kingdom.getResources()),
+        troopService.convert(kingdom.getTroops())
+    );
+  }
+
+  @Override
+  public KingdomResWrappedDTO convertToKingdomResWrappedDTO(Kingdom kingdom) {
+    return new KingdomResWrappedDTO(
+        new KingdomBaseDTO(
+            kingdom.getId(),
+            kingdom.getName(),
+            kingdom.getPlayer().getId(),
+            locationService.convertToLocationDTO(kingdom.getLocation())
+        )
+    );
   }
 
   private Kingdom defaultBuildingCreator(Kingdom kingdom) {

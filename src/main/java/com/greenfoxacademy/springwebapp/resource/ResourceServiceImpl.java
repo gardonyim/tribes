@@ -48,6 +48,11 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   @Override
+  public List<ResourceDTO> convertToResourceDTOs(List<Resource> resources) {
+    return resources.stream().map(this::convertToResourceDTO).collect(Collectors.toList());
+  }
+
+  @Override
   public ResourcesResDTO convertToResourcesResDto(List<Resource> resourceList) {
     return new ResourcesResDTO(resourceList.stream()
         .map(this::convertToResourceDTO)

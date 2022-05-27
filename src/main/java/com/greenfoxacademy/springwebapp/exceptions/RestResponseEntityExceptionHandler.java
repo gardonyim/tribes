@@ -15,7 +15,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
   }
 
   @ExceptionHandler(ForbiddenActionException.class)
-  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(ForbiddenActionException e) {
+  public ResponseEntity<ErrorDTO> handleForbiddenAction(ForbiddenActionException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
   }
 
