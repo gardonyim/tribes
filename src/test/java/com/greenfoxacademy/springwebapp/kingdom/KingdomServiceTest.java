@@ -4,12 +4,14 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingServiceImpl;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomBaseDTO;
+import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResFullDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomResWrappedDTO;
-import com.greenfoxacademy.springwebapp.location.LocationService;
+import com.greenfoxacademy.springwebapp.location.LocationServiceImpl;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.location.models.LocationDTO;
 import com.greenfoxacademy.springwebapp.player.models.Player;
@@ -17,14 +19,6 @@ import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import com.greenfoxacademy.springwebapp.troop.TroopServiceImpl;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
@@ -39,13 +33,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
-import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import static com.greenfoxacademy.TestUtils.defaultKingdom;
 import static com.greenfoxacademy.TestUtils.defaultLocation;
-import static com.greenfoxacademy.TestUtils.playerBuilder;
+import static com.greenfoxacademy.TestUtils.kingdomBuilder;
 import static com.greenfoxacademy.TestUtils.kingdomResFullDtoBuilder;
-
+import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -61,15 +63,15 @@ public class KingdomServiceTest {
   @Mock
   ResourceServiceImpl resourceService;
   @Mock
-  LocationService locationService;
+  LocationServiceImpl locationService;
   @Mock
   TroopServiceImpl troopService;
   @Spy
   @InjectMocks
   KingdomServiceImpl kingdomService;
+
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
-
 
   @Test
   public void when_saveKingdomWithName_should_returnKingdomWithGivenName() {
@@ -139,14 +141,14 @@ public class KingdomServiceTest {
     long ldte = ldt.toEpochSecond(ZoneOffset.UTC);
     Kingdom kdm = createTestKingdom(ldt);
     when(buildingService.convertToDTOs(any())).thenReturn(Arrays.asList(new BuildingDTO(0,
-        kdm.getBuildings().get(0).getBuildingType(), kdm.getBuildings().get(0).getLevel(),
-        kdm.getBuildings().get(0).getHp(), ldte, ldte)));
+            kdm.getBuildings().get(0).getBuildingType(), kdm.getBuildings().get(0).getLevel(),
+            kdm.getBuildings().get(0).getHp(), ldte, ldte)));
     when(resourceService.convertToResourceDTOs((any())))
-        .thenReturn(Arrays.asList(new ResourceDTO("gold", 100, 1, ldte)));
+            .thenReturn(Arrays.asList(new ResourceDTO("gold", 100, 1, ldte)));
     when(troopService.convert(any(List.class)))
-        .thenReturn(Arrays.asList(new TroopDTO(null, 1,1,1,1, ldte, ldte)));
+            .thenReturn(Arrays.asList(new TroopDTO(null, 1, 1, 1, 1, ldte, ldte)));
     when(locationService.convertToLocationDTO((any())))
-        .thenReturn(new LocationDTO(kdm.getLocation().getxcoordinate(), kdm.getLocation().getxcoordinate()));
+            .thenReturn(new LocationDTO(kdm.getLocation().getxcoordinate(), kdm.getLocation().getxcoordinate()));
     KingdomResFullDTO expectedKingdomResFullDTO = createExpectedKingdomResFullDTO(kdm);
 
     KingdomResFullDTO actualKingdomResFullDTO = kingdomService.convertToKingdomResFullDTO(kdm);
@@ -158,7 +160,7 @@ public class KingdomServiceTest {
   public void when_convertKingdom_should_returnProperKingdomResWrappedDTO() {
     Kingdom kdm = createTestKingdom(null);
     when(locationService.convertToLocationDTO((any())))
-        .thenReturn(new LocationDTO(kdm.getLocation().getxcoordinate(), kdm.getLocation().getxcoordinate()));
+            .thenReturn(new LocationDTO(kdm.getLocation().getxcoordinate(), kdm.getLocation().getxcoordinate()));
     KingdomResWrappedDTO expectedKingdomResWrappedDTO = createExpectedKingdomResWrappedDTO(kdm);
 
     KingdomResWrappedDTO actualKingdomResWrappedDTO = kingdomService.convertToKingdomResWrappedDTO(kdm);
@@ -191,7 +193,7 @@ public class KingdomServiceTest {
     Kingdom existingkingdom = defaultKingdom();
     existingkingdom.setLocation(defaultLocation());
     Player existingtestuser =
-        playerBuilder().withId(1).withUsername("existingtestuser").withKingdom(existingkingdom).build();
+            playerBuilder().withId(1).withUsername("existingtestuser").withKingdom(existingkingdom).build();
     existingkingdom.setPlayer(existingtestuser);
     KingdomResFullDTO expectedDto = kingdomResFullDtoBuilder(existingkingdom).build();
     Mockito.doReturn(expectedDto).when(kingdomService).convertToKingdomResFullDTO(any(Kingdom.class));
@@ -206,10 +208,10 @@ public class KingdomServiceTest {
     Kingdom existingkingdom = kingdomBuilder().withId(2).withName("testkingdom2").build();
     existingkingdom.setLocation(new Location(5, -5));
     Player existingtestuser =
-        playerBuilder().withId(2).withUsername("existingtestuser").withKingdom(existingkingdom).build();
+            playerBuilder().withId(2).withUsername("existingtestuser").withKingdom(existingkingdom).build();
     existingkingdom.setPlayer(existingtestuser);
     KingdomResWrappedDTO expectedDto = new KingdomResWrappedDTO(new KingdomBaseDTO(
-        2, "testkingdom2", 2, new LocationDTO(5, -5)));
+            2, "testkingdom2", 2, new LocationDTO(5, -5)));
     Mockito.doReturn(new Kingdom()).when(kingdomService).findById(anyInt());
     Mockito.doReturn(expectedDto).when(kingdomService).convertToKingdomResWrappedDTO(any(Kingdom.class));
 
@@ -237,31 +239,31 @@ public class KingdomServiceTest {
     expected.setName(testKingdom.getName());
     expected.setUserId(testKingdom.getId());
     expected.setLocation(
-        new LocationDTO(testKingdom.getLocation().getxcoordinate(), testKingdom.getLocation().getxcoordinate()));
+            new LocationDTO(testKingdom.getLocation().getxcoordinate(), testKingdom.getLocation().getxcoordinate()));
     expected.setBuildings(Arrays.asList(new BuildingDTO(
-        0, testKingdom.getBuildings().get(0).getBuildingType(),
-        testKingdom.getBuildings().get(0).getLevel(), testKingdom.getBuildings().get(0).getHp(), ldt, ldt)));
+            0, testKingdom.getBuildings().get(0).getBuildingType(),
+            testKingdom.getBuildings().get(0).getLevel(), testKingdom.getBuildings().get(0).getHp(), ldt, ldt)));
     expected.setResources(Arrays.asList(new ResourceDTO("gold", 100, 1, ldt)));
-    expected.setTroops(Arrays.asList(new TroopDTO(null, 1,1,1,1, ldt, ldt)));
+    expected.setTroops(Arrays.asList(new TroopDTO(null, 1, 1, 1, 1, ldt, ldt)));
     return expected;
   }
 
   private KingdomResWrappedDTO createExpectedKingdomResWrappedDTO(Kingdom testKingdom) {
     KingdomBaseDTO kingdomBaseDTO = new KingdomBaseDTO(
-        testKingdom.getId(),
-        testKingdom.getName(),
-        testKingdom.getId(),
-        new LocationDTO(testKingdom.getLocation().getxcoordinate(), testKingdom.getLocation().getxcoordinate())
+            testKingdom.getId(),
+            testKingdom.getName(),
+            testKingdom.getId(),
+            new LocationDTO(testKingdom.getLocation().getxcoordinate(), testKingdom.getLocation().getxcoordinate())
     );
     return new KingdomResWrappedDTO(kingdomBaseDTO);
   }
 
   private List<Building> buildingListCreator() {
     List<Building> buildingList = new ArrayList<>();
-    buildingList.add(new Building(BuildingType.TOWNHALL, 1, null,  null, null));
-    buildingList.add(new Building(BuildingType.FARM, 1, null,  null, null));
-    buildingList.add(new Building(BuildingType.MINE, 1, null,  null, null));
-    buildingList.add(new Building(BuildingType.ACADEMY, 1, null,  null, null));
+    buildingList.add(new Building(BuildingType.TOWNHALL, 1, null, null, null));
+    buildingList.add(new Building(BuildingType.FARM, 1, null, null, null));
+    buildingList.add(new Building(BuildingType.MINE, 1, null, null, null));
+    buildingList.add(new Building(BuildingType.ACADEMY, 1, null, null, null));
     return buildingList;
   }
 
@@ -272,4 +274,51 @@ public class KingdomServiceTest {
     return resourceList;
   }
 
+  @Test
+  public void renameKingdomTest() {
+    when(kingdomRepository.save(any(Kingdom.class))).then(returnsFirstArg());
+
+    Kingdom existingkingdom = new Kingdom(1, new Location());
+    existingkingdom.setName("my initial name");
+    Player existingtestuser =
+            new Player(1, "existingtestuser", null, existingkingdom, null, 0);
+    existingkingdom.setPlayer(existingtestuser);
+
+    existingkingdom = kingdomRepository.save(existingkingdom);
+
+    Authentication auth = new UsernamePasswordAuthenticationToken(existingtestuser, null);
+    KingdomPutDTO kingdomPutDTO = new KingdomPutDTO();
+    kingdomPutDTO.setName("my modified name");
+    KingdomResFullDTO modifiedKingdomAsDTO = kingdomService.renameKingdom(existingkingdom, kingdomPutDTO, auth);
+
+    Assert.assertEquals(kingdomPutDTO.getName(), modifiedKingdomAsDTO.getName());
+  }
+
+  @Test
+  public void convertTest() {
+    when(locationService.convertToLocationDTO(any())).thenReturn(new LocationDTO(1, 1));
+    Player player = new Player("testuser", "testpassword", null, "", 0);
+    player.setId(1);
+    Kingdom initialKingdom = new Kingdom();
+    initialKingdom.setName("my initial name");
+    initialKingdom.setPlayer(player);
+    initialKingdom.setId(1);
+    Location location = new Location(1, 1);
+    initialKingdom.setLocation(location);
+    KingdomResFullDTO kingdomDTO = new KingdomResFullDTO();
+    kingdomDTO.setKingdomId(initialKingdom.getId());
+    kingdomDTO.setUserId(player.getId());
+    kingdomDTO.setName(initialKingdom.getName());
+    kingdomDTO.setLocation(new LocationDTO(1, 1));
+    KingdomResFullDTO convertedKingdomDTO = kingdomService.convertToKingdomResFullDTO(initialKingdom);
+
+    Assert.assertEquals(kingdomDTO, convertedKingdomDTO);
+  }
+
+  @Test
+  public void checkKingdomPutDtoTest_ThrowsException() {
+    exceptionRule.expect(RequestParameterMissingException.class);
+    exceptionRule.expectMessage("name is required");
+    kingdomService.checkKingdomPutDto(new KingdomPutDTO());
+  }
 }

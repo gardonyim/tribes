@@ -5,7 +5,6 @@ import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
-
 import java.util.List;
 
 public interface BuildingService {

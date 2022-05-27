@@ -51,8 +51,8 @@ public class LocationServiceImpl implements LocationService {
   @Override
   public LocationDTO convertToLocationDTO(Location location) {
     return new LocationDTO(
-        location.getxcoordinate(),
-        location.getycoordinate()
+            location.getxcoordinate(),
+            location.getycoordinate()
     );
   }
 
