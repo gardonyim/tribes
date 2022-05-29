@@ -1,6 +1,6 @@
 package com.greenfoxacademy.springwebapp.login;
 
-import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.LoginDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.StatusResponseDTO;
 import com.greenfoxacademy.springwebapp.login.exceptions.InputMissingException;

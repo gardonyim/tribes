@@ -35,4 +35,5 @@ public class RegistrationReqDTO {
   public void setKingdomname(String kingdomname) {
     this.kingdomname = kingdomname;
   }
+
 }

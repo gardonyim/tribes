@@ -52,8 +52,7 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"\",  "
             + "\"kingdomname\" : \"\" }";
-    ErrorDTO errorDTO = new ErrorDTO("password: Password is required.; "
-        + "password: Password must be at least 8 characters.");
+    ErrorDTO errorDTO = new ErrorDTO("Password is required.");
     String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -68,7 +67,7 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"\",  \"password\" : \"testpassword\",  "
             + "\"kingdomname\" : \"\" }";
-    ErrorDTO errorDTO = new ErrorDTO("username: Username is required.");
+    ErrorDTO errorDTO = new ErrorDTO("Username is required.");
     String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -83,8 +82,7 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"\",  \"password\" : \"\",  "
             + "\"kingdomname\" : \"\" }";
-    ErrorDTO errorDTO = new ErrorDTO("password: Password is required.; "
-        + "password: Password must be at least 8 characters.; username: Username is required.");
+    ErrorDTO errorDTO = new ErrorDTO("Password and username are required.");
     String expectedResponse = mapper.writeValueAsString(errorDTO);
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
@@ -113,7 +111,7 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"pw\",  "
             + "\"kingdomname\" : \"The High Ground\" }";
-    ErrorDTO errorDTO = new ErrorDTO("password: Password must be at least 8 characters.");
+    ErrorDTO errorDTO = new ErrorDTO("Password must be at least 8 characters.");
     String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")

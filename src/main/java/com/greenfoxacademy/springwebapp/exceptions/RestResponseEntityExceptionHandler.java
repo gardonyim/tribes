@@ -55,8 +55,8 @@ public class RestResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(InputWrongException.class)
-  public ResponseEntity<com.greenfoxacademy.springwebapp.exceptions.ErrorDTO> handleWrongInput(InputWrongException e) {
-    return ResponseEntity.status(401).body(new com.greenfoxacademy.springwebapp.exceptions.ErrorDTO(e.getMessage()));
+  public ResponseEntity<ErrorDTO> handleWrongInput(InputWrongException e) {
+    return ResponseEntity.status(401).body(new ErrorDTO(e.getMessage()));
   }
 
 }

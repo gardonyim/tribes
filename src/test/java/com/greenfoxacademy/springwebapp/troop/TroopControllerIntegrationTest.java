@@ -2,8 +2,8 @@ package com.greenfoxacademy.springwebapp.troop;
 
 import com.google.gson.Gson;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
-import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
