@@ -1,4 +1,4 @@
-# Adoxus GAS CO2 Java Backend
+# Adoxus GAS CH4 Java Backend
 
 ## Links
 - [JIRA board](https://greenfoxacademy.atlassian.net/jira/software/projects/CH4/boards/54)
