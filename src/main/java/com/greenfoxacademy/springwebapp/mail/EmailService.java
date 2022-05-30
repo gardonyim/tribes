@@ -2,6 +2,8 @@ package com.greenfoxacademy.springwebapp.mail;
 
 import com.greenfoxacademy.springwebapp.exceptions.EmailSendingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,16 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@PropertySource(value = {"classpath:application.properties"})
 public class EmailService {
 
-  //@Value("${app.url}")
-  private String url = "localhost:8080/activation/";
-  //
+  @Value("${app.url}")
+  private String url;
+  @Value("${email.resource.path}")
+  private Resource resourceFile;
   private String subject = "Sikeres regisztrálás";
-  //@Value("classpath:/mail-logo.png")
-  //src/main/resources directory.
-  //TODO
-  Resource resourceFile;
 
   private final JavaMailSenderImpl javaMailSenderImpl;
   private final SpringTemplateEngine thymeleafTemplateEngine;
@@ -38,7 +38,7 @@ public class EmailService {
   public void sendMessageUsingThymeleafTemplate(String to, String userName, String activationCode) {
     Map<String, Object> templateModel = new HashMap<>();
     templateModel.put("recipientName", userName);
-    templateModel.put("link", activationCode);
+    templateModel.put("link", url + activationCode);
 
     Context thymeleafContext = new Context();
     thymeleafContext.setVariables(templateModel);
