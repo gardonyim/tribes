@@ -21,6 +21,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      .cors()
+      .and()
       .addFilterBefore(new JwtTokenValidatorFilter(playerService),
           BasicAuthenticationFilter.class)
       .authorizeRequests()

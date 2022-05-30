@@ -3,11 +3,14 @@ package com.greenfoxacademy.springwebapp.exceptions;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.login.exceptions.InputWrongException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler {
@@ -59,4 +62,22 @@ public class RestResponseEntityExceptionHandler {
     return ResponseEntity.status(401).body(new ErrorDTO(e.getMessage()));
   }
 
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<Object> exception(Exception ex) {
+    return defaultErrorMessage();
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
+                                                           Object body,
+                                                           HttpHeaders headers,
+                                                           HttpStatus status,
+                                                           WebRequest request) {
+    return defaultErrorMessage();
+  }
+
+  private ResponseEntity<Object> defaultErrorMessage() {
+    return ResponseEntity.status(500).body(new ErrorDTO("Unknown error"));
+  }
+  
 }
