@@ -13,7 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler {
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
   private final ExceptionService exceptionService;
 
@@ -52,11 +52,6 @@ public class RestResponseEntityExceptionHandler {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionService.createInputParamsValidErrorMessage(e));
-  }
-
   @ExceptionHandler(InputWrongException.class)
   public ResponseEntity<ErrorDTO> handleWrongInput(InputWrongException e) {
     return ResponseEntity.status(401).body(new ErrorDTO(e.getMessage()));
@@ -65,6 +60,14 @@ public class RestResponseEntityExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> exception(Exception ex) {
     return defaultErrorMessage();
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                HttpHeaders headers,
+                                                                HttpStatus status,
+                                                                WebRequest request) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionService.createInputParamsValidErrorMessage(ex));
   }
 
   @Override
@@ -79,5 +82,5 @@ public class RestResponseEntityExceptionHandler {
   private ResponseEntity<Object> defaultErrorMessage() {
     return ResponseEntity.status(500).body(new ErrorDTO("Unknown error"));
   }
-  
+
 }
