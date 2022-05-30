@@ -58,7 +58,8 @@ public class LoginControllerIntegrationTests {
   @Test
   public void when_postLoginWithoutUsernameAndPassword_should_respondBadRequestStatusAndProperJson() throws Exception {
     String jsonRequest = "{ }";
-    String expectedResponse = "{  \"status\": \"error\", \"message\": \"All fields are required.\" }";
+    String expectedResponse =
+        "{  \"status\": \"error\", \"message\": \"Password and username are required.\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/login")
                     .contentType("application/json")

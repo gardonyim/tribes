@@ -1,11 +1,14 @@
 package com.greenfoxacademy.springwebapp.player;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomRepository;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import javax.transaction.Transactional;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,12 +44,16 @@ public class PlayerControllerIntegrationTest {
   @Autowired
   private KingdomRepository kingdomRepository;
 
+  @Autowired
+  ObjectMapper mapper;
+
   @Test
   public void when_postRegisterWithoutPassword_should_respondBadRequestStatusAndProperJson()
           throws Exception {
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"\",  "
             + "\"kingdomname\" : \"\" }";
-    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : \"Password is required.\" }";
+    ErrorDTO errorDTO = new ErrorDTO("Password is required.");
+    String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
@@ -60,13 +67,14 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"\",  \"password\" : \"testpassword\",  "
             + "\"kingdomname\" : \"\" }";
-    String jsonResponse = "{ \"status\" :  \"error\", \"message\" : \"Username is required.\" }";
+    ErrorDTO errorDTO = new ErrorDTO("Username is required.");
+    String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
                     .content(jsonRequest))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json(jsonResponse));
+            .andExpect(content().json(expectedResponse));
   }
 
   @Test
@@ -74,9 +82,8 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"\",  \"password\" : \"\",  "
             + "\"kingdomname\" : \"\" }";
-    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
-            + "\"Username and password are required.\" }";
-
+    ErrorDTO errorDTO = new ErrorDTO("Password and username are required.");
+    String expectedResponse = mapper.writeValueAsString(errorDTO);
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
                     .content(jsonRequest))
@@ -104,13 +111,13 @@ public class PlayerControllerIntegrationTest {
           throws Exception {
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"pw\",  "
             + "\"kingdomname\" : \"The High Ground\" }";
-    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : "
-            + "\"Password must be at least 8 characters.\" }";
+    ErrorDTO errorDTO = new ErrorDTO("Password must be at least 8 characters.");
+    String expectedResponse = mapper.writeValueAsString(errorDTO);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
                     .content(jsonRequest))
-            .andExpect(status().isNotAcceptable())
+            .andExpect(status().isBadRequest())
             .andExpect(content().json(expectedResponse));
   }
 

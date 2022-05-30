@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.security;
 
 import com.google.gson.Gson;
-import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,5 @@
 package com.greenfoxacademy.springwebapp.player;
 
-import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomServiceImpl;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -48,35 +46,6 @@ public class PlayerServiceTest {
   public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
-  public void when_savePlayerWithoutPassword_should_throwException() {
-    RegistrationReqDTO reqDTO = new RegistrationReqDTO();
-    reqDTO.setUsername("testuser");
-
-    exceptionRule.expect(RequestParameterMissingException.class);
-    exceptionRule.expectMessage("Password is required.");
-    playerService.savePlayer(reqDTO);
-  }
-
-  @Test
-  public void when_savePlayerWithoutUsername_should_throwException() {
-    RegistrationReqDTO reqDTO = new RegistrationReqDTO();
-    reqDTO.setPassword("testpassword");
-
-    exceptionRule.expect(RequestParameterMissingException.class);
-    exceptionRule.expectMessage("Username is required.");
-    playerService.savePlayer(reqDTO);
-  }
-
-  @Test
-  public void when_savePlayerWithoutUsernameAndPassword_should_throwException() {
-    RegistrationReqDTO reqDTO = new RegistrationReqDTO();
-
-    exceptionRule.expect(RequestParameterMissingException.class);
-    exceptionRule.expectMessage("Username and password are required.");
-    playerService.savePlayer(reqDTO);
-  }
-
-  @Test
   public void when_savePlayerWithNonUniqueUsername_should_throwException() {
     RegistrationReqDTO reqDTO = new RegistrationReqDTO();
     reqDTO.setUsername("testuser");
@@ -87,17 +56,6 @@ public class PlayerServiceTest {
 
     exceptionRule.expect(RequestCauseConflictException.class);
     exceptionRule.expectMessage("Username is already taken.");
-    playerService.savePlayer(reqDTO);
-  }
-
-  @Test
-  public void when_savePlayerWithShortPassword_should_throwException() {
-    RegistrationReqDTO reqDTO = new RegistrationReqDTO();
-    reqDTO.setUsername("testuser");
-    reqDTO.setPassword("testpw");
-
-    exceptionRule.expect(RequestNotAcceptableException.class);
-    exceptionRule.expectMessage("Password must be at least 8 characters.");
     playerService.savePlayer(reqDTO);
   }
 
