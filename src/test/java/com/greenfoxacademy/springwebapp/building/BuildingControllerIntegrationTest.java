@@ -183,9 +183,6 @@ public class BuildingControllerIntegrationTest {
     String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
         + "\"startedAt\": " + time + ", \"finishedAt\": " + time + " }";
 
-    //  String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
-    //    + "\"startedAt\": 1651438122, \"finishedAt\": 1651438122 }";
-
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
                 .principal(auth))
             .andExpect(status().isOk())
