@@ -17,7 +17,6 @@ import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import java.util.TimeZone;
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,15 +179,17 @@ public class BuildingControllerIntegrationTest {
     building.setKingdom(player.getKingdom());
     Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
     String timezone = TimeZone.getDefault().getDisplayName();
+    String time = ("Central European Time".equals(timezone) ? "1651438122" : "1651430922");
     String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
-        + "\"startedAt\": 1651438122, \"finishedAt\": 1651438122 }";
+        + "\"startedAt\": " + time + ", \"finishedAt\": " + time + " }";
 
-    //    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
-    //            .principal(auth))
-    //        .andExpect(status().isOk())
-    //        .andExpect(content().json(expectedResponse));
+    //  String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
+    //    + "\"startedAt\": 1651438122, \"finishedAt\": 1651438122 }";
 
-    Assert.assertEquals("Central European Time", timezone);
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
+                .principal(auth))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedResponse));
   }
 
   @Test
