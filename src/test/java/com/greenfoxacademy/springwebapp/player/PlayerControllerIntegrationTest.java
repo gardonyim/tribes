@@ -125,7 +125,8 @@ public class PlayerControllerIntegrationTest {
   public void when_postRegisterWithUsernamePasswordAndKingdom_should_respondCreatedStatusAndJson()
           throws Exception {
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"hellothere\",  "
-            + "\"kingdomname\" : \"The High Ground\" }";
+            + "\"kingdomname\" : \"The High Ground\", "
+            + "\"email\" : \"chucknorrrrris@gmail.com\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
@@ -143,7 +144,8 @@ public class PlayerControllerIntegrationTest {
   public void when_postRegisterWithUsernamePasswordNoKingdom_should_respondCreatedStatusAndJson()
           throws Exception {
     String jsonRequest = "{ \"username\" : \"luke\",  \"password\" : \"hellothere\",  "
-            + "\"kingdomname\" : \"\" }";
+            + "\"kingdomname\" : \"\", "
+            + "\"email\" : \"chucknorrrrris@gmail.com\" }";
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register")
                     .contentType("application/json")
