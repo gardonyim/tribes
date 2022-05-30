@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.greenfoxacademy.springwebapp.utilities.EmailService;
+import com.greenfoxacademy.springwebapp.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,7 +57,7 @@ public class PlayerServiceImpl implements PlayerService {
     player.setEnabled(false);
     player.setActivation(generateKey());
     player = playerRepository.save(player);
-    emailService.sendMessage(player.getEmail(), player.getActivation());
+    emailService.sendMessageUsingThymeleafTemplate(player.getEmail(), player.getUsername(), player.getActivation());
     player.setKingdom(kingdomService.save(reqDTO.getKingdomname(), player));
     return new RegistrationResDTO(player);
   }
