@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.mail;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -16,21 +17,20 @@ import java.util.Properties;
 @PropertySource(value = {"classpath:application.properties"})
 public class EmailConfig {
 
-  //@Value("${spring.mail.username}")
-  private String messageFrom = "greenfox.ch4@gmail.com";
-  //@Value("${spring.mail.host}")
-  private String host = "smtp.gmail.com";
-  //@Value("${spring.mail.port}")
-  private int port = 587;
-  //@Value("${spring.mail.password}")
-  private String password = "veryverysecret";
-  //@Value("${spring.mail.properties.mail.smtp.starttls.enable}")
-  private boolean isStartTlsEnable = true;
-  //@Value("${spring.mail.properties.mail.smtp.auth}")
-  private String mailServerAuth = "true";
-  //@Value("${spring.mail.templates.path}")
-  //Our templates are in the main/resources/mail-templates directory
-  private String mailTemplatesPath = "mail-templates";
+  @Value("${spring.mail.username}")
+  private String messageFrom;
+  @Value("${spring.mail.host}")
+  private String host;
+  @Value("${spring.mail.port}")
+  private int port;
+  @Value("${spring.mail.password}")
+  private String password;
+  @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+  private boolean isStartTlsEnable;
+  @Value("${spring.mail.properties.mail.smtp.auth}")
+  private String mailServerAuth;
+  @Value("${spring.mail.templates.path}")
+  private String mailTemplatesPath;
 
 
   @Bean
@@ -70,7 +70,6 @@ public class EmailConfig {
     return templateEngine;
   }
 
-  // from: src/main/resources/mailMessages_xx_YY.properties
   @Bean
   public ResourceBundleMessageSource emailMessageSource() {
     final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
