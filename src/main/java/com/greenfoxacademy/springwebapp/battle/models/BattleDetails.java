@@ -78,4 +78,5 @@ public class BattleDetails {
   public int hashCode() {
     return Objects.hash(attacker, defender, attackerClones, defenderClones, distance, townhallLevel, fallenTroops);
   }
+  
 }
