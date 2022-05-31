@@ -14,6 +14,7 @@ import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import java.time.ZoneOffset;
 import java.util.TimeZone;
 import javax.transaction.Transactional;
 
@@ -178,10 +179,10 @@ public class BuildingControllerIntegrationTest {
     building.setId(1);
     building.setKingdom(player.getKingdom());
     Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
-    String timezone = TimeZone.getDefault().getDisplayName();
-    String time = ("Central European Time".equals(timezone) ? "1651438122" : "1651430922");
+    ZoneOffset zoneOffset = ZoneOffset.of("Z");
+    String time = String.valueOf(1651438122 - zoneOffset.getTotalSeconds());
     String expectedResponse = "{ \"id\": 1, \"type\": \"townhall\", \"level\": 1, \"hp\": 200, "
-        + "\"startedAt\": " + time + ", \"finishedAt\": " + time + " }";
+        + "\"startedAt\": 1651438122, \"finishedAt\": " + time + " }";
 
     mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
                 .principal(auth))
