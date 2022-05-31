@@ -15,7 +15,6 @@ import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import java.time.ZoneOffset;
-import java.util.TimeZone;
 import javax.transaction.Transactional;
 
 import org.junit.Test;
