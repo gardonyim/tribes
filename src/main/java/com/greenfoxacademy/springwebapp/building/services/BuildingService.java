@@ -29,4 +29,6 @@ public interface BuildingService {
 
   Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
 
+  Building findTownhall(Kingdom kingdom);
+
 }

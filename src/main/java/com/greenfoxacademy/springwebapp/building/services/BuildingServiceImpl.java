@@ -94,15 +94,15 @@ public class BuildingServiceImpl implements BuildingService {
   public Building modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId) {
     Building modifiableBuilding = validateModifyBuildingLevelRequest(buildingDTO, kingdom, buildingId);
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
-    modifiableBuilding.setLevel(reqBuildingLevel);
-    modifiableBuilding.setHp(gameObjectRuleHolder.calcNewHP(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), reqBuildingLevel));
+    String modifiableBuildingType = modifiableBuilding.getBuildingType().getName().toLowerCase();
     int requiredGoldAmount = gameObjectRuleHolder.calcCreationCost(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel);
+        modifiableBuildingType, modifiableBuilding.getLevel(), reqBuildingLevel);
+    modifiableBuilding.setLevel(reqBuildingLevel);
+    modifiableBuilding.setHp(gameObjectRuleHolder.calcNewHP(modifiableBuildingType, reqBuildingLevel));
     resourceService.pay(kingdom, requiredGoldAmount);
     modifiableBuilding.setStartedAt(TimeService.actualTime());
     modifiableBuilding.setFinishedAt(TimeService.timeAtNSecondsAfterTimeStamp(gameObjectRuleHolder.calcCreationTime(
-        modifiableBuilding.getBuildingType().getName().toLowerCase(), modifiableBuilding.getLevel(), reqBuildingLevel),
+            modifiableBuildingType, modifiableBuilding.getLevel(), reqBuildingLevel),
         modifiableBuilding.getStartedAt()));
     kingdomService.update(kingdom);
     return modifiableBuilding;
@@ -120,8 +120,7 @@ public class BuildingServiceImpl implements BuildingService {
     }
     int reqBuildingLevel = (buildingDTO == null) ? modifiableBuilding.getLevel() + 1 : buildingDTO.getLevel();
     if (modifiableBuilding.getBuildingType() != BuildingType.TOWNHALL
-        && kingdom.getBuildings().stream().filter(b -> b.getBuildingType() == BuildingType.TOWNHALL)
-        .collect(Collectors.toList()).get(0).getLevel() < reqBuildingLevel) {
+        && findTownhall(kingdom).getLevel() < reqBuildingLevel) {
       throw new RequestNotAcceptableException("Cannot build buildings with higher level than the Townhall");
     }
     validateHasEnoughGold(modifiableBuilding, reqBuildingLevel);
@@ -183,6 +182,11 @@ public class BuildingServiceImpl implements BuildingService {
   @Override
   public List<BuildingDTO> convertToDTOs(List<Building> buildings) {
     return buildings.stream().map(this::convertToDTO).collect(Collectors.toList());
+  }
+
+  @Override
+  public Building findTownhall(Kingdom kingdom) {
+    return kingdom.getBuildings().stream().filter(b -> b.getBuildingType() == BuildingType.TOWNHALL).findFirst().get();
   }
 
 }

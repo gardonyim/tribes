@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import com.greenfoxacademy.TestUtils;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
@@ -281,6 +282,16 @@ public class BuildingServiceTest {
     Assert.assertEquals(expectedBuilding.getHp(), actualBuilding.getHp());
     Assert.assertEquals(expectedBuilding.getStartedAt(), actualBuilding.getStartedAt());
     Assert.assertEquals(expectedBuilding.getFinishedAt(), actualBuilding.getFinishedAt());
+  }
+
+  @Test
+  public void when_givenAKingdomWithBuildings_should_returnBuildingWithTownhallType() {
+    Kingdom kingdom = TestUtils.kingdomBuilder().build();
+    BuildingType expectedBuildingType = BuildingType.TOWNHALL;
+
+    Building actualBuilding = buildingService.findTownhall(kingdom);
+
+    Assert.assertEquals(expectedBuildingType, actualBuilding.getBuildingType());
   }
 
 }
