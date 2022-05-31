@@ -1,11 +1,13 @@
 package com.greenfoxacademy.springwebapp.player;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.mockito.ArgumentMatchers.anyString;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
 import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomRepository;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
+import com.greenfoxacademy.springwebapp.mail.EmailService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
 import javax.transaction.Transactional;
 
@@ -13,9 +15,11 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +29,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +52,9 @@ public class PlayerControllerIntegrationTest {
 
   @Autowired
   ObjectMapper mapper;
+
+  @MockBean
+  private EmailService emailService;
 
   @Test
   public void when_postRegisterWithoutPassword_should_respondBadRequestStatusAndProperJson()
@@ -124,6 +133,7 @@ public class PlayerControllerIntegrationTest {
   @Test
   public void when_postRegisterWithUsernamePasswordAndKingdom_should_respondCreatedStatusAndJson()
           throws Exception {
+    Mockito.doNothing().when(emailService).sendMessageUsingThymeleafTemplate(anyString(), anyString(), anyString());
     String jsonRequest = "{ \"username\" : \"obiwan\",  \"password\" : \"hellothere\",  "
             + "\"kingdomname\" : \"The High Ground\", "
             + "\"email\" : \"chucknorrrrris@gmail.com\" }";
@@ -138,11 +148,14 @@ public class PlayerControllerIntegrationTest {
             .andExpect(jsonPath("$.username").value("obiwan"))
             .andExpect(jsonPath("$.kingdomId").isNumber())
             .andExpect(jsonPath("$.kingdomId", Matchers.greaterThan(0)));
+
+    verify(emailService, times(1)).sendMessageUsingThymeleafTemplate(anyString(), anyString(), anyString());
   }
 
   @Test
   public void when_postRegisterWithUsernamePasswordNoKingdom_should_respondCreatedStatusAndJson()
           throws Exception {
+    Mockito.doNothing().when(emailService).sendMessageUsingThymeleafTemplate(anyString(), anyString(), anyString());
     String jsonRequest = "{ \"username\" : \"luke\",  \"password\" : \"hellothere\",  "
             + "\"kingdomname\" : \"\", "
             + "\"email\" : \"chucknorrrrris@gmail.com\" }";
@@ -157,6 +170,8 @@ public class PlayerControllerIntegrationTest {
             .andExpect(jsonPath("$.kingdomId").isNumber())
             .andExpect(jsonPath("$.kingdomId", Matchers.greaterThan(0)));
     Assert.assertTrue(kingdomRepository.findFirstByName("luke's kingdom").isPresent());
+
+    verify(emailService, times(1)).sendMessageUsingThymeleafTemplate(anyString(), anyString(), anyString());
   }
 
   @Test
