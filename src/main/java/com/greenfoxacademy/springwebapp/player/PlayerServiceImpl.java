@@ -1,8 +1,6 @@
 package com.greenfoxacademy.springwebapp.player;
 
 import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
-import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.player.models.Player;
