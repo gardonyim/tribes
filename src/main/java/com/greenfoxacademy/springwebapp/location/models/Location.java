@@ -53,16 +53,7 @@ public class Location {
       return false;
     }
     Location location = (Location) o;
-    if (id != location.id) {
-      return false;
-    }
-    if (xcoordinate != location.xcoordinate) {
-      return false;
-    }
-    if (ycoordinate != location.ycoordinate) {
-      return false;
-    }
-    return kingdom != null ? kingdom.equals(location.kingdom) : location.kingdom == null;
+    return xcoordinate == location.xcoordinate && ycoordinate == location.ycoordinate;
   }
 
   @Override

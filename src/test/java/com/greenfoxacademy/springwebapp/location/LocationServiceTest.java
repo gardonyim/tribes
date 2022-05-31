@@ -128,4 +128,15 @@ public class LocationServiceTest {
     List<Location> path = locationService.findShortestPath(start, destination, 3, 0);
   }
 
+  @Test
+  public void when_findShortestPathDistantLocations_should_returnPathWithCorrectNumberOfSteps() {
+    when(locationRepository.findAll()).thenReturn(new ArrayList<Location>());
+    Location start = new Location(0, 0);
+    Location destination = new Location(50, 50);
+
+    List<Location> path = locationService.findShortestPath(start, destination, 201, -100);
+
+    Assert.assertEquals(101, path.size());
+  }
+
 }
