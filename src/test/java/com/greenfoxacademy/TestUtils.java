@@ -134,7 +134,7 @@ public class TestUtils {
   public static BuildingDtoBuilder buildingDtoBuilder(Building building) {
     return new BuildingDtoBuilder()
         .withId(building.getId())
-        .withBuildingType(building.getBuildingType().getName().toLowerCase())
+        .withType(building.getBuildingType().getName().toLowerCase())
         .withLevel(building.getLevel())
         .withHp(building.getHp())
         .withStartedAt(building.getStartedAt().toEpochSecond(ZoneOffset.UTC))
@@ -493,8 +493,8 @@ public class TestUtils {
       return this;
     }
 
-    public BuildingDtoBuilder withBuildingType(String buildingType) {
-      buildingDTO.setBuildingType(buildingType);
+    public BuildingDtoBuilder withType(String type) {
+      buildingDTO.setType(type);
       return this;
     }
 

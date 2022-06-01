@@ -4,6 +4,7 @@ import com.greenfoxacademy.TestUtils;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
@@ -14,7 +15,6 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import org.junit.Before;
 import org.junit.Test;
-import com.greenfoxacademy.springwebapp.exceptions.RequestedForbiddenResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import java.time.LocalDateTime;
@@ -97,7 +97,7 @@ public class TroopServiceTest {
     kingdom2.setId(888);
     when(troopRepository.findById(anyInt())).thenReturn(Optional.of(troop));
 
-    exceptionRule.expect(RequestedForbiddenResourceException.class);
+    exceptionRule.expect(ForbiddenActionException.class);
     exceptionRule.expectMessage("Forbidden action");
     troopService.getTroopById(kingdom2, 1);
   }

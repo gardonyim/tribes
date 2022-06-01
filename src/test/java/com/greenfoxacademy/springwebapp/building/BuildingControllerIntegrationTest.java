@@ -1,10 +1,15 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import static com.greenfoxacademy.TestUtils.defaultPlayer;
+import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import static com.greenfoxacademy.TestUtils.playerBuilder;
+import static com.greenfoxacademy.springwebapp.utilities.TimeService.toEpochSecond;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
+import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.location.models.Location;
 import com.greenfoxacademy.springwebapp.player.models.Player;
@@ -144,7 +149,78 @@ public class BuildingControllerIntegrationTest {
         .andExpect(jsonPath("$.type").value("academy"))
         .andExpect(jsonPath("$.level").value(1))
         .andExpect(jsonPath("$.hp").value(150))
-        .andExpect(jsonPath("$.startedAt").value(TimeService.toEpochSecond(TimeService.actualTime())))
-        .andExpect(jsonPath("$.finishedAt").value(TimeService.toEpochSecond(TimeService.timeAtNSecondsLater(90))));
+        .andExpect(jsonPath("$.startedAt").value(toEpochSecond(TimeService.actualTime())))
+        .andExpect(jsonPath("$.finishedAt").value(toEpochSecond(TimeService.timeAtNSecondsLater(90))));
   }
+
+  @Test
+  public void when_requestBuildingWithoutId_should_returnListOfBuildingsDTO() throws Exception {
+    Authentication auth = new UsernamePasswordAuthenticationToken(defaultPlayer(), null);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings")
+            .principal(auth))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.buildings").exists())
+        .andExpect(jsonPath("$.buildings").isArray())
+        .andExpect(jsonPath("$.buildings[0].id").isNumber())
+        .andExpect(jsonPath("$.buildings[0].type").value("townhall"))
+        .andExpect(jsonPath("$.buildings[0].level").isNumber())
+        .andExpect(jsonPath("$.buildings[0].hp").isNumber());
+  }
+
+  @Test
+  public void when_requestBuildingWithId_should_returnValidBuildingDTO() throws Exception {
+    Kingdom kingdom = kingdomBuilder().withId(1).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Building building = kingdom.getBuildings().get(0);
+    building.setId(1);
+    building.setKingdom(player.getKingdom());
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
+                .principal(auth))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.type").value("townhall"))
+            .andExpect(jsonPath("$.level").value(1))
+            .andExpect(jsonPath("$.hp").value(200))
+            .andExpect(jsonPath("$.startedAt").isNumber())
+            .andExpect(jsonPath("$.finishedAt").isNumber());
+  }
+
+  @Test
+  public void when_requestBuildingInOtherKingdom_should_returnForbiddenRequestException()
+      throws Exception {
+    Kingdom kingdom = kingdomBuilder().withId(2).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Building building = kingdom.getBuildings().get(0);
+    building.setId(1);
+    building.setKingdom(player.getKingdom());
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    String expectedResponse = "{ \"status\": \"error\", \"message\": \"Forbidden action\" }";
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/1")
+            .principal(auth))
+            .andExpect(status().is(403))
+            .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  public void when_requestBuildingWithNonExistingId_should_returnRequestedResourceNotFoundException()
+      throws Exception {
+    Kingdom kingdom = kingdomBuilder().withId(1).build();
+    Player player = playerBuilder().withKingdom(kingdom).build();
+    Building building = kingdom.getBuildings().get(0);
+    building.setId(999);
+    building.setKingdom(player.getKingdom());
+    Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
+    String expectedResponse = "{ \"status\" :  \"error\", \"message\" : \"Id not found\" }";
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/kingdom/buildings/999")
+            .principal(auth))
+        .andExpect(status().isNotFound())
+        .andExpect(content().json(expectedResponse));
+  }
+
 }
