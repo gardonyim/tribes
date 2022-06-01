@@ -3,13 +3,51 @@ package com.greenfoxacademy.springwebapp.battle;
 import com.greenfoxacademy.springwebapp.battle.models.BattleDetails;
 import com.greenfoxacademy.springwebapp.battle.models.BattleReqDTO;
 import com.greenfoxacademy.springwebapp.battle.models.BattleResDTO;
+import com.greenfoxacademy.springwebapp.building.models.BuildingType;
+import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.troop.models.Troop;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@Service
 public class BattleServiceImpl implements BattleService {
+
+  private KingdomService kingdomService;
+
+  public BattleServiceImpl(KingdomService kingdomService) {
+    this.kingdomService = kingdomService;
+  }
 
   @Override
   public BattleResDTO battle(Kingdom attacker, Integer defenderId, BattleReqDTO reqDTO) {
-    return null;
+    BattleDetails battleDetails = prepareBattleDetails(attacker, defenderId, reqDTO);
+    battleDetails = battlePreparation(battleDetails);
+    battleDetails = battleExecution(battleDetails);
+    battleTermination(battleDetails);
+    return new BattleResDTO();
+  }
+
+  private BattleDetails prepareBattleDetails(Kingdom attacker, Integer defenderId, BattleReqDTO reqDTO) {
+    Kingdom defender = kingdomService.findById(defenderId);
+    List<Troop> attackerClones = reqDTO.getTroopIds().stream()
+        .map(id -> attacker.getTroops().stream().filter(t -> t.getId() == id).findFirst().orElse(null))
+        .filter(Objects::nonNull)
+        .map(Troop::new)
+        .collect(Collectors.toList());
+    List<Troop> defenderClones = defender.getTroops().stream()
+        .map(Troop::new)
+        .collect(Collectors.toList());
+    int distance = 0; //TODO: connect to shortest path
+    int townhallLevel = defender.getBuildings().stream()
+        .filter(b -> b.getBuildingType().equals(BuildingType.TOWNHALL))
+        .findFirst()
+        .orElse(null)
+        .getLevel();
+    return new BattleDetails(attacker, defender, attackerClones, defenderClones, distance, townhallLevel);
   }
 
   @Override

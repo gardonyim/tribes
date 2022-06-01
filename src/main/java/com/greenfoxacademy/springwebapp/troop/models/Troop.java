@@ -46,6 +46,11 @@ public class Troop {
     this.kingdom = kingdom;
   }
 
+  public Troop(Troop that) {
+    this(that.getLevel(), that.getHp(), that.getAttack(), that.getDefence(), that.getStartedAt(), that.getFinishedAt(),
+        that.getKingdom());
+  }
+
   public Integer getId() {
     return id;
   }
