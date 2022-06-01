@@ -167,11 +167,12 @@ public class ResourceServiceTest {
   @Test
   public void when_updateResourceGenerationForFarm_should_callDelayUpdateWithValidParameters() {
     Kingdom kingdom = defaultKingdom();
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+    when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(5);
     Resource food = kingdom.getResources().stream()
         .filter(r -> r.getResourceType() == ResourceType.FOOD)
         .findFirst()
         .orElse(null);
-    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
 
     resourceService.updateResourceGeneration(kingdom, "farm", 1, 2);
 
@@ -181,11 +182,12 @@ public class ResourceServiceTest {
   @Test
   public void when_updateResourceGenerationForMine_should_callDelayUpdateWithValidParameters() {
     Kingdom kingdom = defaultKingdom();
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+    when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(10);
     Resource gold = kingdom.getResources().stream()
         .filter(r -> r.getResourceType() == ResourceType.GOLD)
         .findFirst()
         .orElse(null);
-    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
 
     resourceService.updateResourceGeneration(kingdom, "mine", 0, 1);
 
@@ -195,11 +197,12 @@ public class ResourceServiceTest {
   @Test
   public void when_updateResourceGenerationForTroop_should_callDelayUpdateWithValidParameters() {
     Kingdom kingdom = defaultKingdom();
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+    when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(-10);
     Resource food = kingdom.getResources().stream()
         .filter(r -> r.getResourceType() == ResourceType.FOOD)
         .findFirst()
         .orElse(null);
-    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
 
     resourceService.updateResourceGeneration(kingdom, "troop", 0, 2);
 

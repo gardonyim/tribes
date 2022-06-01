@@ -6,6 +6,8 @@ import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.utilities.SchedulingService;
+
+import java.util.HashMap;
 import java.util.List;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourcesResDTO;
@@ -14,6 +16,7 @@ import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -107,22 +110,15 @@ public class ResourceServiceImpl implements ResourceService {
 
   public void updateResourceGeneration(Kingdom kingdom, String type, int currentLevel, int reqLevel) {
     List<Resource> resources = kingdom.getResources();
-    Resource resource = null;
-    int generationChange = currentLevel == 0 ? 5 + (reqLevel - currentLevel) * 5 : (reqLevel - currentLevel) * 5;
-    switch (type) {
-      case "farm":
-        resource = resources.stream().filter(r -> r.getResourceType() == ResourceType.FOOD).findFirst().orElse(null);
-        break;
-      case "mine":
-        resource = resources.stream().filter(r -> r.getResourceType() == ResourceType.GOLD).findFirst().orElse(null);
-        break;
-      case "troop":
-        generationChange = (reqLevel - currentLevel) * -5;
-        resource = resources.stream().filter(r -> r.getResourceType() == ResourceType.FOOD).findFirst().orElse(null);
-        break;
-      default: return;
-    }
-    delayUpdate(gameObjectRuleHolder.calcCreationTime(type, currentLevel, reqLevel), resource, generationChange);
+    Map<String, ResourceType> relatedResourceType = new HashMap<>();
+    relatedResourceType.put("farm", ResourceType.FOOD);
+    relatedResourceType.put("mine", ResourceType.GOLD);
+    relatedResourceType.put("troop", ResourceType.FOOD);
+    long delay = gameObjectRuleHolder.calcCreationTime(type, currentLevel, reqLevel);
+    Resource resource = resources.stream().filter(
+        r -> r.getResourceType() == relatedResourceType.get(type)).findFirst().orElse(null);
+    int generationChange = gameObjectRuleHolder.calcGenerationChange(type, currentLevel, reqLevel);
+    delayUpdate(delay, resource, generationChange);
   }
 
   public void delayUpdate(long delay, Resource resource, int generationChange) {

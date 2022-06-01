@@ -20,14 +20,7 @@ import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
-<<<<<<< HEAD
-import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import java.util.Optional;
-=======
->>>>>>> 3a2af28 (refactor(update resource generation): refactor addBuildings and corresponding tests)
-import com.greenfoxacademy.springwebapp.utilities.TimeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 @Service

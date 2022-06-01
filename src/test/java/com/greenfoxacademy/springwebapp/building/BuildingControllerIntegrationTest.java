@@ -1,15 +1,10 @@
 package com.greenfoxacademy.springwebapp.building;
 
-<<<<<<< HEAD
 import static com.greenfoxacademy.TestUtils.defaultPlayer;
 import static com.greenfoxacademy.TestUtils.kingdomBuilder;
 import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static com.greenfoxacademy.springwebapp.utilities.TimeService.toEpochSecond;
-=======
-import static com.greenfoxacademy.TestUtils.kingdomBuilder;
-import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static com.greenfoxacademy.TestUtils.resourceBuilder;
->>>>>>> 3a2af28 (refactor(update resource generation): refactor addBuildings and corresponding tests)
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
