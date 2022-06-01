@@ -34,8 +34,7 @@ public class BattleServiceImpl implements BattleService {
   private void round(BattleDetails battleDetails) {
     int attackerNr = battleDetails.getAttackerClones().size();
     int defenderNr = battleDetails.getDefenderClones().size();
-    int troopNr = Math.max(attackerNr, defenderNr);
-    for (int i = 0; i < troopNr; i++) {
+    for (int i = 0; i < Math.max(attackerNr, defenderNr); i++) {
       Troop attacker = battleDetails.getAttackerClones().get(i % attackerNr);
       Troop defender = battleDetails.getDefenderClones().get(i % defenderNr);
       strike(attacker, defender);
