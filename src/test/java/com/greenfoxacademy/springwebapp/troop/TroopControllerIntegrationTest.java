@@ -10,9 +10,7 @@ import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
-import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopPostDTO;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +35,6 @@ import static com.greenfoxacademy.TestUtils.defaultPlayer;
 import static com.greenfoxacademy.TestUtils.kingdomBuilder;
 import static com.greenfoxacademy.TestUtils.playerBuilder;
 import static com.greenfoxacademy.TestUtils.resourceBuilder;
-import static com.greenfoxacademy.TestUtils.troopBuilder;
-import static com.greenfoxacademy.TestUtils.troopDtoBuilder;
 import static com.greenfoxacademy.TestUtils.troopPostDtoBuilder;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.greaterThan;
@@ -361,17 +357,14 @@ public class TroopControllerIntegrationTest {
     Player player = playerBuilder().withKingdom(kingdom).build();
     Authentication auth = new UsernamePasswordAuthenticationToken(player, null);
     TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(9).build();
-    Troop troop = troopBuilder().withId(3).withLevel(2).withHP(40).withAttack(20).withDefence(10).build();
-    TroopDTO expected = troopDtoBuilder(troop)
-        .withStartedAt(LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC))
-        .withFinishedAt(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(30L).toEpochSecond(ZoneOffset.UTC)).build();
 
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/3")
             .contentType(MediaType.APPLICATION_JSON)
             .content(gson.toJson(troopPostDTO))
             .principal(auth))
         .andExpect(status().isOk())
-        .andExpect(content().json(gson.toJson(expected)));
+        .andExpect(jsonPath("id").value(3))
+        .andExpect(jsonPath("level").value(2));
   }
 
 }

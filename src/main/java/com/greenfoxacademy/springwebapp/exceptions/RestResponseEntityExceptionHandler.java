@@ -26,9 +26,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
   public ResponseEntity handleMissingParameter(RequestParameterMissingException e) {
     return ResponseEntity.status(400).body(new ErrorDTO(e.getMessage()));
   }
+  
+  @ExceptionHandler(InputWrongException.class)
+  public ResponseEntity<ErrorDTO> handleWrongInput(InputWrongException e) {
+    return ResponseEntity.status(401).body(new ErrorDTO(e.getMessage()));
+  }
 
-  @ExceptionHandler(RequestedForbiddenResourceException.class)
-  public ResponseEntity<ErrorDTO> handleForbiddenRequest(RequestedForbiddenResourceException e) {
+  @ExceptionHandler(ForbiddenActionException.class)
+  public ResponseEntity<ErrorDTO> handleForbiddenAction(ForbiddenActionException e) {
     return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
   }
 
@@ -45,16 +50,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
   @ExceptionHandler({RequestCauseConflictException.class, NotEnoughResourceException.class})
   public ResponseEntity handleConflictCausedByRequest(RuntimeException e) {
     return ResponseEntity.status(409).body(new ErrorDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(ForbiddenActionException.class)
-  public ResponseEntity handleConflictCausedByPlayerForbiddenForBuilding(ForbiddenActionException e) {
-    return ResponseEntity.status(403).body(new ErrorDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(InputWrongException.class)
-  public ResponseEntity<ErrorDTO> handleWrongInput(InputWrongException e) {
-    return ResponseEntity.status(401).body(new ErrorDTO(e.getMessage()));
   }
 
   @ExceptionHandler(Exception.class)

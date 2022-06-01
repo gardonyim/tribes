@@ -3,6 +3,7 @@ package com.greenfoxacademy.springwebapp.troop;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.services.BuildingService;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
@@ -14,7 +15,6 @@ import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopDTO;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import com.greenfoxacademy.springwebapp.troop.models.dtos.TroopsDTO;
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
-import com.greenfoxacademy.springwebapp.exceptions.RequestedForbiddenResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -103,7 +103,7 @@ public class TroopServiceImpl implements TroopService {
     Troop troop = troopRepository.findById(id)
         .orElseThrow(() -> new RequestedResourceNotFoundException("Id not found"));
     if (troop.getKingdom().getId() != kingdom.getId()) {
-      throw new RequestedForbiddenResourceException("Forbidden action");
+      throw new ForbiddenActionException();
     }
     return troop;
   }

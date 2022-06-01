@@ -146,4 +146,6 @@ public class Player implements UserDetails {
   public Boolean getEnabled() {
     return enabled;
   }
+
 }
+
