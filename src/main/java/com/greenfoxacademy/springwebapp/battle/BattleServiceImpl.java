@@ -6,6 +6,7 @@ import com.greenfoxacademy.springwebapp.battle.models.BattleResDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.kingdom.KingdomService;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import com.greenfoxacademy.springwebapp.location.LocationService;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 public class BattleServiceImpl implements BattleService {
 
   private KingdomService kingdomService;
+  private LocationService locationService;
 
-  public BattleServiceImpl(KingdomService kingdomService) {
+  public BattleServiceImpl(KingdomService kingdomService, LocationService locationService) {
     this.kingdomService = kingdomService;
+    this.locationService = locationService;
   }
 
   @Override
@@ -31,7 +34,7 @@ public class BattleServiceImpl implements BattleService {
     return new BattleResDTO();
   }
 
-  private BattleDetails prepareBattleDetails(Kingdom attacker, Integer defenderId, BattleReqDTO reqDTO) {
+  public BattleDetails prepareBattleDetails(Kingdom attacker, Integer defenderId, BattleReqDTO reqDTO) {
     Kingdom defender = kingdomService.findById(defenderId);
     List<Troop> attackerClones = reqDTO.getTroopIds().stream()
         .map(id -> attacker.getTroops().stream().filter(t -> t.getId() == id).findFirst().orElse(null))
@@ -41,7 +44,7 @@ public class BattleServiceImpl implements BattleService {
     List<Troop> defenderClones = defender.getTroops().stream()
         .map(Troop::new)
         .collect(Collectors.toList());
-    int distance = 0; //TODO: connect to shortest path
+    int distance = locationService.findShortestPath(attacker.getLocation(), defender.getLocation()).size() - 1;
     int townhallLevel = defender.getBuildings().stream()
         .filter(b -> b.getBuildingType().equals(BuildingType.TOWNHALL))
         .findFirst()
