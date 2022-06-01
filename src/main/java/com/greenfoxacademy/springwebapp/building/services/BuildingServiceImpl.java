@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
 import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
+import com.greenfoxacademy.springwebapp.building.models.BuildingsDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
 
@@ -17,14 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceService;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Optional;
+import com.greenfoxacademy.springwebapp.utilities.TimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class BuildingServiceImpl implements BuildingService {
@@ -135,6 +144,27 @@ public class BuildingServiceImpl implements BuildingService {
     }
   }
 
+  public BuildingsDTO getBuildingDtoList(Kingdom kingdom) {
+    return new BuildingsDTO(kingdom.getBuildings()
+        .stream()
+        .map(this::convertToDTO)
+        .collect(Collectors.toList()));
+  }
+
+  @Override
+  public BuildingDTO getBuildingDTO(Integer id, Kingdom kingdom) {
+    Optional<Building> building = buildingRepository.findById(id);
+    if (building.isPresent()) {
+      if (building.get().getKingdom().getId() == kingdom.getId()) {
+        return convertToDTO(building.get());
+      } else {
+        throw new ForbiddenActionException();
+      }
+    } else {
+      throw new RequestedResourceNotFoundException("Id not found");
+    }
+  }
+
   public void validateAddBuildingRequest(BuildingTypeDTO typeDTO, Kingdom kingdom) {
     if (typeDTO.getType() == null || typeDTO.getType().trim().isEmpty()) {
       throw new RequestParameterMissingException("Missing parameter(s): type!");
@@ -171,7 +201,7 @@ public class BuildingServiceImpl implements BuildingService {
   public BuildingDTO convertToDTO(Building building) {
     BuildingDTO dto = new BuildingDTO();
     dto.setId(building.getId());
-    dto.setBuildingType(building.getBuildingType().name().toLowerCase());
+    dto.setType(building.getBuildingType().name().toLowerCase());
     dto.setLevel(building.getLevel());
     dto.setHp(building.getHp());
     dto.setStartedAt(TimeService.toEpochSecond(building.getStartedAt()));

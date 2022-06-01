@@ -1,6 +1,6 @@
 package com.greenfoxacademy.springwebapp.login;
 
-import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.LoginDTO;
 import com.greenfoxacademy.springwebapp.login.dtos.StatusResponseDTO;
 import com.greenfoxacademy.springwebapp.login.exceptions.InputMissingException;
@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.validation.Valid;
 
 @Controller
 public class LoginController {
@@ -23,7 +25,7 @@ public class LoginController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<StatusResponseDTO> authentication(@RequestBody LoginDTO loginDTO)
+  public ResponseEntity<StatusResponseDTO> authentication(@Valid @RequestBody LoginDTO loginDTO)
           throws InputMissingException, InputWrongException {
     StatusResponseDTO response = loginService.authenticateWithLoginDTO(loginDTO);
     return ResponseEntity.ok(response);

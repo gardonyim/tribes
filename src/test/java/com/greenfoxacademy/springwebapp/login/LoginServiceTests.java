@@ -51,41 +51,6 @@ public class LoginServiceTests {
   }
 
   @Test
-  public void when_authenticateWithoutPassword_should_throwException()
-          throws InputMissingException, InputWrongException {
-    LoginDTO loginDTO = new LoginDTO();
-    loginDTO.setUsername("testusername");
-
-    exceptionRule.expect(InputMissingException.class);
-    exceptionRule.expectMessage("Password is required.");
-    loginService.authenticateWithLoginDTO(loginDTO);
-  }
-
-  @Test
-  public void when_authenticateWithoutUsername_should_throwException()
-          throws InputMissingException, InputWrongException {
-    LoginDTO loginDTO = new LoginDTO();
-    loginDTO.setUsername(null);
-    loginDTO.setPassword("testpassword");
-
-    exceptionRule.expect(InputMissingException.class);
-    exceptionRule.expectMessage("Username is required.");
-    loginService.authenticateWithLoginDTO(loginDTO);
-  }
-
-  @Test
-  public void when_authenticateWithoutUsernameOrPassword_should_throwException()
-          throws InputMissingException, InputWrongException {
-    LoginDTO loginDTO = new LoginDTO();
-    loginDTO.setUsername(null);
-    loginDTO.setPassword(null);
-
-    exceptionRule.expect(InputMissingException.class);
-    exceptionRule.expectMessage("All fields are required.");
-    loginService.authenticateWithLoginDTO(loginDTO);
-  }
-
-  @Test
   public void when_authenticateWithWrongUsernameOrPassword_should_throwException()
           throws InputMissingException, InputWrongException {
     LoginDTO loginDTO = new LoginDTO();

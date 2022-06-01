@@ -2,7 +2,7 @@ package com.greenfoxacademy.springwebapp.kingdom;
 
 import com.google.gson.Gson;
 import com.greenfoxacademy.springwebapp.TestNoSecurityConfig;
-import com.greenfoxacademy.springwebapp.exceptions.ErrorDTO;
+import com.greenfoxacademy.springwebapp.exceptions.models.ErrorDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.kingdom.models.KingdomPutDTO;
 import com.greenfoxacademy.springwebapp.location.models.Location;
