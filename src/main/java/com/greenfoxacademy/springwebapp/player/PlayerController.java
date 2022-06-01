@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 public class PlayerController {
 
@@ -22,7 +24,7 @@ public class PlayerController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity registerUser(@RequestBody RegistrationReqDTO reqDTO) {
+  public ResponseEntity registerUser(@Valid @RequestBody RegistrationReqDTO reqDTO) {
     return ResponseEntity.status(201).body(playerService.savePlayer(reqDTO));
   }
 
