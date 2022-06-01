@@ -57,10 +57,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(401).body(new ErrorDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(Exception.class)
+/*  @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> exception(Exception ex) {
     return defaultErrorMessage();
-  }
+  }*/
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -70,14 +70,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionService.createInputParamsValidErrorMessage(ex));
   }
 
-  @Override
+/*  @Override
   protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
                                                            Object body,
                                                            HttpHeaders headers,
                                                            HttpStatus status,
                                                            WebRequest request) {
     return defaultErrorMessage();
-  }
+  }*/
 
   private ResponseEntity<Object> defaultErrorMessage() {
     return ResponseEntity.status(500).body(new ErrorDTO("Unknown error"));
