@@ -5,7 +5,9 @@ import com.greenfoxacademy.springwebapp.battle.models.BattleReqDTO;
 import com.greenfoxacademy.springwebapp.battle.models.BattleResDTO;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
+import org.springframework.stereotype.Service;
 
+@Service
 public class BattleServiceImpl implements BattleService {
 
   @Override
@@ -32,7 +34,8 @@ public class BattleServiceImpl implements BattleService {
   private void round(BattleDetails battleDetails) {
     int attackerNr = battleDetails.getAttackerClones().size();
     int defenderNr = battleDetails.getDefenderClones().size();
-    for (int i = 0; i < Math.max(attackerNr, defenderNr); i++) {
+    int troopNr = Math.max(attackerNr, defenderNr);
+    for (int i = 0; i < troopNr; i++) {
       Troop attacker = battleDetails.getAttackerClones().get(i % attackerNr);
       Troop defender = battleDetails.getDefenderClones().get(i % defenderNr);
       strike(attacker, defender);
