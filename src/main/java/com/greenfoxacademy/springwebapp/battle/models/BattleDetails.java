@@ -3,6 +3,7 @@ package com.greenfoxacademy.springwebapp.battle.models;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.troop.models.Troop;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BattleDetails {
@@ -13,6 +14,7 @@ public class BattleDetails {
   private List<Troop> defenderClones;
   private int distance;
   private int townhallLevel;
+  private List<Troop> fallenTroops;
 
   public BattleDetails(Kingdom attacker, Kingdom defender, List<Troop> attackerClones, List<Troop> defenderClones,
                      int distance, int townhallLevel) {
@@ -22,6 +24,19 @@ public class BattleDetails {
     this.defenderClones = defenderClones;
     this.distance = distance;
     this.townhallLevel = townhallLevel;
+    this.fallenTroops = new ArrayList<>();
+  }
+
+  public boolean addFallenTroop(Troop fallenTroop) {
+    return this.fallenTroops.add(fallenTroop);
+  }
+
+  public boolean removeAttackerClone(Troop fallenTroop) {
+    return this.attackerClones.remove(fallenTroop);
+  }
+
+  public boolean removeDefenderClone(Troop fallenTroop) {
+    return this.defenderClones.remove(fallenTroop);
   }
 
   public List<Troop> getAttackerClones() {
@@ -54,6 +69,10 @@ public class BattleDetails {
 
   public int getTownhallLevel() {
     return townhallLevel;
+  }
+
+  public List<Troop> getFallenTroops() {
+    return fallenTroops;
   }
 
 }
