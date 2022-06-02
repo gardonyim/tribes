@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.building;
 
+import com.greenfoxacademy.TestUtils;
 import com.greenfoxacademy.springwebapp.building.models.Building;
 import com.greenfoxacademy.springwebapp.building.models.BuildingDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingType;
@@ -7,12 +8,19 @@ import com.greenfoxacademy.springwebapp.building.models.BuildingTypeDTO;
 import com.greenfoxacademy.springwebapp.building.models.BuildingsDTO;
 import com.greenfoxacademy.springwebapp.building.repositories.BuildingRepository;
 import com.greenfoxacademy.springwebapp.building.services.BuildingServiceImpl;
+import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
+import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
+import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
+import com.greenfoxacademy.springwebapp.exceptions.NotEnoughResourceException;
 import com.greenfoxacademy.springwebapp.exceptions.ForbiddenActionException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestCauseConflictException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestNotAcceptableException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestParameterMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.RequestedResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
+import com.greenfoxacademy.springwebapp.kingdom.KingdomServiceImpl;
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
 import com.greenfoxacademy.springwebapp.resource.ResourceServiceImpl;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
@@ -21,6 +29,7 @@ import com.greenfoxacademy.springwebapp.utilities.TimeService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +45,9 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static com.greenfoxacademy.TestUtils.kingdomBuilder;
+import static com.greenfoxacademy.TestUtils.buildingBuilder;
+import static com.greenfoxacademy.TestUtils.defaultKingdom;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,6 +64,8 @@ public class BuildingServiceTest {
   private BuildingRepository buildingRepository;
   @Mock
   private ResourceServiceImpl resourceService;
+  @Mock
+  private KingdomServiceImpl kingdomService;
   @Mock
   private GameObjectRuleHolder gameObjectRuleHolder;
 
@@ -119,11 +133,11 @@ public class BuildingServiceTest {
   public void when_validateAddBuildingAndHasInsufficientGold_should_throwException() {
     Kingdom kingdom = new Kingdom();
     Resource gold = new Resource(ResourceType.GOLD, 50);
-    Building townhall = new Building(BuildingType.TOWNHALL, 1, kingdom, null, null);
+    Building mine = new Building(BuildingType.MINE, 1, kingdom, null, null);
     when(buildingRepository.findFirstByBuildingTypeAndKingdom(any(), any()))
-        .thenReturn(Optional.of(townhall));
-    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
-    when(resourceService.getResourceByKingdomAndType(any(), any())).thenReturn(gold);
+        .thenReturn(Optional.of(mine));
+    when(gameObjectRuleHolder.calcCreationCost(anyString(), anyInt(), anyInt())).thenReturn(100);
+    when(resourceService.hasEnoughGold(any(), anyInt())).thenReturn(false);
     BuildingTypeDTO buildingTypeDTO = new BuildingTypeDTO("mine");
 
     exceptionRule.expect(RequestCauseConflictException.class);
@@ -174,7 +188,7 @@ public class BuildingServiceTest {
     Building building = new Building();
     Mockito.doNothing().when(buildingService).validateAddBuildingRequest(typeDTO, kingdom);
     Mockito.doReturn(building).when(buildingService).constructBuilding(anyString(), anyInt(), any());
-    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
+    when(gameObjectRuleHolder.calcCreationCost(anyString(), anyInt(), anyInt())).thenReturn(100);
     when(resourceService.pay(any(), anyInt())).thenReturn(null);
     when(buildingRepository.save(any())).then(returnsFirstArg());
     Mockito.doReturn(new BuildingDTO()).when(buildingService).convertToDTO(any());
@@ -183,10 +197,109 @@ public class BuildingServiceTest {
 
     Mockito.verify(buildingService, times(1)).validateAddBuildingRequest(typeDTO, kingdom);
     Mockito.verify(buildingService, times(1)).constructBuilding("academy", 1, kingdom);
-    Mockito.verify(gameObjectRuleHolder, times(1)).getBuildingCostMultiplier("academy", 1);
+    Mockito.verify(gameObjectRuleHolder, times(1)).calcCreationCost("academy", 0, 1);
     Mockito.verify(resourceService, times(1)).pay(kingdom, 100);
     Mockito.verify(buildingRepository, times(1)).save(building);
     Mockito.verify(buildingService, times(1)).convertToDTO(building);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithoutBuildingId_should_throwException() {
+    exceptionRule.expect(RequestParameterMissingException.class);
+    exceptionRule.expectMessage("Missing parameter(s): buildingId!");
+
+    buildingService.validateModifyBuildingLevelRequest(new BuildingDTO(), new Kingdom(), null);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithNotExistBuildingId_should_throwException() {
+    exceptionRule.expect(RequestedResourceNotFoundException.class);
+    exceptionRule.expectMessage("Required building is not exist!");
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+    buildingService.validateModifyBuildingLevelRequest(new BuildingDTO(), new Kingdom(), 1);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithForeignBuildingId_should_throwException() {
+    exceptionRule.expect(ForbiddenActionException.class);
+    exceptionRule.expectMessage("Forbidden action");
+    Building reqBuilding = new Building();
+    reqBuilding.setKingdom(kingdomBuilder().withId(1).build());
+    Kingdom myKingdom = kingdomBuilder().withId(2).build();
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.of(reqBuilding));
+
+    buildingService.validateModifyBuildingLevelRequest(new BuildingDTO(), myKingdom, 1);
+  }
+
+  @Test
+  public void when_validateModBuildingLevReqWithHigherLevelThanTownhall_should_throwException() {
+    exceptionRule.expect(RequestNotAcceptableException.class);
+    exceptionRule.expectMessage("Cannot build buildings with higher level than the Townhall");
+    Kingdom myKingdom = kingdomBuilder().withId(1).build();
+    List<Building> buildings = new ArrayList<>();
+    Building reqBuilding = buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
+    reqBuilding.setKingdom(myKingdom);
+    buildings.add(reqBuilding);
+    buildings.add(buildingBuilder(BuildingType.TOWNHALL).withId(1).withLevel(1).build());
+    myKingdom.setBuildings(buildings);
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.of(reqBuilding));
+    BuildingDTO buildingDTO = new BuildingDTO();
+    buildingDTO.setLevel(2);
+
+    buildingService.validateModifyBuildingLevelRequest(buildingDTO, myKingdom, 2);
+  }
+
+  @Test
+  public void when_validateHasEnoughGoldWithToExpensiveDevelopment_should_returnException() {
+    exceptionRule.expect(NotEnoughResourceException.class);
+    exceptionRule.expectMessage("Not enough resource");
+    Kingdom myKingdom = kingdomBuilder().withId(1).build();
+    List<Building> buildings = new ArrayList<>();
+    Building reqBuilding = buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
+    reqBuilding.setKingdom(myKingdom);
+    buildings.add(reqBuilding);
+    buildings.add(buildingBuilder(BuildingType.TOWNHALL).withId(1).withLevel(2).build());
+    myKingdom.setBuildings(buildings);
+    when(buildingRepository.findById(anyInt())).thenReturn(Optional.of(reqBuilding));
+    Mockito.doThrow(new NotEnoughResourceException())
+        .when(buildingService).validateHasEnoughGold(any(Building.class), anyInt());
+    BuildingDTO buildingDTO = new BuildingDTO();
+    buildingDTO.setLevel(2);
+
+    buildingService.validateModifyBuildingLevelRequest(buildingDTO, myKingdom, 2);
+  }
+
+  @Test
+  public void when_modifyBuildingLevelWithAppropriateInput_should_returnDevelopedBuilding() {
+    Building modBuildung = buildingBuilder(BuildingType.FARM).withId(2).withLevel(1).build();
+    Mockito.doReturn(modBuildung).when(buildingService).validateModifyBuildingLevelRequest(any(), any(), any());
+    when(gameObjectRuleHolder.calcNewHP(anyString(), anyInt())).thenReturn(100);
+    when(gameObjectRuleHolder.calcCreationTime(anyString(),anyInt(),anyInt())).thenReturn(100);
+    when(resourceService.pay(any(), anyInt())).thenReturn(null);
+    when(kingdomService.update(any(Kingdom.class))).thenReturn(null);
+    Building expectedBuilding = modBuildung;
+    expectedBuilding.setStartedAt(LocalDateTime.parse("2022-01-01T00:00:00"));
+    expectedBuilding.setFinishedAt(expectedBuilding.getStartedAt().plusSeconds(100));
+    expectedBuilding.setHp(expectedBuilding.getHp() + 100);
+    BuildingDTO buildingDTO = new BuildingDTO();
+    buildingDTO.setLevel(2);
+    expectedBuilding.setLevel(buildingDTO.getLevel());
+    Building actualBuilding = buildingService.modifyBuildingLevel(buildingDTO, defaultKingdom(), modBuildung.getId());
+    Assert.assertEquals(expectedBuilding.getLevel(), actualBuilding.getLevel());
+    Assert.assertEquals(expectedBuilding.getHp(), actualBuilding.getHp());
+    Assert.assertEquals(expectedBuilding.getStartedAt(), actualBuilding.getStartedAt());
+    Assert.assertEquals(expectedBuilding.getFinishedAt(), actualBuilding.getFinishedAt());
+  }
+
+  @Test
+  public void when_givenAKingdomWithBuildings_should_returnBuildingWithTownhallType() {
+    Kingdom kingdom = TestUtils.kingdomBuilder().build();
+    BuildingType expectedBuildingType = BuildingType.TOWNHALL;
+
+    Building actualBuilding = buildingService.findTownhall(kingdom);
+
+    Assert.assertEquals(expectedBuildingType, actualBuilding.getBuildingType());
   }
 
   @Test

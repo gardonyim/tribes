@@ -17,6 +17,9 @@ public class GameObjectRuleHolder implements
   private List<GameObjectRule> gameObjectRules;
   public static final int ATTACK_MULTIPLIER = 10;
   public static final int DEFENCE_MULTIPLIER = 5;
+  public static final int BUILDING_1ST_GENERATION_CONST = 5;
+  public static final int BUILDING_NTH_GENERATION_CONST = 5;
+  public static final int TROOP_GENERATION_CONST = -5;
 
   @Autowired
   public GameObjectRuleHolder(GameObjectRuleService gameObjectRuleService) {
@@ -28,6 +31,14 @@ public class GameObjectRuleHolder implements
     gameObjectRules = gameObjectRuleService.findAll();
   }
 
+  public int calcGenerationChange(String type, int currentLevel, int reqLevel) {
+    if (type.equals("troop")) {
+      return (reqLevel - currentLevel) * TROOP_GENERATION_CONST;
+    }
+    return currentLevel == 0 ? BUILDING_1ST_GENERATION_CONST + (reqLevel - currentLevel) * BUILDING_1ST_GENERATION_CONST
+        : (reqLevel - currentLevel) * BUILDING_NTH_GENERATION_CONST;
+  }
+
   public int calcCreationTime(String gameObjectType, int currentLevel, int reqLevel) {
     int totalTime = 0;
     if (reqLevel <= currentLevel) {
@@ -35,7 +46,7 @@ public class GameObjectRuleHolder implements
     }
     int nextLevel = ++currentLevel;
     while (nextLevel <= reqLevel) {
-      totalTime += getBuildingTimeMultiplier(gameObjectType, nextLevel);
+      totalTime += nextLevel * getBuildingTimeMultiplier(gameObjectType, nextLevel);
       nextLevel++;
     }
     return totalTime;
@@ -48,7 +59,7 @@ public class GameObjectRuleHolder implements
     }
     int nextLevel = ++currentLevel;
     while (nextLevel <= reqLevel) {
-      totalCost += getBuildingCostMultiplier(gameObjectType, nextLevel);
+      totalCost += nextLevel * getBuildingCostMultiplier(gameObjectType, nextLevel);
       nextLevel++;
     }
     return totalCost;

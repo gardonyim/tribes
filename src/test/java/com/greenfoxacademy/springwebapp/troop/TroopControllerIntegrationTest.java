@@ -350,8 +350,7 @@ public class TroopControllerIntegrationTest {
   }
 
   @Test
-  public void when_putKingdomTroopsIdValid_should_respondOkStatusAndProperJson()
-      throws Exception {
+  public void when_putKingdomTroopsIdValid_should_respondOkStatusAndProperJson() throws Exception {
     Resource gold = resourceBuilder(ResourceType.GOLD).withId(2).withAmount(150).withGeneration(0).build();
     Kingdom kingdom = kingdomBuilder().withId(4).withResources(Collections.singletonList(gold)).build();
     Player player = playerBuilder().withKingdom(kingdom).build();
@@ -359,8 +358,7 @@ public class TroopControllerIntegrationTest {
     TroopPostDTO troopPostDTO = troopPostDtoBuilder().withBuildingId(9).build();
 
     mockMvc.perform(MockMvcRequestBuilders.put("/kingdom/troops/3")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(gson.toJson(troopPostDTO))
+            .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(troopPostDTO))
             .principal(auth))
         .andExpect(status().isOk())
         .andExpect(jsonPath("id").value(3))
