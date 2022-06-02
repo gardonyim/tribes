@@ -66,8 +66,12 @@ public class BattleDetails {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     BattleDetails that = (BattleDetails) o;
     return distance == that.distance && townhallLevel == that.townhallLevel && Objects.equals(attacker, that.attacker)
         && Objects.equals(defender, that.defender) && attackerClones.equals(that.attackerClones)
@@ -78,5 +82,5 @@ public class BattleDetails {
   public int hashCode() {
     return Objects.hash(attacker, defender, attackerClones, defenderClones, distance, townhallLevel, fallenTroops);
   }
-  
+
 }
