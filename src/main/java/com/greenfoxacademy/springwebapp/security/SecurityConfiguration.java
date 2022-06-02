@@ -11,6 +11,11 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+  public static final String[] PRIVATE_ENDPOINTS = {
+    "/kingdom/**",
+    "/players",
+  };
+
   private PlayerService playerService;
 
   @Autowired
@@ -26,7 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       .addFilterBefore(new JwtTokenValidatorFilter(playerService),
           BasicAuthenticationFilter.class)
       .authorizeRequests()
-      .antMatchers("/kingdom/**").authenticated()
+      .antMatchers(PRIVATE_ENDPOINTS).authenticated()
       .antMatchers("/**").permitAll()
         .and()
       .csrf().disable()

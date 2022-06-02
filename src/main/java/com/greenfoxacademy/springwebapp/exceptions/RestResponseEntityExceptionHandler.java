@@ -54,6 +54,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> exception(Exception ex) {
+    ex.printStackTrace();
     return defaultErrorMessage();
   }
 
@@ -71,6 +72,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                            HttpHeaders headers,
                                                            HttpStatus status,
                                                            WebRequest request) {
+    ex.printStackTrace();
     return defaultErrorMessage();
   }
 
