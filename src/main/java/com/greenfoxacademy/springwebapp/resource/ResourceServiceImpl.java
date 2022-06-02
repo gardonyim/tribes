@@ -21,6 +21,14 @@ import java.util.stream.Collectors;
 @Service
 public class ResourceServiceImpl implements ResourceService {
 
+  private static final Map<String, ResourceType> relatedResourceType = new HashMap<String, ResourceType>() {
+    {
+      put("farm", ResourceType.FOOD);
+      put("mine", ResourceType.GOLD);
+      put("troop", ResourceType.FOOD);
+    }
+  };
+
   private final ResourceRepository resourceRepository;
   private final GameObjectRuleHolder gameObjectRuleHolder;
 
@@ -107,26 +115,36 @@ public class ResourceServiceImpl implements ResourceService {
     return gold.getAmount() >= amount;
   }
 
+  @Override
   public void updateResourceGeneration(Kingdom kingdom, String type, int currentLevel, int reqLevel) {
-    List<Resource> resources = kingdom.getResources();
-    Map<String, ResourceType> relatedResourceType = new HashMap<>();
-    relatedResourceType.put("farm", ResourceType.FOOD);
-    relatedResourceType.put("mine", ResourceType.GOLD);
-    relatedResourceType.put("troop", ResourceType.FOOD);
     long delay = gameObjectRuleHolder.calcCreationTime(type, currentLevel, reqLevel);
-    Resource resource = resources.stream().filter(
-        r -> r.getResourceType() == relatedResourceType.get(type)).findFirst().orElse(null);
+    Resource resource = findResource(kingdom, relatedResourceType.get(type));
     int generationChange = gameObjectRuleHolder.calcGenerationChange(type, currentLevel, reqLevel);
     delayUpdate(delay, resource, generationChange);
   }
 
-  public void delayUpdate(long delay, Resource resource, int generationChange) {
+  @Override
+  public void delayUpdate(long delay, Resource resource, int generationChange, int amountChange) {
     Runnable updateResGen = () -> {
       Resource updatedResource = updateResource(resource);
       updatedResource.setGeneration(updatedResource.getGeneration() + generationChange);
+      updatedResource.setAmount(updatedResource.getAmount() + amountChange);
       save(updatedResource);
     };
     SchedulingService.scheduler(updateResGen, delay);
+  }
+
+  @Override
+  public void delayUpdate(long delay, Resource resource, int generationChange) {
+    delayUpdate(delay, resource, generationChange, 0);
+  }
+
+  @Override
+  public Resource findResource(Kingdom kingdom, ResourceType type) {
+    return kingdom.getResources().stream()
+            .filter(r -> r.getResourceType() == type)
+            .findFirst()
+            .orElse(null);
   }
 
 }

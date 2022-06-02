@@ -46,7 +46,7 @@ public class GameObjectRuleHolder implements
     }
     int nextLevel = ++currentLevel;
     while (nextLevel <= reqLevel) {
-      totalTime += getBuildingTimeMultiplier(gameObjectType, nextLevel);
+      totalTime += nextLevel * getBuildingTimeMultiplier(gameObjectType, nextLevel);
       nextLevel++;
     }
     return totalTime;
@@ -59,7 +59,7 @@ public class GameObjectRuleHolder implements
     }
     int nextLevel = ++currentLevel;
     while (nextLevel <= reqLevel) {
-      totalCost += getBuildingCostMultiplier(gameObjectType, nextLevel);
+      totalCost += nextLevel * getBuildingCostMultiplier(gameObjectType, nextLevel);
       nextLevel++;
     }
     return totalCost;
