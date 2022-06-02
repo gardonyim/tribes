@@ -31,4 +31,12 @@ public interface ResourceService {
 
   int calculateAvailableResource(Resource resource);
 
+  void updateResourceGeneration(Kingdom kingdom, String type, int currentLevel, int desiredLevel);
+
+  void delayUpdate(long delay, Resource resource, int generation, int amountChange);
+
+  void delayUpdate(long delay, Resource resource, int generation);
+
+  Resource findResource(Kingdom kingdom, ResourceType type);
+
 }

@@ -133,11 +133,11 @@ public class BuildingServiceTest {
   public void when_validateAddBuildingAndHasInsufficientGold_should_throwException() {
     Kingdom kingdom = new Kingdom();
     Resource gold = new Resource(ResourceType.GOLD, 50);
-    Building townhall = new Building(BuildingType.TOWNHALL, 1, kingdom, null, null);
+    Building mine = new Building(BuildingType.MINE, 1, kingdom, null, null);
     when(buildingRepository.findFirstByBuildingTypeAndKingdom(any(), any()))
-        .thenReturn(Optional.of(townhall));
-    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
-    when(resourceService.getResourceByKingdomAndType(any(), any())).thenReturn(gold);
+        .thenReturn(Optional.of(mine));
+    when(gameObjectRuleHolder.calcCreationCost(anyString(), anyInt(), anyInt())).thenReturn(100);
+    when(resourceService.hasEnoughGold(any(), anyInt())).thenReturn(false);
     BuildingTypeDTO buildingTypeDTO = new BuildingTypeDTO("mine");
 
     exceptionRule.expect(RequestCauseConflictException.class);
@@ -188,7 +188,7 @@ public class BuildingServiceTest {
     Building building = new Building();
     Mockito.doNothing().when(buildingService).validateAddBuildingRequest(typeDTO, kingdom);
     Mockito.doReturn(building).when(buildingService).constructBuilding(anyString(), anyInt(), any());
-    when(gameObjectRuleHolder.getBuildingCostMultiplier(anyString(), anyInt())).thenReturn(100);
+    when(gameObjectRuleHolder.calcCreationCost(anyString(), anyInt(), anyInt())).thenReturn(100);
     when(resourceService.pay(any(), anyInt())).thenReturn(null);
     when(buildingRepository.save(any())).then(returnsFirstArg());
     Mockito.doReturn(new BuildingDTO()).when(buildingService).convertToDTO(any());
@@ -197,7 +197,7 @@ public class BuildingServiceTest {
 
     Mockito.verify(buildingService, times(1)).validateAddBuildingRequest(typeDTO, kingdom);
     Mockito.verify(buildingService, times(1)).constructBuilding("academy", 1, kingdom);
-    Mockito.verify(gameObjectRuleHolder, times(1)).getBuildingCostMultiplier("academy", 1);
+    Mockito.verify(gameObjectRuleHolder, times(1)).calcCreationCost("academy", 0, 1);
     Mockito.verify(resourceService, times(1)).pay(kingdom, 100);
     Mockito.verify(buildingRepository, times(1)).save(building);
     Mockito.verify(buildingService, times(1)).convertToDTO(building);

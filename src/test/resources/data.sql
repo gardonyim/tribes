@@ -29,7 +29,8 @@ INSERT INTO kingdoms (id, name, player_id, location_id) VALUES
 INSERT INTO resources (id, resource_type, amount, generation, updated_at, kingdom_id) VALUES
     (1, 'gold', 50, 0, '2022-05-01 18:48:42', 3),
     (2, 'gold', 150, 0, '2022-05-01 18:48:42', 4),
-    (3, 'gold', 1000, 0, '2022-05-01 18:48:42', 5);
+    (3, 'gold', 150, 0, '2022-05-01 18:48:42', 1),
+    (4, 'gold', 1000, 0, '2022-05-01 18:48:42', 5);
 
 INSERT INTO buildings (id, building_type, level, hp, kingdom_id, started_at, finished_at) VALUES
     (1, 'townhall', 1, 200, 1, '2022-05-01 18:48:42', '2022-05-01 18:48:42'),

@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.resource;
 
+import com.greenfoxacademy.springwebapp.gamesettings.model.GameObjectRuleHolder;
 import com.greenfoxacademy.springwebapp.resource.models.Resource;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceDTO;
 import com.greenfoxacademy.springwebapp.resource.models.ResourceType;
@@ -17,14 +18,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.greenfoxacademy.TestUtils.defaultKingdom;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,6 +39,10 @@ public class ResourceServiceTest {
   @Mock
   ResourceRepository resourceRepository;
 
+  @Mock
+  GameObjectRuleHolder gameObjectRuleHolder;
+
+  @Spy
   @InjectMocks
   ResourceServiceImpl resourceService;
 
@@ -100,18 +110,18 @@ public class ResourceServiceTest {
   public void when_pay_should_setGoldToValidAmountAndUpdatedAtToCurrentTime() {
     Kingdom kingdom = new Kingdom();
     Resource gold = new Resource(ResourceType.GOLD, 1000, 2,
-        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(61), kingdom);
     when(resourceRepository.findFirstByKingdomAndResourceType(any(), any())).thenReturn(Optional.of(gold));
 
     Resource actual = resourceService.pay(kingdom, 100);
 
     Assert.assertEquals(ResourceType.GOLD, actual.getResourceType());
-    Assert.assertEquals(1100, actual.getAmount());
+    Assert.assertEquals(902, actual.getAmount());
   }
 
   @Test
   public void when_updateResources_should_returnKingdomWithUpdatedResources() {
-    LocalDateTime previousUpdate = LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101);
+    LocalDateTime previousUpdate = LocalDateTime.now(ZoneOffset.UTC).minusSeconds(61);
     Kingdom kingdom = new Kingdom();
     List<Resource> resources = new ArrayList<>();
     resources.add(new Resource(ResourceType.GOLD, 1000, 1, previousUpdate, kingdom));
@@ -120,10 +130,10 @@ public class ResourceServiceTest {
 
     Kingdom actual = resourceService.updateResources(kingdom);
 
-    Assert.assertEquals(1100, actual.getResources().get(0).getAmount());
+    Assert.assertEquals(1001, actual.getResources().get(0).getAmount());
     Assert.assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS),
         actual.getResources().get(0).getUpdatedAt());
-    Assert.assertEquals(1200, actual.getResources().get(1).getAmount());
+    Assert.assertEquals(1002, actual.getResources().get(1).getAmount());
     Assert.assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS),
         actual.getResources().get(1).getUpdatedAt());
   }
@@ -132,12 +142,12 @@ public class ResourceServiceTest {
   public void when_updateResource_should_returnResourceWithUpdatedAmountAndUpdateTime() {
     Kingdom kingdom = new Kingdom();
     Resource resource = new Resource(ResourceType.FOOD, 1000, 5,
-        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(61), kingdom);
 
     Resource actual = resourceService.updateResource(resource);
 
     Assert.assertEquals(ResourceType.FOOD, actual.getResourceType());
-    Assert.assertEquals(1500, actual.getAmount());
+    Assert.assertEquals(1005, actual.getAmount());
     Assert.assertEquals(5, actual.getGeneration());
     Assert.assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS), actual.getUpdatedAt());
     Assert.assertEquals(kingdom, actual.getKingdom());
@@ -147,11 +157,56 @@ public class ResourceServiceTest {
   public void when_calculateAvailableResource_should_returnValidAmount() {
     Kingdom kingdom = new Kingdom();
     Resource resource = new Resource(ResourceType.FOOD, 1000, 10,
-        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(101), kingdom);
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(61), kingdom);
 
     int actual = resourceService.calculateAvailableResource(resource);
 
-    Assert.assertEquals(2000, actual);
+    Assert.assertEquals(1010, actual);
+  }
+
+  @Test
+  public void when_updateResourceGenerationForFarm_should_callDelayUpdateWithValidParameters() {
+    Kingdom kingdom = defaultKingdom();
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+    when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(5);
+    Resource food = kingdom.getResources().stream()
+        .filter(r -> r.getResourceType() == ResourceType.FOOD)
+        .findFirst()
+        .orElse(null);
+
+    resourceService.updateResourceGeneration(kingdom, "farm", 1, 2);
+
+    verify(resourceService, times(1)).delayUpdate(60L, food, 5);
+  }
+
+  @Test
+  public void when_updateResourceGenerationForMine_should_callDelayUpdateWithValidParameters() {
+    Kingdom kingdom = defaultKingdom();
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+    when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(10);
+    Resource gold = kingdom.getResources().stream()
+        .filter(r -> r.getResourceType() == ResourceType.GOLD)
+        .findFirst()
+        .orElse(null);
+
+    resourceService.updateResourceGeneration(kingdom, "mine", 0, 1);
+
+    verify(resourceService, times(1)).delayUpdate(60L, gold, 10);
+  }
+
+  @Test
+  public void when_updateResourceGenerationForTroop_should_callDelayUpdateWithValidParameters() {
+    Kingdom kingdom = defaultKingdom();
+    when(gameObjectRuleHolder.calcCreationTime(anyString(), anyInt(), anyInt())).thenReturn(60);
+    when(gameObjectRuleHolder.calcGenerationChange(anyString(), anyInt(), anyInt())).thenReturn(-10);
+    Resource food = kingdom.getResources().stream()
+        .filter(r -> r.getResourceType() == ResourceType.FOOD)
+        .findFirst()
+        .orElse(null);
+
+    resourceService.updateResourceGeneration(kingdom, "troop", 0, 2);
+
+    verify(resourceService, times(1)).delayUpdate(60L, food, -10);
   }
 
 }

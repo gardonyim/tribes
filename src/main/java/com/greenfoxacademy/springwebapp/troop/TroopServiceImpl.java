@@ -39,15 +39,14 @@ public class TroopServiceImpl implements TroopService {
 
   @Override
   public Troop createTroopOfLevel(int level, Kingdom kingdom) {
-    int hp = level * gameObjectRuleHolder.getHpMultiplier("troop", level);
-    long finishedAtSec = level * gameObjectRuleHolder.getBuildingTimeMultiplier("troop", level);
+    int hp = gameObjectRuleHolder.calcNewHP("troop", level);
+    long finishedAtSec = gameObjectRuleHolder.calcCreationTime("troop", 0, level);
     Troop troop = new Troop();
     troop.setLevel(level);
     troop.setHp(hp);
     troop.setKingdom(kingdom);
-    // TODO: troop attack and defence should be stored in game settings as well
-    troop.setAttack(level * 10);
-    troop.setDefence(level * 5);
+    troop.setAttack(gameObjectRuleHolder.calcNewAttack("troop", level));
+    troop.setDefence(gameObjectRuleHolder.calcNewDefence("troop", level));
     troop.setStartedAt(TimeService.actualTime());
     troop.setFinishedAt(TimeService.timeAtNSecondsLater(finishedAtSec));
     return troop;
@@ -88,6 +87,8 @@ public class TroopServiceImpl implements TroopService {
     int level = building.getLevel();
     int price = gameObjectRuleHolder.getBuildingCostMultiplier("troop", level);
     resourceService.hasEnoughGold(kingdom, price);
+    resourceService.pay(kingdom, price);
+    resourceService.updateResourceGeneration(kingdom, "troop", 0, level);
     Troop troop = createTroopOfLevel(level, kingdom);
     Troop savedTroop = troopRepository.save(troop);
     return convert(savedTroop);
@@ -117,6 +118,7 @@ public class TroopServiceImpl implements TroopService {
     int cost = gameObjectRuleHolder.calcCreationCost("troop", currentLevel, desiredLevel);
     if (resourceService.hasEnoughGold(kingdom, cost)) {
       resourceService.pay(kingdom, cost);
+      resourceService.updateResourceGeneration(kingdom, "troop", currentLevel, desiredLevel);
       return convert(troopRepository.save(setValues(troop, currentLevel, desiredLevel)));
     }
     throw new NotEnoughResourceException();
