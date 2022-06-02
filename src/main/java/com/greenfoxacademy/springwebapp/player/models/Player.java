@@ -1,6 +1,8 @@
 package com.greenfoxacademy.springwebapp.player.models;
 
 import com.greenfoxacademy.springwebapp.kingdom.models.Kingdom;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,9 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.OneToOne;
 import javax.persistence.Column;
 import javax.persistence.Id;
+import java.util.Collection;
 
 @Entity(name = "players")
-public class Player {
+public class Player implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +23,11 @@ public class Player {
   private String password;
   @OneToOne(mappedBy = "player")
   private Kingdom kingdom;
+  private String email;
   private String avatar;
   private Integer points;
+  private String activation;
+  private Boolean enabled;
 
   public Player(int id, String username, String password,
                 Kingdom kingdom, String avatar, Integer points) {
@@ -42,6 +48,31 @@ public class Player {
   }
 
   public Player() {
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return null;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return false;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return false;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return false;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return this.enabled;
   }
 
   public int getId() {
@@ -92,4 +123,29 @@ public class Player {
     this.points = points;
   }
 
+  public String getActivation() {
+    return activation;
+  }
+
+  public void setActivation(String activation) {
+    this.activation = activation;
+  }
+
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public Boolean getEnabled() {
+    return enabled;
+  }
+
 }
+

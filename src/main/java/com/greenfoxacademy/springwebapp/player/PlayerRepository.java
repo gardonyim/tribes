@@ -22,5 +22,7 @@ public interface PlayerRepository extends CrudRepository<Player, Integer> {
       nativeQuery = true)
   List<Player> findAllNearBy(@Param("xMin") int xmin, @Param("xMax") int xmax,
                              @Param("yMin") int ymin, @Param("yMax") int ymax);
+
+  Optional<Player> findFirstByActivation(String code);
   
 }

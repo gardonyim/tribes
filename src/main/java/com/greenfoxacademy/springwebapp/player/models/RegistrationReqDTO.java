@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.player.models;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.Email;
 
 public class RegistrationReqDTO {
 
@@ -11,6 +12,8 @@ public class RegistrationReqDTO {
   @Size(min = 8, message = "Password must be at least 8 characters.")
   private String password;
   private String kingdomname;
+  @Email(message = "Email have to be a valid e-mail address!")
+  private String email;
 
   public String getUsername() {
     return username;
@@ -34,6 +37,14 @@ public class RegistrationReqDTO {
 
   public void setKingdomname(String kingdomname) {
     this.kingdomname = kingdomname;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
 }
