@@ -28,4 +28,12 @@ public interface BuildingService {
 
   List<BuildingDTO> convertToDTOs(List<Building> buildings);
 
+  BuildingDTO provideDtoAboutBuildingDevResoult(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+
+  Building modifyBuildingLevel(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+
+  Building validateModifyBuildingLevelRequest(BuildingDTO buildingDTO, Kingdom kingdom, Integer buildingId);
+
+  Building findTownhall(Kingdom kingdom);
+
 }
