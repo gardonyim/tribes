@@ -55,8 +55,12 @@ public class PlayerServiceImpl implements PlayerService {
     player.setEnabled(false);
     player.setActivation(generateKey());
     player = playerRepository.save(player);
-    emailService.sendMessageUsingThymeleafTemplate(player.getEmail(), player.getUsername(), player.getActivation());
     player.setKingdom(kingdomService.save(reqDTO.getKingdomname(), player));
+    try {
+      emailService.sendMessageUsingThymeleafTemplate(player.getEmail(), player.getUsername(), player.getActivation());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return new RegistrationResDTO(player);
   }
 

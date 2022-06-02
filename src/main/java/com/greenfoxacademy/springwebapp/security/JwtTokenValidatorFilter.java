@@ -20,6 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.greenfoxacademy.springwebapp.security.SecurityConfiguration.PRIVATE_ENDPOINTS;
 
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
@@ -37,6 +42,10 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException, ResponseStatusException {
+    if (shouldNotFilter(request)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
     String jwt = request.getHeader("Authorization").substring(7).trim();
 
     SecretKey key = Keys.hmacShaKeyFor(
@@ -50,10 +59,11 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    String reqPath = request.getServletPath();
-    return (reqPath.equals("/login")
-        || reqPath.equals("/register")
-        || reqPath.startsWith("/activation/"));
+    String path = request.getServletPath();
+    List<String> privateEndpoints = Arrays.stream(PRIVATE_ENDPOINTS)
+            .map(endpoint -> endpoint.replaceAll("/\\*\\*", ""))
+            .collect(Collectors.toList());
+    return !privateEndpoints.stream().anyMatch(e -> path.startsWith(e));
   }
 
   private Player convert(String jwt, SecretKey key) {
